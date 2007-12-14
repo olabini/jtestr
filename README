@@ -1,0 +1,11 @@
+JtestR
+------
+
+A testing framework, allowing you to use Ruby to test Java code, based on JRuby.
+
+
+
+License
+-------
+
+MIT. See LICENSE file.

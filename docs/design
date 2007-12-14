@@ -1,0 +1,38 @@
+TestRunner:
+
+Should have a config file that points out the dir where builds happen. That config file should live in the root of the test directory:
+ test/jtestr_config.rb
+
+The config file should also enumerate the jar-files to be added to the class path for this, if that's not done through ant.
+
+classes 'build/classes'
+classes ['build/classes', 'build/test']
+libraries Dir['lib/**/*.jar']
+
+The default is to find a reasonable place in either ./build or ./target to find classes, and to add all jar-s in ./lib
+
+From there, reasonable defaults will be used,
+ meaning files ending in _helper.rb and _factory.rb will always be loaded
+ files ending in _spec.rb will be run with RSpec
+ everything else will be loaded, and then checked for Test::Unit classes
+
+You can point out directories with the config file, eg:
+
+rspec 'test/dir_name'
+dust 'test/other_dir/fluff'
+test_unit 'test/a_third_one/
+
+Everything pointed out in the config file will be removed from the automagic finding of stuff.
+
+The order is this:
+ first run everything that has unit in the dir name
+  then with functional in the dir name
+   then with integration in the dir name
+    then the rest alphabetically
+
+ within each run, test/unit stuff is run to completion, then specs
+
+
+You should also be able to point out JUnit classes
+
+junit org.jtestr.tests.MainTestSuite

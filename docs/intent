@@ -1,0 +1,26 @@
+Executive summary: Testing Java code is harder than it should be. Testing should NOT be done in Java. TestR makes it easier to test with Ruby than with Java. It includes the best of breed Ruby testing frameworks, tuned for Java testing. A first working implementation is a few weeks away. Could potentially see integration with other TW testing/build tools for good effect.
+
+Intro:
+This is a letter of intent. I haven't begun this project yet, but I will tomorrow. It's important, but I don't want to announce it to a wider circle of people until I have something real.
+
+I'll call it TestR here, but I'm not sure about that name yet.
+
+The Problem: I'm going around at conferences and talking to people, telling them that the best way to get started with Ruby in a larger organization is to start testing your Java code with it. But I've come to realize that no one is really doing it - you need some mojo to get it working correctly, enough that the barrier to entry is to large. Also, Java code is really not suited for the kind of potentially repetetive code you get with unit tests, and even less for stuff like specifications and integration testing. You need fluidity here, which Java is not good enough for.
+
+The Solution: From tomorrow I'm starting work on a new open source project, possibly called TestR. I'll do it in all the spare time I got, and announce it internally as soon as I have something people can test/use.
+So, what is it? Basically, it's a bundle with JRuby and some of the best Ruby testing frameworks, put together in such a way that you can used it from scratch in about a minute. 
+
+It'll have easy integration with Ant, Maven and buildr for a start. It will include a code generator to get a default test structure generated. It will include some custom code to make the hurdle of testing Java code easier, including helpers of all kinds for the things you usually need when testing.
+
+Also, I have a neat idea for how to _very_ easy create a background server that _totally_ avoids the runtime startup cost for JRuby. You won't have to use it, but it will give you instantaneous test startup.
+
+What will be included by default? RSpec, Test::Unit, Mocha, dust, a few other things like that. 
+
+Further away I'm thinking code coverage, integration testing support with ActiveRecord helpers, LDAP stuff, REST API testers, maybe heckle support (possibly on Java bytecode level... =),
+
+The vision is something that I can point any Java developer to, that will give them 1. EASY testing, 2. a way to get started with Ruby in a Java-dominant organization.
+
+This probably won't jive totally with what TIDE is supposed to be, but there might be a point of commonality down the road. I'm definitely seeing it as something CC.rb should support, and maybe inclusion in buildix.
+
+
+Feedback and rotten tomatoes appreciated. =)

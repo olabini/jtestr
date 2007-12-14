@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="jar" name="jtestr">
+  <description>
+    	JtestR is a testing solution for testing Java code with Ruby
+  </description>
+
+  <!-- First try to load machine-specific properties. -->
+  <property file="build.properties"/>
+  
+  <!-- And then load the defaults. It seems backwards to set defaults AFTER 
+       setting local overrides, but that's how Ant works. -->
+  <property file="default.build.properties"/>
+
+  <path id="build.classpath">
+    <fileset dir="${lib.dir}" includes="*.jar"/>
+  </path>
+
+  <patternset id="java.src.pattern">
+    <include name="**/*.java"/>
+  </patternset>
+
+  <target name="prepare" description="Creates the directories needed for building">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${classes.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+  </target>
+  
+  <target name="compile" depends="prepare" description="Compile the source files for the project.">
+    <javac destdir="${classes.dir}" debug="true" source="${javac.version}" target="${javac.version}">
+      <classpath refid="build.classpath"/>
+      <src path="${src.java.dir}"/>
+      <patternset refid="java.src.pattern"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="compile" description="Runs all tests">
+    <taskdef name="jtestr" classname="org.jtestr.ant.JtestRAntRunner">
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+      <classpath path="${src.ruby.dir}"/>
+    </taskdef>
+
+    <jtestr/>
+  </target>
+
+  <target name="test-server" depends="compile" description="Starts test server">
+    <java classname="org.jtestr.BackgroundServer" fork="false" spawn="false">
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+      <classpath path="${src.ruby.dir}"/>
+      <arg line="20333 3"/>
+    </java>
+  </target>
+
+  <target name="test-client" depends="compile" description="Runs tests against test server">
+    <taskdef name="jtestr-client" classname="org.jtestr.ant.JtestRAntClient">
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+    </taskdef>
+
+    <jtestr-client port="20333" tests="test_tests/simple_passing"/>
+  </target>
+
+  <target name="test-client-real" depends="compile" description="Runs tests against test server">
+    <taskdef name="jtestr-client" classname="org.jtestr.ant.JtestRAntClient">
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+    </taskdef>
+
+    <jtestr-client port="20333" tests="test"/>
+  </target>
+
+  <target name="jar" depends="test" description="Create the distribution file">
+    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${lib.dir}/jarjar-0.7.jar"/>
+    <jarjar destfile="${dist.dir}/jtestr.jar">
+      <fileset dir="${classes.dir}">
+        <include name="**/*.class"/>
+        <include name="**/*.properties"/>
+      </fileset>
+      <fileset dir="${src.ruby.dir}">
+        <include name="**/*.rb"/>
+      </fileset>
+      <zipfileset src="${lib.dir}/jruby-complete-r5185.jar"/>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+      </manifest>
+    </jarjar>
+  </target>
+
+  <target name="clean" description="Removes temporary build artifacts">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+</project>

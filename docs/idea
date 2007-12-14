@@ -1,0 +1,34 @@
+Name:
+
+JtestR
+
+
+TestR
+FoolR (pronounced fooler)
+Japer
+Roustie
+RaJt
+
+----
+
+Purpose: To make it easier to test Java code with Ruby, than with anything else.
+Should include RSpec, Test::Unit, dust, mocha and a few other frameworks
+Should include JRuby
+Should include custom framework for mixing Java and Ruby testing
+Should include some kind of coverage tool (version 2)
+Should have reasonable defaults for directory structure so everything works
+Maybe code generator to set up the initial structure
+Easily create a background server to run tests - it will start up two JRuby instances on startup:
+ - testing is asked for, runtime 1 is used for this
+ -  testing is finished
+ -  runtime 1 gets dumped
+ -  runtime 1 gets recreated in the background
+ - testing is asked for, while runtime 1 is starting, runtime 2 is used
+ - and round
+
+Should be integrated into ANT, Maven, buildr and maybe others. Should be runnable without background server. Should be extremely easy to use:
+One line (maybe two) of ant script
+One or two lines of maven stuff
+etc.
+
+Integration testing stuff?

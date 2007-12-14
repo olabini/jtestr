@@ -1,0 +1,45 @@
+-test/unit tester
+-dust tester
+-rspec tester
+-ant-runner
+-helper support
+-factory support
+-add activesupport
+-fix configuration, easy by doing Configuration.new(contents), instance_eval on that, and Configuration object having a method missing
+-test building into one jar file
+-background server runner
+-add support for environment info from Ant and so on - make it usable from inside configuration files (it's already there, through ENV and ENV_JAVA. should be documented though)
+
+ant-runner configuration
+
+general configuration through jtestr (make everything configurable through config file)
+extra java files support (pointing out libs in config)
+gem loading through configuration from existing system
+
+mock support
+more java integration helpers
+integration tools
+selenium integration
+
+junit test runner support
+testng test runner support
+maven-runner
+buildr-runner
+cc.rb-helper
+
+ant project generator
+maven project generator
+
+good documentation
+
+selectively run only parts of the tests
+
+helpers that are injected into specific parts
+factories that automatically are called
+more spec like output
+support rspec behaviours
+
+fix fail safe background server, including locks on the runtime array and so on
+Make it easy to override formatter and logger
+Make sure everything uses internal CLASSPATH
+DI stuff
