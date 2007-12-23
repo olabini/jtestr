@@ -8,12 +8,8 @@ module JtestR
       @result_handler.starting
     end
     
-    def add_behaviour(behaviour)
-      @behaviour = behaviour
-    end
-    
     def example_started(example)
-      @result_handler.starting_single("#{example.description}(#{@behaviour.description})")
+      @result_handler.starting_single("#{example.description}(#{@example_group.description})")
     end
 
     def example_passed(example)

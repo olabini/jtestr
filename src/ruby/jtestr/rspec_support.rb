@@ -1,6 +1,7 @@
 $:.unshift File.join(File.dirname(__FILE__), '..', 'rspec', 'lib')
 
 require 'spec'
+require 'spec/runner/formatter/base_formatter'
 require 'jtestr/rspec_result_handler'
 
 Spec::Runner.configure do |config|
@@ -18,19 +19,18 @@ module JtestR
 
         out = StringIO.new
 
-        parser = ::Spec::Runner::OptionParser.new
+        parser = ::Spec::Runner::OptionParser.new(out, out)
+        parser.order!(files)
+        options = parser.options
         
-        options = parser.parse(files, out, out, false)
-        options.configure
-
         result_handler = GenericResultHandler.new(name, "example", @output, @output_level)
-        
-        options.reporter = ::Spec::Runner::Reporter.new([RSpecResultHandler.new(result_handler)], options.backtrace_tweaker)
-        
-        $behaviour_runner = options.behaviour_runner
-        res = $behaviour_runner.run(files, false)
-        
-        @result &= (res == 0)
+
+        options.instance_variable_set :@format_options, [['progress', out]]
+        options.instance_variable_set :@formatters, [RSpecResultHandler.new(result_handler)]
+
+        res = ::Spec::Runner::CommandLine.run(options)
+
+        @result &= res
       end
     rescue Exception => e
       log.err e.inspect

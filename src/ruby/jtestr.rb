@@ -1,14 +1,15 @@
 $:.unshift File.join(File.dirname(__FILE__), 'activesupport/lib')
 $:.unshift File.join(File.dirname(__FILE__), 'mocha/lib')
 
-require 'file_fixes'
+require 'java'
 
 #require 'active_support'
-require 'mocha'
 require 'jtestr/simple_logger'
 require 'jtestr/generic_result_handler'
-require 'jtestr/rspec_support'
+# RSpec needs to be loaded before the Test/Unit things, because of the stupid test/unit interop features
+require 'jtestr/rspec_support' 
 require 'jtestr/test_unit_support'
+require 'mocha'
 require 'jtestr/configuration'
 
 module JtestR
