@@ -72,8 +72,7 @@
   </target>
 
   <target name="jar" depends="test" description="Create the distribution file">
-    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${lib.dir}/jarjar-0.7.jar"/>
-    <jarjar destfile="${dist.dir}/jtestr.jar">
+    <jar destfile="${dist.dir}/jtestr.jar" filesonly="false">
       <fileset dir="${classes.dir}">
         <include name="**/*.class"/>
         <include name="**/*.properties"/>
@@ -85,7 +84,7 @@
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
       </manifest>
-    </jarjar>
+    </jar>
   </target>
 
   <target name="clean" description="Removes temporary build artifacts">
