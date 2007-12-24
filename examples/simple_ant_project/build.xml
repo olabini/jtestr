@@ -9,7 +9,7 @@
   <taskdef name="jtestr-client" classname="org.jtestr.ant.JtestRAntClient" classpath="../../dist/jtestr.jar"/>
   
   <target name="test" description="Runs all tests">
-    <jtestr/>
+    <jtestr port="20333"/>
   </target>
 
   <target name="test-server" description="Starts test server">

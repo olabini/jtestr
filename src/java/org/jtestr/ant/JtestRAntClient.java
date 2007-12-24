@@ -28,10 +28,8 @@ public class JtestRAntClient extends Task {
         this.port = port;
     }
 
-    public void execute() throws BuildException {
+    static void executeClient(Socket socket, String tests) throws BuildException {
         try {
-            Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("127.0.0.1",port));
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
 
@@ -95,6 +93,16 @@ public class JtestRAntClient extends Task {
             }
 
             socket.close();
+        } catch(IOException e) {
+            throw new BuildException("Connection with server failed", e);
+        }
+    }
+
+    public void execute() throws BuildException {
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("127.0.0.1",port));
+            executeClient(socket, tests);
         } catch(IOException e) {
             throw new BuildException("Connection with server failed", e);
         }

@@ -3,6 +3,11 @@
  */
 package org.jtestr.ant;
 
+import java.io.IOException;
+
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 import org.jruby.Ruby;
 
 import org.apache.tools.ant.BuildException;
@@ -16,36 +21,56 @@ import org.jtestr.TestRunner;
  */
 public class JtestRAntRunner extends Task {
     private boolean failOnError = true;
+    private int port = 22332;
+    private String tests = "test";
 
     public void setFailonerror(boolean value) {
         failOnError = value;
     }
 
+    public void setTests(String tests) {
+        this.tests = tests;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public void execute() throws BuildException {
-        Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
+        boolean ran = false;
         try {
-            TestRunner testRunner = new TestRunner(runtime);
-            boolean result = testRunner.run();
-            testRunner.report();
-            if(failOnError && !result) {
-                throw new BuildException("Tests failed");
-            }
-        } catch(org.jruby.exceptions.RaiseException e) {
-            System.err.println("Failure: "  + e);
-            e.printStackTrace(System.err);
-
-            StackTraceElement[] trace = e.getStackTrace();
-            int externalIndex = 0;
-            for (int i = 0; i < trace.length; i++) {
-                System.err.println(trace[i]);
-            }
-
-            throw new BuildException("Exception while running", e);
-        } finally {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("127.0.0.1",port));
+            JtestRAntClient.executeClient(socket, tests);
+            ran = true;
+        } catch(IOException e) {}
+        
+        if(!ran) {
+            Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
-                runtime.tearDown();
+                TestRunner testRunner = new TestRunner(runtime);
+                boolean result = testRunner.run(tests);
+                testRunner.report();
+                if(failOnError && !result) {
+                    throw new BuildException("Tests failed");
+                }
             } catch(org.jruby.exceptions.RaiseException e) {
-                // Catches SystemExit events
+                System.err.println("Failure: "  + e);
+                e.printStackTrace(System.err);
+
+                StackTraceElement[] trace = e.getStackTrace();
+                int externalIndex = 0;
+                for (int i = 0; i < trace.length; i++) {
+                    System.err.println(trace[i]);
+                }
+
+                throw new BuildException("Exception while running", e);
+            } finally {
+                try {
+                    runtime.tearDown();
+                } catch(org.jruby.exceptions.RaiseException e) {
+                    // Catches SystemExit events
+                }
             }
         }
     }
