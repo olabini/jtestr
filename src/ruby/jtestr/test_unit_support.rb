@@ -15,14 +15,20 @@ module JtestR
         log.debug { "running test unit[#{name}] on #{files.inspect}" }
 
         before = test_unit_classes
+        before_all = classes
+
         files.each do |file|
           guard("while loading #{file}") { load file }
         end
+
         after = test_unit_classes
+        after_all = classes
         
         log.debug "Testing classes: #{(after-before).inspect}"
 
         result_handler = GenericResultHandler.new(name, "test", @output, @output_level)
+        
+        JtestR::Helpers.apply(after_all - before_all)
         
         @result = @result & Test::Unit::AutoRunner.new(false) do |runner|
           runner.collector = proc do |r|
@@ -40,6 +46,14 @@ module JtestR
     rescue Exception => e
       log.err e.inspect
       log.err e.backtrace
+    end
+
+    def classes
+      all = []
+      ObjectSpace.each_object(Class) do |klass|
+        all << klass
+      end
+      all
     end
 
     def test_unit_classes

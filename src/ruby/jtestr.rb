@@ -12,6 +12,8 @@ require 'jtestr/test_unit_support'
 require 'mocha'
 require 'jtestr/configuration'
 
+require 'jtestr/helpers'
+
 module JtestR
   class TestRunner
     include TestUnitTestRunning

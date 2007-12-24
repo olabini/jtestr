@@ -57,7 +57,9 @@ module JtestR
     def add_fault(fault)
       @result_handler.add_fault(fault)
       
-      if defined?(Spec) && Spec::Expectations::ExpectationNotMetError === fault.exception
+      if defined?(Spec) && 
+          fault.respond_to?(:exception) && 
+          Spec::Expectations::ExpectationNotMetError === fault.exception
         @result_handler.fail_single
       else
         case fault.single_character_display
