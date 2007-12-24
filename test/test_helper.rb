@@ -43,4 +43,29 @@ helper_for /Foo/ do
   end
 end
 
-# Need to have a way to make the same work for specs...
+# String on spec name
+helper_for "FooBarGap" do 
+  def should_be_available_to_specs_with_foobargap_description
+    true
+  end
+end
+
+# Regexp on spec name
+helper_for /Foo/ do 
+  def should_be_available_to_specs_including_foo_in_name
+    true
+  end
+end
+
+# Basic for all examples
+helper_for :"Spec::Example::ExampleGroup" do 
+  def should_be_available_to_all_specs
+    true
+  end
+end
+
+helper_for :all do 
+  def should_be_available_in_all_tests
+    true
+  end
+end

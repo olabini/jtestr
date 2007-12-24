@@ -28,8 +28,6 @@ module JtestR
         options.instance_variable_set :@format_options, [['progress', out]]
         options.instance_variable_set :@formatters, [RSpecResultHandler.new(result_handler)]
 
-        JtestR::Helpers.apply([])
-
         res = ::Spec::Runner::CommandLine.run(options)
 
         @result &= res

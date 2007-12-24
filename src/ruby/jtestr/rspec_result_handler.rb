@@ -7,6 +7,11 @@ module JtestR
     def start(example_count)
       @result_handler.starting
     end
+
+    def add_example_group(example_group)
+      JtestR::Helpers.apply([example_group])
+      super
+    end
     
     def example_started(example)
       @result_handler.starting_single("#{example.description}(#{@example_group.description})")

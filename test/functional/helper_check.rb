@@ -4,6 +4,10 @@ functional_tests do
     assert respond_to?(:should_be_available_everywhere)
   end
 
+  test "all helper should be available" do 
+    assert respond_to?(:should_be_available_in_all_tests)
+  end
+
   test "functionals helper should be available" do 
     assert respond_to?(:should_be_available_inside_of_functionals)
   end
@@ -20,6 +24,10 @@ module Functionals
   class AnotherHelperTest < Test::Unit::TestCase 
     def test_testcase_helper_is_available
       assert respond_to?(:should_be_available_everywhere)
+    end
+
+    def test_all_helper_is_available
+      assert respond_to?(:should_be_available_in_all_tests)
     end
 
     def test_available_within_functionals
