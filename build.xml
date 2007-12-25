@@ -23,6 +23,7 @@
   <target name="prepare" description="Creates the directories needed for building">
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${classes.dir}"/>
+    <mkdir dir="${classes.test.dir}"/>
     <mkdir dir="${dist.dir}"/>
   </target>
   
@@ -30,6 +31,10 @@
     <javac destdir="${classes.dir}" debug="true" source="${javac.version}" target="${javac.version}">
       <classpath refid="build.classpath"/>
       <src path="${src.java.dir}"/>
+      <patternset refid="java.src.pattern"/>
+    </javac>
+    <javac destdir="${classes.test.dir}" debug="true" source="${javac.version}" target="${javac.version}">
+      <src path="${src.java.test.dir}"/>
       <patternset refid="java.src.pattern"/>
     </javac>
   </target>

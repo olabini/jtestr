@@ -27,6 +27,7 @@ module JtestR
       
       @result = true
       load_configuration
+      setup_classpath
       find_tests
 
       load_helpers
@@ -78,6 +79,18 @@ module JtestR
       end
     end
 
+    def setup_classpath
+      @paths ||= find_existing_common_paths
+
+      @paths.each do |p|
+        $CLASSPATH << File.expand_path(p)
+      end
+    end
+    
+    def find_existing_common_paths
+      Dir["{build,target}/{classes,test_classes}"] + Dir['{lib,build_lib}/**/*.jar']
+    end
+    
     def find_tests
       log.debug { "finding tests" }
 

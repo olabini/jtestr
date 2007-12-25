@@ -9,8 +9,7 @@ unit_tests do
   end
 
   test "that the class loader used for Java classes under test is the JRuby class loader" do 
-    $stderr.puts org.jtestr.RuntimeFactory.java_class.class_loader
-    assert false
+    assert_instance_of org.jruby.util.JRubyClassLoader, org.jtestr.test.FooBean.java_class.class_loader
   end
   
 #  test "exception" do 
