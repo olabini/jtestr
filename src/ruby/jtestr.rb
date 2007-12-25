@@ -7,17 +7,23 @@ require 'jtestr/simple_logger'
 require 'jtestr/generic_result_handler'
 # RSpec needs to be loaded before the Test/Unit things, because of the stupid test/unit interop features
 require 'jtestr/rspec_support' 
-require 'active_support'
-require 'jtestr/test_unit_support'
-require 'mocha'
-require 'jtestr/configuration'
 
+require 'active_support'
+
+require 'jtestr/test_unit_support'
+
+require 'mocha'
+
+require 'jtestr/junit_support'
+
+require 'jtestr/configuration'
 require 'jtestr/helpers'
 
 module JtestR
   class TestRunner
     include TestUnitTestRunning
     include RSpecTestRunning
+    include JUnitTestRunning
     
     def run(dirname = nil, log_level = JtestR::SimpleLogger::WARN, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
       @logger = JtestR::SimpleLogger.new(output, log_level)
@@ -40,8 +46,9 @@ module JtestR
       ].each do |name, pattern|
         run_test_unit("#{name} tests", pattern)
         run_rspec("#{name} specs", pattern)
+        run_junit("JUnit #{name} tests", name)
       end
-
+      
       @result && (!@errors || @errors.empty?)
     rescue Exception => e
       log.err e.inspect
@@ -97,7 +104,7 @@ module JtestR
       lib_files = Dir["{#{@test_directories.map{ |td| "#{td}/lib"}.join(',')}}/**/*.rb"]
       work_files = (Dir["{#{@test_directories.join(',')}}/**/*.rb"] - lib_files) - @config_files
 
-      Dir["{#{@test_directories.map{ |td| "#{td}/lib"}.join(',')}}/*.rb"].each do |lib_file|
+      lib_files.each do |lib_file|
         guard("Loading #{lib_file}") { load lib_file }
       end
       

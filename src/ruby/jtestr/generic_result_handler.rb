@@ -71,12 +71,29 @@ module JtestR
           case fault
           when Test::Unit::Error, Test::Unit::Failure: output(fault, level)
           else
-            output("#{fault.header}\n#{fault.exception.message}", level)
-            output(format_backtrace(fault.exception.backtrace), level)
+            if fault.respond_to?(:test_header)
+              output("#{fault.test_header}\n#{fault.exception.message}", level)
+              output(format_java_backtrace(fault.trace), level)
+            else
+              output("#{fault.header}\n#{fault.exception.message}", level)
+              output(format_backtrace(fault.exception.backtrace), level)
+            end
           end
-          nl(level)
+          nl(level) 
         end
       end
+    end
+
+    def format_java_backtrace(backtrace)
+      return "" if backtrace.nil?
+      have_jruby = false
+      b1 = backtrace.select { |line|
+        if line =~ /org\.jruby\.javasupport\.JavaMethod\./
+          have_jruby = true
+        end
+        !have_jruby
+      }
+      b1[0..-5].join("") + "      ...internal JRuby stack omitted"
     end
 
     def format_backtrace(backtrace)
