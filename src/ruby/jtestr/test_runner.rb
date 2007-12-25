@@ -6,6 +6,9 @@ module JtestR
     include JUnitTestRunning
     
     def run(dirname = nil, log_level = JtestR::SimpleLogger::WARN, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
+      JtestR::logger = JtestR::SimpleLogger
+      JtestR::result_handler = JtestR::GenericResultHandler
+
       @output_level = outp_level
       @output = output
       @dirname = dirname
@@ -67,9 +70,18 @@ module JtestR
     end
 
     def setup_classpath
-      @paths ||= find_existing_common_paths
+      cp = @configuration.configuration_values(:classpath)
+      add = @configuration.configuration_value(:add_common_classpath)
 
-      @paths.each do |p|
+      cp = if cp.empty?
+             find_existing_common_paths
+           elsif add
+             cp + find_existing_common_paths
+           else
+             cp
+           end
+      
+      cp.each do |p|
         $CLASSPATH << File.expand_path(p)
       end
     end

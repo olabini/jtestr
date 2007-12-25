@@ -40,3 +40,7 @@ end
 
 JtestR::logger = FooLogger
 JtestR::result_handler = IgnoringResultHandler
+
+classpath "build/test_classes2"
+classpath "build/foobar.jar"
+add_common_classpath true

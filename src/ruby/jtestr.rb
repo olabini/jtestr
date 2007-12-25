@@ -18,5 +18,3 @@ module JtestR
     attr_accessor :result_handler
   end
 end
-JtestR::logger = JtestR::SimpleLogger
-JtestR::result_handler = JtestR::GenericResultHandler
