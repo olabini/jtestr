@@ -40,3 +40,9 @@ factory_for :"Spec::Example::ExampleGroup", :tests => /should/ do
     "val6"
   end
 end
+
+factory_for :"Spec::Example::ExampleGroup" do 
+  def create_something_for_all_specs
+    "val7"
+  end
+end

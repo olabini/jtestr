@@ -18,6 +18,16 @@ functional_tests do
     assert !respond_to?(:should_be_available_in_named_class)
     assert !respond_to?(:should_be_available_inside_of_modules_that_include_foo)
   end
+  
+  test "that factories have injected values" do 
+    assert_equal "val", @something_for_all_test_unit_cases
+    assert_equal "val2", @something_for_all_cases
+    assert_equal "val3", @something_for_all_functionals
+
+    assert_nil @something_for_tests_in_specified_class_name
+    assert_nil @something_for_tests_in_specified_spec_matching_test_regexp
+    assert_nil @something_for_all_specs_with_test_names_including_should
+  end
 end
 
 module Functionals
@@ -40,6 +50,16 @@ module Functionals
       assert !respond_to?(:should_be_available_in_named_class)
       assert !respond_to?(:should_be_available_inside_of_modules_that_include_foo)
       assert !respond_to?(:should_be_available_inside_of_modules_that_include_foo)
+    end
+  
+    def test_that_factories_have_injected_values 
+      assert_equal "val", @something_for_all_test_unit_cases
+      assert_equal "val2", @something_for_all_cases
+      assert_equal "val3", @something_for_all_functionals
+
+      assert_nil @something_for_tests_in_specified_class_name
+      assert_nil @something_for_tests_in_specified_spec_matching_test_regexp
+      assert_nil @something_for_all_specs_with_test_names_including_should
     end
   end
 end
