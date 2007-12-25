@@ -26,7 +26,7 @@ module JtestR
         
         log.debug "Testing classes: #{(after-before).inspect}"
 
-        result_handler = GenericResultHandler.new(name, "test", @output, @output_level)
+        result_handler = JtestR.result_handler.new(name, "test", @output, @output_level)
         
         JtestR::Helpers.apply(after_all - before_all)
         

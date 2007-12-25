@@ -6,13 +6,15 @@ module JtestR
     include JUnitTestRunning
     
     def run(dirname = nil, log_level = JtestR::SimpleLogger::WARN, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
-      @logger = JtestR::SimpleLogger.new(output, log_level)
       @output_level = outp_level
       @output = output
       @dirname = dirname
       
       @result = true
       load_configuration
+
+      @logger = JtestR.logger.new(output, log_level)
+      
       setup_classpath
       find_tests
 
@@ -54,8 +56,6 @@ module JtestR
     end
     
     def load_configuration
-      log.debug { "loading configuration" }
-
       @test_directories = @dirname ? [@dirname.strip] : ["test","src/test"]
       
       @config_files = @test_directories.map {|dir| File.join(dir, "jtestr_config.rb") }.select {|file| File.exist?(file)}

@@ -23,7 +23,7 @@ module JtestR
         parser.order!(files)
         options = parser.options
         
-        result_handler = GenericResultHandler.new(name, "example", @output, @output_level)
+        result_handler = JtestR.result_handler.new(name, "example", @output, @output_level)
         
         formatters = load_spec_formatters(options, result_handler)
 

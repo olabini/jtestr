@@ -14,7 +14,7 @@ module JtestR
           request = org.junit.runner.Request.classes(desc, test_classes)
           runner = org.junit.runner.JUnitCore.new
 
-          result_handler = GenericResultHandler.new(desc, "test", @output, @output_level)
+          result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level)
           
           runner.addListener(JUnitResultHandler.new(result_handler))
           result = runner.run(request)

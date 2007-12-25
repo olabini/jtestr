@@ -11,3 +11,12 @@ require 'jtestr/junit_support'
 require 'jtestr/configuration'
 require 'jtestr/helpers'
 require 'jtestr/test_runner'
+
+module JtestR
+  class << self
+    attr_accessor :logger
+    attr_accessor :result_handler
+  end
+end
+JtestR::logger = JtestR::SimpleLogger
+JtestR::result_handler = JtestR::GenericResultHandler
