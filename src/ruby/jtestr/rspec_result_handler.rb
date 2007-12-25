@@ -1,5 +1,7 @@
+require 'jtestr/rspec_helper_formatter'
+
 module JtestR
-  class RSpecResultHandler < ::Spec::Runner::Formatter::BaseFormatter
+  class RSpecResultHandler < RSpecHelperFormatter
     def initialize(result_handler)
       @result_handler = result_handler
     end
@@ -8,11 +10,6 @@ module JtestR
       @result_handler.starting
     end
 
-    def add_example_group(example_group)
-      JtestR::Helpers.apply([example_group])
-      super
-    end
-    
     def example_started(example)
       @result_handler.starting_single("#{example.description}(#{@example_group.description})")
     end
@@ -35,7 +32,7 @@ module JtestR
       @result_handler.pending_single(example_name)
     end
 
-    def start_dump
+    def dump_summary(*args)
       @result_handler.ending
     end
   end
