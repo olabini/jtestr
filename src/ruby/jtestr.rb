@@ -10,6 +10,7 @@ require 'jtestr/mocha_support'
 require 'jtestr/junit_support'
 require 'jtestr/configuration'
 require 'jtestr/helpers'
+require 'jtestr/factories'
 require 'jtestr/test_runner'
 
 module JtestR
