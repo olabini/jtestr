@@ -1,6 +1,8 @@
 
 module JtestR
-  class JUnitResultHandler < org.junit.runner.notification.RunListener
+  begin
+  JRunListener = org.junit.runner.notification.RunListener
+  class JUnitResultHandler < JRunListener
     def initialize(result_handler)
       super()
       @result_handler = result_handler
@@ -40,4 +42,7 @@ module JtestR
     def testIgnored(description)
     end
   end  
+  rescue Exception => e
+  warn "can't load JUnit 4"
+  end
 end

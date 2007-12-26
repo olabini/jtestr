@@ -58,24 +58,6 @@
     </java>
   </target>
 
-  <target name="test-client" depends="compile" description="Runs tests against test server">
-    <taskdef name="jtestr-client" classname="org.jtestr.ant.JtestRAntClient">
-      <classpath refid="build.classpath"/>
-      <classpath path="${classes.dir}"/>
-    </taskdef>
-
-    <jtestr-client port="20333" tests="test_tests/simple_passing"/>
-  </target>
-
-  <target name="test-client-real" depends="compile" description="Runs tests against test server">
-    <taskdef name="jtestr-client" classname="org.jtestr.ant.JtestRAntClient">
-      <classpath refid="build.classpath"/>
-      <classpath path="${classes.dir}"/>
-    </taskdef>
-
-    <jtestr-client port="20333" tests="test"/>
-  </target>
-
   <target name="jar" depends="test" description="Create the distribution file">
     <jar destfile="${dist.dir}/jtestr.jar" filesonly="false">
       <fileset dir="${classes.dir}">
@@ -86,6 +68,7 @@
         <include name="**/*.rb"/>
       </fileset>
       <zipfileset src="${lib.dir}/jruby-complete-r5352.jar"/>
+      <zipfileset src="${lib.dir}/junit-4.4.jar"/>
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
       </manifest>

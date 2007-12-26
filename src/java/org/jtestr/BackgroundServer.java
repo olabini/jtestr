@@ -110,6 +110,18 @@ public class BackgroundServer {
         server.close();
     }
 
+
+    private String readBoundedName(InputStream input) throws IOException {
+        int toRead = (int)input.read();
+        byte[] buffer = new byte[toRead];
+        int read0 = 0;
+        while(read0 < toRead) {
+            int bytesRead = input.read(buffer, read0, toRead-read0);
+            read0 += bytesRead;
+        }
+        return new String(buffer, 0, toRead);
+    }
+
     private void run(Socket socket) throws IOException {
         InputStream socketInput = socket.getInputStream();
         OutputStream socketOutput = socket.getOutputStream();
@@ -134,11 +146,14 @@ public class BackgroundServer {
             return;
         }
 
-        byte[] buffer2 = new byte[256];
-        bytesRead = socketInput.read(buffer2);
-        String dirname = new String(buffer2, 0, bytesRead);
-
+        String dirname = readBoundedName(socketInput);
         debug("testing from directory: " + dirname);
+        String loglevel = readBoundedName(socketInput);
+        debug("testing with loglevel: " + loglevel);
+        String outputlevel = readBoundedName(socketInput);
+        debug("testing with outputlevel: " + outputlevel);
+        String output = readBoundedName(socketInput);
+        debug("testing with output: " + output);
 
         socketOutput.write(new byte[]{'2','0','1'});
         socketOutput.flush();
@@ -148,7 +163,7 @@ public class BackgroundServer {
         
         TestRunner runtime = getRuntime();
         try {
-            boolean result = runtime.run(dirname);
+            boolean result = runtime.run(dirname, loglevel, outputlevel, output);
             runtime.report();
             
             resOut.flush(); resErr.flush();

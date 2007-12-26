@@ -10,31 +10,29 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
-public class JtestRAntClient extends Task {
-    private int port = 22332;
-    private String tests = "test";
-
-    public void setTests(String tests) {
-        this.tests = tests;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    static void executeClient(Socket socket, String tests) throws BuildException {
+public class JtestRAntClient {
+    static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output) throws BuildException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
 
             os.print("TEST");
+            os.write((byte)tests.length());
             os.print(tests);
+            os.write((byte)logLevel.length());
+            os.print(logLevel);
+            os.write((byte)outputLevel.length());
+            os.print(outputLevel);
+            os.write((byte)output.length());
+            os.print(output);
             os.flush();
 
             byte[] status = new byte[3];
@@ -93,16 +91,6 @@ public class JtestRAntClient extends Task {
             }
 
             socket.close();
-        } catch(IOException e) {
-            throw new BuildException("Connection with server failed", e);
-        }
-    }
-
-    public void execute() throws BuildException {
-        try {
-            Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("127.0.0.1",port));
-            executeClient(socket, tests);
         } catch(IOException e) {
             throw new BuildException("Connection with server failed", e);
         }

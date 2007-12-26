@@ -30,6 +30,15 @@ public class TestRunner {
         return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{runtime.newString(dirname)}).isTrue();
     }
 
+    public boolean run(String dirname, String logLevel, String outputLevel, String output) {
+        return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{
+                runtime.newString(dirname),
+                runtime.evalScriptlet("JtestR::SimpleLogger::" + logLevel),
+                runtime.evalScriptlet("JtestR::GenericResultHandler::" + outputLevel),
+                runtime.evalScriptlet(output)
+            }).isTrue();
+    }
+
     public void report() {
         runner.callMethod(runtime.getCurrentContext(), "report", new IRubyObject[0]);
     }

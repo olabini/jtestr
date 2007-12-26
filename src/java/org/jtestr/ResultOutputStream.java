@@ -11,7 +11,7 @@ import java.io.OutputStream;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class ResultOutputStream extends OutputStream {
-    private byte[] prefix;
+    private byte[] prefix = new byte[]{'E'};
     private OutputStream realStream;
     private BackgroundServer backgroundServer;
     
@@ -108,22 +108,28 @@ public class ResultOutputStream extends OutputStream {
     }
 
     protected void processFlush(ByteArrayOutputStream buffer) throws IOException {
-        //        System.err.println("Sending to real stream");
+        //        backgroundServer.originalStandardErr.println("Sending to real stream");
         byte[] buff = buffer.toByteArray();
         int len = buff.length;
         int ix = 0;
-        while(len > 255) {
+        if(realStream != null) {
+            while(len > 255) {
+                realStream.write(prefix);
+                realStream.write((byte)255);
+                realStream.write(buff,ix,255);
+                ix += 255;
+                len -= 255;
+            }
+
             realStream.write(prefix);
-            realStream.write((byte)255);
-            realStream.write(buff,ix,255);
-            ix += 255;
-            len -= 255;
+            realStream.write((byte)len);
+            realStream.write(buff,ix,len);
+            realStream.flush();
+            resetBufferInfo();
+        } else {
+            backgroundServer.originalStandardErr.write(buff, ix, len);
+            resetBufferInfo();
         }
-        realStream.write(prefix);
-        realStream.write((byte)len);
-        realStream.write(buff,ix,len);
-        realStream.flush();
-        resetBufferInfo();
     }
 
     public void close() throws IOException {

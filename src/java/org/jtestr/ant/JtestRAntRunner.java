@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.jruby.Ruby;
 
 import org.apache.tools.ant.BuildException;
@@ -23,6 +26,10 @@ public class JtestRAntRunner extends Task {
     private boolean failOnError = true;
     private int port = 22332;
     private String tests = "test";
+    private String logging = "WARN";
+    private String configFile = "jtestr_config.rb";
+    private String outputLevel = "QUIET";
+    private String output = "STDOUT";
 
     public void setFailonerror(boolean value) {
         failOnError = value;
@@ -36,12 +43,42 @@ public class JtestRAntRunner extends Task {
         this.port = port;
     }
 
+    public void setConfigurationfile(String configFile) {
+        this.configFile = configFile;
+    }
+
+    private final static List<String> LOGGING_LEVELS = Arrays.asList("NONE","ERR","WARN","INFO","DEBUG");
+    public void setLogging(String logging) {
+        if(LOGGING_LEVELS.contains(logging)) {
+            this.logging = logging;
+        } else {
+            throw new IllegalArgumentException("Value " + logging + " is not a valid logging level. The only valid levels are: " + LOGGING_LEVELS);
+        }
+    } 
+
+    private final static List<String> OUTPUT_LEVELS = Arrays.asList("NONE","QUIET","NORMAL","VERBOSE","DEFAULT");
+    public void setOutputlevel(String outputLevel) {
+        if(OUTPUT_LEVELS.contains(logging)) {
+            this.outputLevel = outputLevel;
+        } else {
+            throw new IllegalArgumentException("Value " + outputLevel + " is not a valid output level. The only valid levels are: " + OUTPUT_LEVELS);
+        }
+    }
+
+    public void setOutput(String output) {
+        if(output.equals("STDOUT") || output.equals("STDERR")) {
+            this.output = output;
+        } else {
+            this.output = "File.open(' " + output + "', 'a+')";
+        }
+    }
+
     public void execute() throws BuildException {
         boolean ran = false;
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
-            JtestRAntClient.executeClient(socket, tests);
+            JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output);
             ran = true;
         } catch(IOException e) {}
         
@@ -49,7 +86,7 @@ public class JtestRAntRunner extends Task {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(tests);
+                boolean result = testRunner.run(tests, logging, outputLevel, output);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new BuildException("Tests failed");

@@ -13,13 +13,9 @@
   </target>
 
   <target name="test-server" description="Starts test server">
-    <java classname="org.jtestr.BackgroundServer" fork="false" spawn="false">
+    <java classname="org.jtestr.BackgroundServer" fork="true" maxmemory="512M" spawn="false">
       <classpath path="../../dist/jtestr.jar"/>
       <arg line="20333 3"/>
     </java>
-  </target>
-
-  <target name="test-client" description="Runs tests against test server">
-    <jtestr-client port="20333" tests="test"/>
   </target>
 </project>
