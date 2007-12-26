@@ -80,7 +80,7 @@ module JtestR
     end
     
     def ext(type)
-      unless type < @module
+      unless type <= @module
         type.send(:include, @module)
       end
     end

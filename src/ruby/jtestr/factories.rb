@@ -14,12 +14,6 @@ module JtestR
           res = f.apply_on(instance)
           @__factories_instance_variables += res
         end
-        
-        if instance.is_a?(Test::Unit::TestCase)
-#          puts "T/U FACTORY CALL: #{instance.class.name}##{instance.method_name}"
-        else
-#          puts "RSP FACTORY CALL: #{instance.class.description}##{instance.description}"
-        end
       end
       
       def after(instance)
@@ -36,13 +30,80 @@ module JtestR
     end
     
     def initialize(spec, block)
-      @spec = spec
+      @type_spec = spec.first
+      @method_spec = spec[1] || {:tests => :all}
       @module = Module.new(&block)
       @creations = @module.public_instance_methods.select{ |m| m=~ /\Acreate_/ }.map{ |m| m[7..-1] }
+      @instance_variables = @creations.map { |name| 
+        "@#{name}".to_sym
+      }
     end
     
     def apply_on(instance)
-      []
+      added = false
+      case @type_spec
+      when :all
+        added = added | add_factory_on(instance)
+        added = added | add_factory_on(instance)
+      when Symbol
+        t = eval(@type_spec.to_s) rescue nil
+        case t
+        when Class
+          added = do_class(t, instance)
+        when Module
+          added = do_module(t, instance)
+        end
+      when String
+        if instance.class.respond_to?(:description) && instance.class.description == @type_spec
+          added = add_factory_on(instance)
+        end
+      when Class
+        added = do_class(@type_spec, instance)
+      when Module
+        added = do_module(@type_spec, instance)
+      end
+      added ? @instance_variables : []
+    end
+
+    def do_module(m, instance)
+      added = false
+      m.constants.each do |c|
+        v = m.const_get c
+        if v.is_a?(Class)
+          added = added | add_factory_on(instance)
+        end
+      end
+      added
+    end
+    
+    def do_class(c, instance)
+      add_factory_on(instance) if instance.is_a?(c)
+    end
+    
+    def match_method_spec(instance)
+      tests = @method_spec["tests"] || @method_spec[:tests]
+      case tests
+      when :all
+        true
+      when Regexp
+        ((instance.respond_to?(:description) && instance.description) || instance.method_name) =~ tests
+      else puts "couldn't handle stuff: #{tests.inspect}"; true
+      end
+    end
+    
+    def add_factory_on(instance)
+      if match_method_spec(instance)
+        unless instance.is_a?(@module)
+          instance.send :extend, @module
+        end
+        @creations.each do |creation|
+          val = instance.send :"create_#{creation}"
+          instance.instance_variable_set :"@#{creation}", val
+        end
+        true
+      else
+        false
+      end
     end
   end
 end

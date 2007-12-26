@@ -1,6 +1,6 @@
 
 # same as
-# factory_for Test::Unit::TestCase, :all do
+# factory_for Test::Unit::TestCase, :tests => :all do
 factory_for Test::Unit::TestCase do 
   def create_something_for_all_test_unit_cases
     "val"
