@@ -94,7 +94,6 @@ module JtestR
         ((instance.respond_to?(:description) && instance.description) || instance.method_name) =~ tests
       when Array
         tests.any? { |t| match_method_spec(instance, t) }
-      else puts "couldn't handle stuff: #{tests.inspect}"; true
       end
     end
     
