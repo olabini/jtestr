@@ -40,13 +40,17 @@ module JtestR
     end
     
     def apply_on(instance)
+      check(@type_spec, instance) ? @instance_variables : []
+    end
+
+    def check(spec, instance)
       added = false
-      case @type_spec
+      case spec
       when :all
         added = added | add_factory_on(instance)
         added = added | add_factory_on(instance)
       when Symbol
-        t = eval(@type_spec.to_s) rescue nil
+        t = eval(spec.to_s) rescue nil
         case t
         when Class
           added = do_class(t, instance)
@@ -54,15 +58,17 @@ module JtestR
           added = do_module(t, instance)
         end
       when String
-        if instance.class.respond_to?(:description) && instance.class.description == @type_spec
+        if instance.class.respond_to?(:description) && instance.class.description == spec
           added = add_factory_on(instance)
         end
       when Class
-        added = do_class(@type_spec, instance)
+        added = do_class(spec, instance)
       when Module
-        added = do_module(@type_spec, instance)
+        added = do_module(spec, instance)
+      when Array
+        added = @type_spec.map{ |s| check(s, instance) }.any?
       end
-      added ? @instance_variables : []
+      added
     end
 
     def do_module(m, instance)
@@ -80,19 +86,20 @@ module JtestR
       add_factory_on(instance) if instance.is_a?(c)
     end
     
-    def match_method_spec(instance)
-      tests = @method_spec["tests"] || @method_spec[:tests]
+    def match_method_spec(instance, tests)
       case tests
       when :all
         true
       when Regexp
         ((instance.respond_to?(:description) && instance.description) || instance.method_name) =~ tests
+      when Array
+        tests.any? { |t| match_method_spec(instance, t) }
       else puts "couldn't handle stuff: #{tests.inspect}"; true
       end
     end
     
     def add_factory_on(instance)
-      if match_method_spec(instance)
+      if match_method_spec(instance, @method_spec["tests"] || @method_spec[:tests])
         unless instance.is_a?(@module)
           instance.send :extend, @module
         end
