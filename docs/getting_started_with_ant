@@ -1,0 +1,43 @@
+Getting started with JtestR - with ant
+--------------------------------------
+
+The first step to get started with JtestR is to download the binary jar file from (TODO: INSERT URL HERE). The file is quite large, since it contains several interesting libraries. Once you have downloaded the jar file, the only thing you need to get started is to add it to your classpath for the project you want to test, and then make sure you define the tasks necessary for JtestR to work. There are two tasks you might be interested in adding to your buid.xml. The first one is for general testing:
+
+  <target name="test" description="Runs all tests">
+    <taskdef name="jtestr" classname="org.jtestr.ant.JtestRAntRunner" classpath="lib/jtestr.jar"/>
+
+    <jtestr/>
+  </target>
+
+Make sure that change the classpath variable of the taskdef to point to the real jtestr.jar. Now, when you run the test target in Ant, jtestr will check in several directories for the place where you have put your tests. If for example you have a directory named "test", then JtestR will automatically start running from that point. If you explicitly want to say which directory contains your tests, you can do that using the "tests" property of the jtestr task:
+
+   <jtestr tests="my_tests"/>
+
+Where my_tests is a directory relative from the build.xml file. The jtestr task takes these arguments:
+
+- failOnError (boolean, default is true): Whether JtestR should fail the Ant build when the testing fails.
+- port (int, default is 22332): The port to try checking for a JtestR server on.
+- tests (String, default is "test"): The directory to look for JtestR configuration file and tests.
+- logging (String, default is "WARN"): The logging level, valid values are: "NONE","ERR","WARN","INFO","DEBUG"
+- configFile (String, default is "jtestr_config.rb"): The name of the config file. Note that this is not a path, just the name of the file itself.
+- outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
+- output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
+
+If you are running your tests often - as you should - you will soon realize that it takes some time for JtestR to get started. This is because the JRuby runtime is a bit heavy weight to start. To solve this problem, there is a second ant task available that starts a background server. If a background server is started, the regular jtestr task will automatically use that instead. Both jtestr and jtestr-server takes an optional port to use for the server:
+
+   <target name="test-server" description="Starts test server">
+    <taskdef name="jtestr-server" classname="org.jtestr.ant.JtestRAntServer" classpath="lib/jtestr.jar"/>
+
+    <jtestr-server port="20333" runtimes="3"/>
+  </target>
+
+The jtestr-server task takes these arguments:
+
+- port (int, default is 22332): The port to start the JtestR server on.
+- runtimes (int, default is 3): How many runtimes to cycle through for testing. 
+- debug (boolean, default is true): Should the server write information about each connection or not?
+
+Note that the server also takes an optional argument for how many JRuby runtimes to start. In most cases 2 or 3 is good enough. It will take some time for the server to start, but once it's started it will cycle through runtimes so you should be able to start test runs very quickly. You need to keep the test-server ant task running to keep the server running. The task also provides some logging for every time it runs a test task.
+
+And that's really all you need to know on how to get started from the Ant side of things. The next step in getting started is to look at how to get started with Maven integration, or how to get started writing tests with JtestR.
+
