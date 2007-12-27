@@ -16,6 +16,26 @@ module JtestR
       @result = true
       load_configuration
 
+      if ll = @configuration.configuration_value(:log_level)
+        log_level = case ll
+                    when String: JtestR::SimpleLogger.const_get(ll)
+                    when Symbol: JtestR::SimpleLogger.const_get(ll)
+                    else ll
+                    end
+      end
+
+      if ol = @configuration.configuration_value(:output_level)
+        @output_level = case ol
+                        when String: JtestR::GenericResultHandler.const_get(ol)
+                        when Symbol: JtestR::GenericResultHandler.const_get(ol)
+                        else ol
+                        end
+      end
+      
+      if out = @configuration.configuration_value(:output)
+        @output = out
+      end
+      
       @logger = JtestR.logger.new(output, log_level)
       
       setup_classpath

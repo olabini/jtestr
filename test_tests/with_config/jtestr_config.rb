@@ -54,3 +54,14 @@ test_unit File.dirname(__FILE__) + "/foo_spec.rb"
 after do 
   raise "Should have run the correct tests" unless $__is_spec_ran && $__is_tu_ran
 end
+
+# can be any valid Ruby value, of course
+output STDERR
+
+# values are DEBUG, INFO, WARN, ERR
+# can be specified as "ERR" or :ERR, or just JtestR::SimpleLogger::ERR
+log_level "ERR"
+
+# values are NONE, QUIET, NORMAL, VERBOSE, DEFAULT
+# can be specified the same way as logging, exception with JtestR::GenericResultHandler::
+output_level :NORMAL
