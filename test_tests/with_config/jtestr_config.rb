@@ -7,9 +7,12 @@ junit 'org.jtestr.test.JUnit4Test'
 
 class FooLogger
   def initialize(*args)
+    $__foo_logger_args = args
+    @internal = JtestR::SimpleLogger.new(*args)
   end
-  def method_missing(name, *args)
+  def method_missing(name, *args, &block)
     $__foo_logger_called = true
+    @internal.send name, *args, &block
   end
 end
 
@@ -19,22 +22,17 @@ class IgnoringResultHandler
     @level = level
     @output = output
     @type_name = type_name
+    $__result_handler_args = [name, type_name, output, level]
+    @internal = JtestR::GenericResultHandler.new(name, type_name, output, level)
   end
 
   def starting_single(name = nil)
-    @tname = name
     $__ignoring_result_handler_have_started = true
+    @internal.starting_single(name)
   end
 
-  def fail_single(name = nil)
-    @output.puts "#{@name} failed"
-  end
-
-  def error_single(name = nil)
-    @output.puts "#{@name} had an error"
-  end
-
-  def method_missing(name, *args)
+  def method_missing(name, *args, &block)
+    @internal.send name, *args, &block
   end
 end
 
@@ -65,3 +63,17 @@ log_level "ERR"
 # values are NONE, QUIET, NORMAL, VERBOSE, DEFAULT
 # can be specified the same way as logging, exception with JtestR::GenericResultHandler::
 output_level :NORMAL
+
+
+class FakeFormatter
+  def initialize(*args)
+  end
+  def method_missing(name, *args)
+    $__fake_formatter_method_calls = true
+  end
+end
+
+# unify_rspec_output false
+#rspec_formatter ["s", STDOUT]
+#rspec_formatter "s"
+rspec_formatter FakeFormatter

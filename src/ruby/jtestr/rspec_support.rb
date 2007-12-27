@@ -26,7 +26,6 @@ module JtestR
         result_handler = JtestR.result_handler.new(name, "example", @output, @output_level)
         
         formatters = load_spec_formatters(options, result_handler)
-
         
         options.instance_variable_set :@formatters, formatters
         
@@ -40,7 +39,8 @@ module JtestR
     end
     
     def load_spec_formatters(options, result_handler)
-      formatters = (@spec_formatters || []).map { |name, where|
+      rspec_formatters = @configuration.configuration_values(:rspec_formatter)
+      formatters = rspec_formatters.map { |name, where|
         if val = ::Spec::Runner::Options::EXAMPLE_FORMATTERS[name]
           require val[0]
           eval("::Spec::Runner::" + val[1], binding, __FILE__, __LINE__).new(options, transform_spec_where(where || @output))
@@ -54,7 +54,9 @@ module JtestR
           end
         end
       }
-      formatters << (@spec_no_unified_result_handling ? RSpecHelperFormatter.new : RSpecResultHandler.new(result_handler))
+      unification = @configuration.configuration_values(:unify_rspec_output).flatten
+      unification = unification.empty? ? true : unification.first
+      formatters << (!unification ? RSpecHelperFormatter.new : RSpecResultHandler.new(result_handler))
       formatters
     end
     

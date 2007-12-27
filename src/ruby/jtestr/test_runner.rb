@@ -4,7 +4,7 @@ module JtestR
     include TestUnitTestRunning
     include RSpecTestRunning
     include JUnitTestRunning
-    
+
     def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
       JtestR::logger = JtestR::SimpleLogger
       JtestR::result_handler = JtestR::GenericResultHandler
@@ -12,31 +12,12 @@ module JtestR
       @output_level = outp_level
       @output = output
       @dirname = dirname
+      @log_level = log_level
       
       @result = true
+
       load_configuration
-
-      if ll = @configuration.configuration_value(:log_level)
-        log_level = case ll
-                    when String: JtestR::SimpleLogger.const_get(ll)
-                    when Symbol: JtestR::SimpleLogger.const_get(ll)
-                    else ll
-                    end
-      end
-
-      if ol = @configuration.configuration_value(:output_level)
-        @output_level = case ol
-                        when String: JtestR::GenericResultHandler.const_get(ol)
-                        when Symbol: JtestR::GenericResultHandler.const_get(ol)
-                        else ol
-                        end
-      end
-      
-      if out = @configuration.configuration_value(:output)
-        @output = out
-      end
-      
-      @logger = JtestR.logger.new(output, log_level)
+      setup_logger
       
       setup_classpath
       find_tests
@@ -44,16 +25,8 @@ module JtestR
       load_helpers
       load_factories
       
-      [["Unit", {:directory => /unit/}],
-       ["Functional", {:directory => /functional/}],
-       ["Integration", {:directory => /integration/}],
-       ["Other", {:not_directory => /unit|functional|integration/}]
-      ].each do |name, pattern|
-        run_test_unit("#{name} tests", pattern)
-        run_rspec("#{name} specs", pattern)
-        run_junit("JUnit #{name} tests", name)
-      end
-
+      run_tests
+      
       @configuration.configuration_values(:after).flatten.each &:call
       
       @result && (!@errors || @errors.empty?)
@@ -91,6 +64,30 @@ module JtestR
       end
     end
 
+    def setup_logger
+      if ll = @configuration.configuration_value(:log_level)
+        @log_level = case ll
+                    when String: JtestR::SimpleLogger.const_get(ll)
+                    when Symbol: JtestR::SimpleLogger.const_get(ll)
+                    else ll
+                    end
+      end
+
+      if ol = @configuration.configuration_value(:output_level)
+        @output_level = case ol
+                        when String: JtestR::GenericResultHandler.const_get(ol)
+                        when Symbol: JtestR::GenericResultHandler.const_get(ol)
+                        else ol
+                        end
+      end
+      
+      if out = @configuration.configuration_value(:output)
+        @output = out
+      end
+      
+      @logger = JtestR.logger.new(@output, @log_level)
+    end
+    
     def setup_classpath
       cp = @configuration.configuration_values(:classpath)
       add = @configuration.configuration_value(:add_common_classpath)
@@ -160,6 +157,18 @@ module JtestR
 
       @factories.each do |factory|
         guard("Loading #{factory}") { load factory }
+      end
+    end
+
+    def run_tests
+      [["Unit", {:directory => /unit/}],
+       ["Functional", {:directory => /functional/}],
+       ["Integration", {:directory => /integration/}],
+       ["Other", {:not_directory => /unit|functional|integration/}]
+      ].each do |name, pattern|
+        run_test_unit("#{name} tests", pattern)
+        run_rspec("#{name} specs", pattern)
+        run_junit("JUnit #{name} tests", name)
       end
     end
     
