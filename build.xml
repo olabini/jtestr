@@ -67,7 +67,7 @@
       <fileset dir="${src.ruby.dir}">
         <include name="**/*.rb"/>
       </fileset>
-      <zipfileset src="${lib.dir}/jruby-complete-r5352.jar"/>
+      <zipfileset src="${lib.dir}/jruby-complete-r5385.jar"/>
       <zipfileset src="${lib.dir}/junit-4.4.jar"/>
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
