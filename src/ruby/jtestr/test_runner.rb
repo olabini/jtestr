@@ -6,7 +6,7 @@ module JtestR
     include JUnitTestRunning
 
     def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
-      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"
+#      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"
       JtestR::logger = JtestR::SimpleLogger
       JtestR::result_handler = JtestR::GenericResultHandler
 
@@ -29,7 +29,7 @@ module JtestR
       run_tests
       
       @configuration.configuration_values(:after).flatten.each &:call
-      output.puts "Finished test run: #{@result && (!@errors || @errors.empty?) ? 'SUCCESSFUL' : 'FAILED'}"
+#      output.puts "Finished test run: #{@result && (!@errors || @errors.empty?) ? 'SUCCESSFUL' : 'FAILED'}"
       @result && (!@errors || @errors.empty?)
     rescue Exception => e
       log.err e.inspect

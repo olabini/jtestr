@@ -6,16 +6,13 @@
   </description>
 
   <taskdef name="jtestr" classname="org.jtestr.ant.JtestRAntRunner" classpath="../../dist/jtestr.jar"/>
-  <taskdef name="jtestr-client" classname="org.jtestr.ant.JtestRAntClient" classpath="../../dist/jtestr.jar"/>
+  <taskdef name="jtestr-server" classname="org.jtestr.ant.JtestRAntServer" classpath="../../dist/jtestr.jar"/>
   
   <target name="test" description="Runs all tests">
     <jtestr port="20333"/>
   </target>
 
   <target name="test-server" description="Starts test server">
-    <java classname="org.jtestr.BackgroundServer" fork="true" maxmemory="512M" spawn="false">
-      <classpath path="../../dist/jtestr.jar"/>
-      <arg line="20333 3"/>
-    </java>
+    <jtestr-server port="20333" runtimes="3"/>
   </target>
 </project>
