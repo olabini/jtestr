@@ -4,10 +4,6 @@ unit_tests do
     assert true
   end
 
-  test "that a file in a lib directory gets loaded" do 
-    assert $has_loaded_lib_file
-  end
-
   test "that the class loader used for java classes under test is the jruby class loader" do 
     assert_instance_of org.jruby.util.JRubyClassLoader, org.jtestr.test.FooBean.java_class.class_loader
   end

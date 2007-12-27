@@ -4,13 +4,11 @@ describe "Mocking" do
     map = mock(java.util.Map)
 
     map.expects(:size).returns(0)
-
-    iter = java.util.Iterator.new
+    iter = mock(java.util.Iterator)
     iter.expects(:hasNext).returns(false)
 
-    set = java.util.Set.new
+    set = mock(java.util.Set)
     set.expects(:iterator).returns(iter)
-
     map.expects(:entrySet).returns(set)
 
     java.util.HashMap.new(map).size.should == 0
@@ -21,13 +19,11 @@ describe "Mocking" do
     map = mock(java.util.HashMap)
 
     map.expects(:size).returns(0)
-
-    iter = java.util.Iterator.new
+    iter = mock(java.util.Iterator)
     iter.expects(:hasNext).returns(false)
 
-    set = java.util.Set.new
+    set = mock(java.util.Set)
     set.expects(:iterator).returns(iter)
-
     map.expects(:entrySet).returns(set)
 
     java.util.HashMap.new(map).size.should == 0

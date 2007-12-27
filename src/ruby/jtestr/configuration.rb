@@ -5,9 +5,9 @@ module JtestR
       @values = { }
     end
     
-    def evaluate(config_string)
+    def evaluate(config_string,file = "<eval>")
       before = local_variables
-      after = instance_eval <<VAL
+      after = instance_eval <<VAL, file, 0
 #{config_string}
 local_variables
 VAL

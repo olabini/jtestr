@@ -5,7 +5,7 @@ module JtestR
     include RSpecTestRunning
     include JUnitTestRunning
     
-    def run(dirname = nil, log_level = JtestR::SimpleLogger::WARN, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
+    def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
       JtestR::logger = JtestR::SimpleLogger
       JtestR::result_handler = JtestR::GenericResultHandler
 
@@ -33,6 +33,8 @@ module JtestR
         run_rspec("#{name} specs", pattern)
         run_junit("JUnit #{name} tests", name)
       end
+
+      @configuration.configuration_values(:after).flatten.each &:call
       
       @result && (!@errors || @errors.empty?)
     rescue Exception => e
@@ -65,7 +67,7 @@ module JtestR
       
       @configuration = Configuration.new
       @config_files.each do |file|
-        @configuration.evaluate(File.read(file))
+        @configuration.evaluate(File.read(file),file)
       end
     end
 
@@ -93,19 +95,36 @@ module JtestR
     def find_tests
       log.debug { "finding tests" }
 
-      lib_files = Dir["{#{@test_directories.map{ |td| "#{td}/lib"}.join(',')}}/**/*.rb"]
-      work_files = (Dir["{#{@test_directories.join(',')}}/**/*.rb"] - lib_files) - @config_files
-
-      lib_files.each do |lib_file|
-        guard("Loading #{lib_file}") { load lib_file }
-      end
+      work_files = (Dir["{#{@test_directories.join(',')}}/**/*.rb"].map{ |f| File.expand_path(f) }) - @config_files.map{ |f| File.expand_path(f) }
       
       # here all places enumerated in configuration should be removed first
+
+      spec_conf = @configuration.configuration_values(:rspec).flatten
+      tu_conf = @configuration.configuration_values(:test_unit).flatten
       
+      specced = spec_conf.first == :all ? :all : spec_conf.map{ |f| File.expand_path(f) }
+      tunited = tu_conf.first == :all ? :all : tu_conf.map{ |f| File.expand_path(f) }
+
+      if specced != :all && tunited != :all
+        work_files = (work_files - specced) - tunited
+      end
+
       @helpers, work_files = work_files.partition { |filename| filename =~ /_helper\.rb$/ }
       @factories, work_files = work_files.partition { |filename| filename =~ /_factory\.rb$/ }
-      @specs, work_files = work_files.partition { |filename| filename =~ /_spec\.rb$/ }
-      @test_units = work_files
+
+      if specced == :all
+        @specs = work_files
+        @test_units = []
+      elsif tunited == :all
+        @test_units = work_files
+        @specs = []
+      else
+        @specs, work_files = work_files.partition { |filename| filename =~ /_spec\.rb$/ }
+        @test_units = work_files
+        
+        @specs = @specs + specced
+        @test_units = @test_units + tunited
+      end
     end
 
     def load_helpers

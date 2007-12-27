@@ -44,3 +44,13 @@ JtestR::result_handler = IgnoringResultHandler
 classpath "build/test_classes2"
 classpath "build/foobar.jar"
 add_common_classpath true
+
+# rspec :all
+rspec Dir["#{File.dirname(__FILE__)}/specs/**/*.rb"]
+
+# test_unit :all
+test_unit File.dirname(__FILE__) + "/foo_spec.rb"
+
+after do 
+  raise "Should have run the correct tests" unless $__is_spec_ran && $__is_tu_ran
+end
