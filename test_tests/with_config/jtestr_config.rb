@@ -77,3 +77,6 @@ end
 #rspec_formatter ["s", STDOUT]
 #rspec_formatter "s"
 rspec_formatter FakeFormatter
+
+helper File.dirname(__FILE__) + "/foobar.rb"
+factory File.dirname(__FILE__) + "/foobar2.rb"

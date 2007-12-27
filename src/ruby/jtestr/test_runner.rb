@@ -115,13 +115,15 @@ module JtestR
 
       work_files = (Dir["{#{@test_directories.join(',')}}/**/*.rb"].map{ |f| File.expand_path(f) }) - @config_files.map{ |f| File.expand_path(f) }
       
-      # here all places enumerated in configuration should be removed first
-
+      helpers = @configuration.configuration_values(:helper).flatten.map{ |f| File.expand_path(f) }
+      factories = @configuration.configuration_values(:factory).flatten.map{ |f| File.expand_path(f) }
       spec_conf = @configuration.configuration_values(:rspec).flatten
       tu_conf = @configuration.configuration_values(:test_unit).flatten
       
       specced = spec_conf.first == :all ? :all : spec_conf.map{ |f| File.expand_path(f) }
       tunited = tu_conf.first == :all ? :all : tu_conf.map{ |f| File.expand_path(f) }
+
+      work_files = (work_files - helpers) - factories
 
       if specced != :all && tunited != :all
         work_files = (work_files - specced) - tunited
@@ -130,6 +132,9 @@ module JtestR
       @helpers, work_files = work_files.partition { |filename| filename =~ /_helper\.rb$/ }
       @factories, work_files = work_files.partition { |filename| filename =~ /_factory\.rb$/ }
 
+      @helpers = @helpers + helpers
+      @factories = @factories + factories
+      
       if specced == :all
         @specs = work_files
         @test_units = []
