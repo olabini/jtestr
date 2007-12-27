@@ -34,6 +34,7 @@
       <patternset refid="java.src.pattern"/>
     </javac>
     <javac destdir="${classes.test.dir}" debug="true" source="${javac.version}" target="${javac.version}">
+      <classpath refid="build.classpath"/>
       <src path="${src.java.test.dir}"/>
       <patternset refid="java.src.pattern"/>
     </javac>
@@ -67,7 +68,7 @@
       <fileset dir="${src.ruby.dir}">
         <include name="**/*.rb"/>
       </fileset>
-      <zipfileset src="${lib.dir}/jruby-complete-r5385.jar"/>
+      <zipfileset src="${lib.dir}/jruby-complete-r5387.jar"/>
       <zipfileset src="${lib.dir}/junit-4.4.jar"/>
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
