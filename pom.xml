@@ -35,17 +35,8 @@
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
-
             <configuration>
-            <excludeArtifactIds>ant</excludeArtifactIds>
-            <artifactItem>
-              <groupId>org.jruby</groupId>
-              <artifactId>jruby-complete</artifactId>
-              <version>r5387</version>
-              <excludeArtifactIds>ant</excludeArtifactIds>
-            </artifactItem>
-          
-            
+              <excludeArtifactIds>ant</excludeArtifactIds>            
             </configuration>
           </execution>
         </executions>
