@@ -1,5 +1,74 @@
 Getting started with JtestR - with maven
 ----------------------------------------
 
-TODO: Anda should write this! =)
+JtestR currently only supports Maven2. It should be fairly simple to integrate it with Maven 1 too, though, since the Ant tasks are available. These instructions are only for Maven2. To test your project using Maven2, you need to add this to your pom.xml:
 
+{noformat}
+<plugins>
+  <plugin>
+    <groupId>org.jtestr</groupId>
+    <artifactId>jtestr</artifactId>
+    <version>0.1</version>
+    <executions>
+      <execution>
+        <goals>
+          <goal>test</goal>
+        </goals>
+      </execution>
+    </executions>
+  </plugin>
+</plugins>
+{noformat}
+
+That's the basic parts needed for standalone test execution. Exactly like with Ant, there are several configuration values you can add, though. These are added in the regular manner of Maven plugin configuration:
+
+{noformat}
+<plugins>
+  <plugin>
+    <groupId>org.jtestr</groupId>
+    <artifactId>jtestr</artifactId>
+    <version>0.1</version>
+    <configuration>
+      <tests>ruby_tests</tests>
+    </configuration>
+    <executions>
+      <execution>
+        <goals>
+          <goal>test</goal>
+        </goals>
+      </execution>
+    </executions>
+  </plugin>
+</plugins>
+{noformat}
+
+The configurations supported are:
+
+* failOnError (boolean, default is true): Whether JtestR should fail the Maven build when the testing fails.
+* port (int, default is 22332): The port to try checking for a JtestR server on.
+* tests (String, default is "test"): The directory to look for JtestR configuration file and tests.
+* logging (String, default is "WARN"): The logging level, valid values are: "NONE","ERR","WARN","INFO","DEBUG"
+* configFile (String, default is "jtestr_config.rb"): The name of the config file. Note that this is not a path, just the name of the file itself.
+* outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
+* output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
+
+You can use another Maven goal to start a background server, just like with Ant. The best way of starting it is by running this command:
+
+{noformat}
+mvn org.jtestr:jtestr:server
+{noformat}
+
+You can provide two other pieces of configuration that is only for the background server:
+
+* runtimes (int, default is 3): How many runtimes to cycle through for testing. 
+* debug (boolean, default is true): Should the server write information about each connection or not?
+
+The port argument affects both the test goal and the server goal.
+
+There might be a problem with a dependency in the Maven build on a non-standard JRuby complete. This will be fixed in future revisions, but for now the best way of handling it is to download the file from [http://dist.codehaus.org/jtestr/jruby-complete-r5387.jar], and install it locally using this command:
+
+{noformat}
+mvn install:install-file -Dfile=jruby-complete-r5387.jar -Dversion=r5387 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby
+{noformat}
+
+That is really all there is to the Maven2 integration.
