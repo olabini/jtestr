@@ -1,0 +1,111 @@
+Getting started with JtestR - testing
+-------------------------------------
+
+When using JtestR for testing, you have several choices for test engine. The Ruby libraries Test::Unit and RSpec are both included, and you can write Test::Unit tests using either the regular way of doing Test::Unit, or with dust syntax. This guide will quickly show you examples using each of these technologies. Unless you change it in the configuration file, all files ending with _spec.rb will be run using RSpec, and everything else will use Test::Unit. Of course, your existing JUnit tests can also be integrated and run together with the rest of the tsts in JtestR.
+
+You will notice that the way Ruby test frameworks usually work is that you have a test directory that contains all the tests. They are usually organized in a directory structure with three different base directories: unit, functional and integration. In JtestR, all directories named unit will run first, then the directories named functional, then the integration directories, and finally all files that hasn't been run yet. You will see that as JtestR reports what it's doing. You will also notice that Test::Unit, RSpec and JUnit tests are run separately. This is because RSpec allows you to change output formats in different ways from the other engines.
+
+Lets first take a look at a few tests for java.util.HashMap, written using classical Test::Unit style:
+
+class HashMapTests < Test::Unit::TestCase
+  def setup
+    @map = java.util.HashMap.new
+  end
+
+  def test_that_map_is_empty
+    assert @map.isEmpty
+  end
+
+  def test_that_an_entry_can_be_added
+    @map.put "foo", "bar"
+    assert_equal "bar", @map.get("foo")
+  end
+
+  def test_that_it_returns_a_keyset_that_returns_an_iterator_that_throws_exception
+    assert_raises(java.util.NoSuchElementException) do 
+      @map.key_set.iterator.next
+    end
+  end
+end
+
+
+As you can see, this code looks quite a lot like typical JUnit code. You have a setup method where a new HashMap is created. This gets called for every test. Test::Unit will use all methods that begin with test_ and run these. Test::Unit also includes several standard assertions that can be used to check expectations. You see three of them in the example above, assert, assert_equal and assert_raises. Available assertions can be found in the module Test::Unit::Assertions:
+
+ assert
+ assert_equal
+ assert_in_delta
+ assert_instance_of
+ assert_kind_of
+ assert_match
+ assert_nil
+ assert_no_match
+ assert_not_equal
+ assert_not_nil
+ assert_not_same
+ assert_nothing_raised
+ assert_nothing_thrown
+ assert_operator
+ assert_raise
+ assert_raises
+ assert_respond_to
+ assert_same
+ assert_throws
+
+Note that for testing exceptions, you should use assert_raise and assert_nothing_raised. The methods assert_throws and assert_nothing_thrown is for a different language feature in Ruby, that really doesn't have a counterpart in Java.
+
+Testing with Test::Unit can also have a teardown method that runs after each test. All documentation you can find on Test::Unit online is as applicable for testing Java code as for testing Ruby code.
+
+Many developers feel that the way Test::Unit requires you to specify tests is a bit unnatural and verbose. Jay Fields created dust to get around this problem. You can use dust anywhere in JtestR instead of regular Test::Unit syntax. Note that you still use the same assertions, setup and teardown methods with dust. The only thing that is different is how you define your tests:
+
+unit_tests do 
+  test "that foo is not equal to bar" do 
+    assert_not_equal "foo", "bar"
+  end
+end
+
+functional_tests do 
+  test "that foo is not equal to bar" do 
+    assert_not_equal "foo", "bar"
+  end
+end
+
+And that's really all there is to dust. Behind the covers, a Ruby class wil be generated based on the file name this code resides in. 
+
+RSpec is a bit more different. The framework has a different goal than Test::Unit, but it works very well for most testing tasks. In JtestR all files ending in _spec.rb will be run with RSpec. You can change which files are used with the configuration file, though. A typical RSpec test file contains descriptions about something, and examples of how the behavior of it should work. In practical terms it looks like this:
+
+
+import java.util.HashMap
+
+describe "An empty", HashMap do 
+  before :each do 
+    @hash_map = HashMap.new
+  end
+  
+  it "should be able to add an entry to it" do 
+    @hash_map.put "foo", "bar"
+    @hash_map.get("foo").should == "bar"
+  end
+
+  it "should not be empty after an entry has been added to it" do 
+    @hash_map.put "foo", "bar"
+    @hash_map.should_not be_empty
+  end
+  
+  it "should be empty" do 
+    @hash_map.should be_empty
+    @hash_map.size.should == 0
+  end
+  
+  it "should return a keyset iterator that throws an exception on next" do 
+    proc do 
+      @hash_map.key_set.iterator.next
+    end.should raise_error(java.util.NoSuchElementException)
+  end
+end
+
+
+The structure of a typical RSpec specification uses describe to start a block describing something. The description of the thing under test should more or less match the common thing for all examples in that group. Each example is described with the it-method. You use before(:each) to do something before every test, and before(:all) to run something once, before all the examples are executed. There are corresponding after-methods. If you don't give a block to the it-method, you have created a pending test. That's legal and will be reported separately when run through JtestR.
+
+The basic ways of checking values in RSpec depend on the should and should_not methods. You send them so called "expectation matchers", and that is the test in question. The combination ends up being quite readable and natural. The matchers in RSpec are quite flexible, and there are many of them. The best way to find out about them is to look at the RSpec site at http://rspec.info and read their documentation.
+
+This concludes the getting started part for JtestR testing. For more information see the examples and documents about specific features.
