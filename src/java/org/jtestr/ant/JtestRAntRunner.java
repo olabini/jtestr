@@ -18,6 +18,7 @@ import org.apache.tools.ant.Task;
 
 import org.jtestr.RuntimeFactory;
 import org.jtestr.TestRunner;
+import org.jtestr.BackgroundClientException;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -78,7 +79,11 @@ public class JtestRAntRunner extends Task {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
-            JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output);
+            try {
+                JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output);
+            } catch(BackgroundClientException e) {
+                throw new BuildException(e.getMessage(), e.getCause());
+            }
             ran = true;
         } catch(IOException e) {}
         

@@ -13,13 +13,13 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tools.ant.BuildException;
+import org.jtestr.BackgroundClientException;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class JtestRAntClient {
-    static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output) throws BuildException {
+    public static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output) throws BackgroundClientException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
@@ -42,7 +42,7 @@ public class JtestRAntClient {
                status[1] != '0' || 
                status[2] != '1') {
                 socket.close();
-                throw new BuildException("Test server failed - check logs for more information");
+                throw new BackgroundClientException("Test server failed - check logs for more information");
             }
 
             byte[] next = new byte[2];
@@ -52,7 +52,7 @@ public class JtestRAntClient {
                 int readOne = is.read(next);
 
                 if(readOne == -1) {
-                    throw new BuildException("Test server closed with no tests");
+                    throw new BackgroundClientException("Test server closed with no tests");
                 } else if(readOne == 1) {
                     is.read(next, 1, 1);
                 }
@@ -63,7 +63,7 @@ public class JtestRAntClient {
                     int len = next[1]&0xFF;
                     if(len == 0) {
                         socket.close();
-                        throw new BuildException("Zero length data");
+                        throw new BackgroundClientException("Zero length data");
                     }
 
                     int bread;
@@ -83,7 +83,7 @@ public class JtestRAntClient {
                 case 'R':
                     if(next[1] == 'F') {
                         socket.close();
-                        throw new BuildException("Tests failed");
+                        throw new BackgroundClientException("Tests failed");
                     }
                     done = true;
                     break;
@@ -92,7 +92,7 @@ public class JtestRAntClient {
 
             socket.close();
         } catch(IOException e) {
-            throw new BuildException("Connection with server failed", e);
+            throw new BackgroundClientException("Connection with server failed", e);
         }
     }
 }// JtestRAntClient
