@@ -28,4 +28,32 @@ describe "Mocking" do
 
     java.util.HashMap.new(map).size.should == 0
   end
+  
+  it "should be possible to use any_instance on classes and get the expected result" do 
+    java.util.HashMap.any_instance.stubs(:toString).returns("Hello World")
+
+    m1 = mock(java.util.HashMap)
+    m2 = mock(java.util.HashMap)
+
+    m1.toString.should == "Hello World"
+    m2.toString.should == "Hello World"
+    
+    m1.should_not be_equal(m2)
+    
+    JtestR::Mocha.revert_mocking(java.util.HashMap)
+  end
+
+  it "should be possible to use any_instance on interfaces and get the expected result" do 
+    java.util.Map.any_instance.stubs(:toString).returns("Hello World")
+
+    m1 = mock(java.util.Map)
+    m2 = mock(java.util.Map)
+
+    m1.toString.should == "Hello World"
+    m2.toString.should == "Hello World"
+    
+    m1.should_not be_equal(m2)
+
+    JtestR::Mocha.revert_mocking(java.util.HashMap)
+  end
 end
