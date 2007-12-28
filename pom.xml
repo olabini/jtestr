@@ -97,7 +97,7 @@
     </dependency>     
   </dependencies> 
   
-  <!-- this is for deploying to 
+  <!-- this is for deploying to codehouse -->
   <distributionManagement>
     <repository>
       <id>org.jtestr</id>
