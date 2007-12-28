@@ -1,0 +1,141 @@
+Mocking in JtestR
+-----------------
+
+JtestR bundles the Ruby mocking framework Mocha. This is the mocking framework used for mocking in both Test/Unit and RSpec tests. For several reasons the RSpec way of mocking doesn't fit well with mocking of Java classes. Mocha on the other hand supports this quite easily.
+
+Let's first take a lock at the regular workings of Mocha. Mocha have a syntax that's quite close to Java frameworks like JMock or SchMock. One of the major differences between Mocha and other Ruby based mocking frameworks is that Mocha allows you to work on instances of real classes. Let's take a typical example of testing the constructor of java.util.HashMap, that takes another Map as argument. This constructor should first call size on the map, and then get the entry set from the map, and finally get the iterator from the entry set and call next as many times as the size from the map. Using only interfaces, we can express it like this with Mocha:
+
+{noformat}
+import java.util.Map
+import java.util.Iterator
+import java.util.Set
+import java.util.HashMap
+
+functional_tests do 
+  test "that a new HashMap can be created based on another map" do 
+    map = Map.new
+
+    map.expects(:size).returns(0)
+
+    iter = Iterator.new
+    iter.expects(:hasNext).returns(false)
+
+    set = Set.new
+    set.expects(:iterator).returns(iter)
+
+    map.expects(:entrySet).returns(set)
+
+    assert_equals 0, HashMap.new(map).size
+  end
+end
+{noformat}
+
+We are using the JRuby feature that allows us to instantiate interfaces as instances. The returned object will throw exceptions for any call made to it. But when you use the Mocha expects method to specify methods that should be called, this works as expected. Now, this way of doing it has worked with JRuby and Mocha for a long time. It's been another story using concrete Java classes, where this way of doing things doesn't work as expected. JtestR includes a way of fixing this using the mock-method. So with JtestR you can mock a concrete class too:
+
+{noformat}
+import java.util.Iterator
+import java.util.Set
+import java.util.HashMap
+
+functional_tests do 
+  test "that a new HashMap can be created based on another map" do 
+    map = mock(HashMap)
+
+    map.expects(:size).returns(0)
+
+    iter = Iterator.new
+    iter.expects(:hasNext).returns(false)
+
+    set = Set.new
+    set.expects(:iterator).returns(iter)
+
+    map.expects(:entrySet).returns(set)
+
+    assert_equals 0, HashMap.new(map).size
+  end
+end
+{noformat}
+
+For symmetry, you can use the mock method on interfaces too, so if you always write mock(SomeJavaClassOrInterface), you'll be fine. Currently, the behavior of the mock method is to throw an exception for any method call that hasn't been expected. If this causes problems for people, I'm considering adding a mode that retains all the original functionality of the mocked class too. Note that the mock method will not work for final classes, or for mocking methods marked final.
+
+Mocha supports a bit more than the features you can see here.
+
+h3. stubs
+
+The difference between expects and stubs is that stubbed methods will not cause a test failure if they aren't called. Except for that they work the same as expects:
+
+{noformat}
+map.stubs(:size).returns(42)
+{noformat}
+
+h3. with
+
+If you need to check that arguments sent to a method are correct you can use the with method:
+
+{noformat}
+map.expects(:put).with("hello", "world").returns(nil)
+{noformat}
+
+In this case the expectation will fail unless the put method gets the arguments "hello" and "world".
+
+h3. any_instance
+
+In Ruby, any_instance is incredibly powerful. With Java classes it's not as useful, but can still be good. The thing to remember is this: when using any_instance, you still need to create objects using the mock method, otherwise the methods stubbed with any_instance will not work.
+
+You use it like this:
+
+{noformat}
+java.util.HashMap.any_instance.stubs(:size).returns(42)
+assert_equal 42, mock(java.util.HashMap).size
+assert_equal 42, mock(java.util.HashMap).size
+{noformat}
+
+h3. at_least, at_least_once, at_most, at_most_once, never, once, times
+
+There are several modifiers you can put at the end of expectations to modify how many times they should fire. Some examples of this:
+
+{noformat}
+map.expects(:size).at_least(3)
+map.expects(:size).at_least_once
+map.expects(:size).at_most(4)
+map.expects(:size).at_most_once
+map.expects(:size).never
+map.expects(:size).once
+map.expects(:size).times(2)
+map.expects(:size).times(2..4)
+{noformat}
+
+These are all fairly self explanatory.
+
+h3. returns
+
+As you saw above, returns can be used to specify what value should be returned from an instance. You can also supply several values to it:
+
+{noformat}
+map.expects(:size).returns(1, 2)
+assert_equal 1, map.size
+assert_equal 2, map.size
+{noformat}
+
+You can also call returns several times in the same invocation for subsequent values:
+
+{noformat}
+map.expects(:size).returns(1).then.returns(2)
+assert_equal 1, map.size
+assert_equal 2, map.size
+{noformat}
+
+Note that the then method doesn't do anything, it's just there to make it easier to read.
+
+h3. Parameter matchers
+
+When matching parameter arguments with the with-method, Mocha can take literal values, but you can also specify matchers on the argument with either a block or parameter matchers. That way you can do things like this:
+
+{noformat}
+map.expects(:get).with(is_a(String))
+map.expects(:put).with{|first, second| first.is_a?(String) && second == 3}
+{noformat}
+
+The second example could have been done easier without the block, but this shows how you can use a block to make any kind of matching on parameters possible. There are quite a few parameters matchers, but the most interesting except for those you have seen is probably anything and any_parameters. Anything will match any one parameter, while any_parameters will match any number of arguments with any value.
+
+More information about Mocha can be found at [http://mocha.rubyforge.org/].
