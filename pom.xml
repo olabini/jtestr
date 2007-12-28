@@ -13,17 +13,16 @@
 
     <outputDirectory>target/classes</outputDirectory>
     <sourceDirectory>src/java</sourceDirectory>
-    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.5</source>
+          <target>1.5</target>
         </configuration>
       </plugin>
-
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -39,9 +38,9 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>      -->
     </plugins>
-    
+
     <resources>
       <resource>
         <directory>src/ruby</directory>
@@ -56,14 +55,14 @@
         </includes>
       </resource>
     </resources>
-    
+
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-webdav</artifactId>
         <version>1.0-beta-1</version>
       </extension>
-    </extensions>    
+    </extensions>
   </build>
   
   <dependencies>
@@ -90,7 +89,7 @@
       <version>r5387</version>
     </dependency>     
   </dependencies> 
-  
+
   <!-- this is for deploying to codehouse -->
   <distributionManagement>
     <repository>
