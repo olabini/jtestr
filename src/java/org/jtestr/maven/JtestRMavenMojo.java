@@ -11,7 +11,8 @@ import org.apache.maven.plugin.MojoExecutionException;
  * This class is the main class responsible for integration with Maven2.
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
- * @goal jtestr
+ * @phase test
+ * @goal test
  */
 public class JtestRMavenMojo extends AbstractMojo implements Mojo {
     public void execute() throws MojoExecutionException {

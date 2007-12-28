@@ -13,6 +13,7 @@
 
     <outputDirectory>target/classes</outputDirectory>
     <sourceDirectory>src/java</sourceDirectory>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -22,23 +23,6 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-dependencies</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <configuration>
-              <excludeArtifactIds>ant</excludeArtifactIds>            
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>      -->
     </plugins>
 
     <resources>
@@ -46,12 +30,6 @@
         <directory>src/ruby</directory>
         <includes recurse="true">
           <include>**/*.rb</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>target/dependency</directory>
-        <includes recurse="true">
-          <exclude>**/*.jar</exclude>
         </includes>
       </resource>
     </resources>
