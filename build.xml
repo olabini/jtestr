@@ -18,6 +18,7 @@
 
   <patternset id="java.src.pattern">
     <include name="**/*.java"/>
+    <exclude name="**/*Mojo.java"/>
   </patternset>
 
   <target name="prepare" description="Creates the directories needed for building">

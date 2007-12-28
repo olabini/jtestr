@@ -5,7 +5,7 @@
   <groupId>org.jtestr</groupId>
   <artifactId>jtestr</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>JtestR</name>
   
   <build>
@@ -71,17 +71,17 @@
   <!-- this is for deploying to codehouse -->
   <distributionManagement>
     <repository>
-      <id>org.jtestr</id>
+      <id>codehaus.org</id>
       <name>JtestR Central Repository</name>
       <url>dav:https://dav.codehaus.org/repository/jtestr/</url>
     </repository>
     <snapshotRepository>
-      <id>org.jtestr</id>
+      <id>codehaus.org</id>
       <name>JtestR Dev Repository</name>
       <url>dav:https://dav.codehaus.org/snapshots.repository/jtestr/</url>
     </snapshotRepository>
     <site>
-      <id>org.jtestr</id>
+      <id>codehaus.org</id>
       <url>dav:https://dav.codehaus.org/jtestr/</url>
     </site>
   </distributionManagement>
