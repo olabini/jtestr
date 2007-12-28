@@ -12,13 +12,13 @@
     <directory>target</directory>
     <outputDirectory>target/classes</outputDirectory>
     <sourceDirectory>src</sourceDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.jtestr</groupId>
+        <artifactId>jtestr</artifactId>
+        <version>0.1-SNAPSHOT</version>
+      </plugin>
+    </plugins>
   </build>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.jtestr</groupId>
-      <artifactId>jtestr</artifactId>
-      <version>0.1-SNAPSHOT</version>
-    </dependency>     
-  </dependencies> 
 </project>
