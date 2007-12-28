@@ -1,0 +1,116 @@
+Helpers in JtestR
+-----------------
+
+Every file in the test directory that ends with _helper.rb will be loaded before all the tests. That way you can specify shared behavior and things that make sense to use from more than one place in the same code. JtestR also adds a twist to this, using the helper_for method which allows you automatically inject helper methods in the places you want it available. Under the covers the implementation will generate a Module for you, and include that in the right places, but you don't need to care about that. The syntax makes it totally invisible, and you don't need to explicitly include helpers.
+
+Say that you have a test file called foo_test.rb that looks like this:
+
+{noformat}
+functional_tests do 
+  test "that helpers work" do 
+    puts helper_method
+  end
+end
+{noformat}
+
+The way dust works, this will generate a class called Functionals::FooTest. In one of your helper files you can add this:
+
+{noformat}
+helper_for :"Functionals::FooTest" do 
+  def helper_method
+    "Hello World"
+  end
+
+  def helper_method2
+    "Goodbye World"
+  end
+end
+{noformat}
+
+And this will be automatically made available to the FooTest. Note that I'm using a Symbol to refer to the class name, since the class itself probably doesn't exist when the helper is defined. If you want to specify more than one class for the same helper, just do that:
+
+{noformat}
+helper_for :"Functionals::FooTest", :"Functionals::BarTest" do 
+  def helper_method
+    "Hello World"
+  end
+{noformat}
+
+There are a few other ways to specify where a helper should be inject. But first lets show how you would inject a helper into all Test/Unit tests:
+
+{noformat}
+helper_for Test::Unit::TestCase do
+  def helper_method
+    "Hello World"
+  end
+{noformat}
+
+Since TestCase is the base class for all Test/Unit tests, injecting the helper into that class will make it available to everything. In the same manner you can make helpers available to all RSpec specifications like this:
+
+{noformat}
+helper_for Spec::Example::ExampleGroup do
+  def helper_method
+    "Hello World"
+  end
+{noformat}
+
+If you want a helper available in all tests no matter what tests they are:
+
+{noformat}
+helper_for :all do
+  def helper_method
+    "Hello World"
+  end
+{noformat}
+
+You can always specify more than one specification as the argument to helper_for, and the helper will be available in all things matching.
+
+If you are organizing yours tests into modules, you can use the module name to make the helper available to all Classes directly inside of that module. Say you want to have all dust unit tests to share a helper:
+
+{noformat}
+helper_for :Units do
+  def helper_method
+    "Hello World"
+  end
+{noformat}
+
+Since dust generates all unit tests into the Units module, this will make it available to all classes within that module. This works for any module, so if you're organizing things that way, you can always name a module and it will work as expected.
+
+You can use regular expressions to match against class names and module names. In that case all things matching the regular expression will be injected with the helper:
+
+{noformat}
+helper_for /FooTest$/ do
+  def helper_method
+    "Hello World"
+  end
+{noformat}
+
+This will inject into every class whose name ends with with FooTest, and also check to see if any modules are available that ends with FooTest, and in that case inject into the classes in that module.
+
+The regular expression will also work against RSpec spec names, and inject into matching ones. Say you have a spec file containing this:
+
+{noformat}
+describe "something" do 
+ it "should have helpers" do 
+ end
+end
+
+describe "other" do 
+ it "should have helpers" do 
+ end
+end
+{noformat}
+
+You can specify a helper like this:
+
+{noformat}
+helper_for /^(something|other)$/ do
+  def helper_method
+    "Hello World"
+  end
+{noformat}
+
+And that helper will available in both specs. If you specify a String instead, it will look for specs that have that exact string as description.
+
+The way the resolution of helpers work will probably evolve quite a bit. Right now it's a bit rigid, but there should be ways of specifying your own ways of matching in the future.
+

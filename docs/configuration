@@ -1,0 +1,182 @@
+JtestR configuration
+--------------------
+
+By default JtestR will look for a file called jtestr_config.rb in the directory under test. You can change the name of the file it looks for by using the Ant command parameters. There are quite a few different configuration things you can set through this file, and since it's pure Ruby code, you can execute any code you want. There are some special names though.
+
+Note that you should never use local variables in the configuration file. There should be no equal signs at all, except if you need local variables internally. All configuration settings are set without the assignment operator. This is not true for the logger and result_handler options, though.
+
+All configuration options can take more than one value and be invoked more than once, unless something else is noted. This means that configuration values can always have more than one value.
+
+h3. configuration_value, configuration_values
+
+If you need access to a value set earlier in the configuration file, you can use these two. The first one will return the first value set, the second will return all values set. The first one will return nil for non existing configuration options, the second will return the empty list. Both of them take symbols as names for configurations:
+
+{noformat}
+foo 1
+foo 2
+bar 3
+p configuration_value(:foo) # will print 1
+p configuration_values(:foo) # will print [1, 2]
+p configuration_value(:bar) # will print 3
+{noformat}
+
+h3. JtestR::logger= 
+
+The logger JtestR by default uses (JtestR::SimpleLogger) is very simple. If you want something more advanced, or just something different, you can set the logger attribute on the JtestR module. The value you set here should be class like. It will be instantiated with new, passing in the place to send output and the log level. The methods called are the same as in JtestR::SimpleLogger.
+
+h3. JtestR::result_handler=
+
+The result handler is the unified place where all test output goes. When a test run starts or finishes, when a test case starts, succeeds, fails or errors out, the result handler is the object the takes care of it. This attribute should also be class like. The default is JtestR::GenericResultHandler. Check that class out for more information on the method calls you can expect.
+
+h3. output
+
+Specifies where the output from everything goes. This will change output for both logs and other output from test runs. Make sure to only call this once, since the first value is the only that will be used. If you need multicasting, you can always specify an IO like object that multicasts calls. The configuration takes anything that is IO like - the default is STDOUT.
+
+If you specify a file for output, make sure that you make provisions to close it after the run is finished. The easiest way of doing this is to provide an after-block that closes it.
+
+{noformat}
+$__log_output_file = open("test_output", "a+")
+
+output $__log_output_file
+
+after do 
+  $__log_output_file.close
+end
+{noformat}
+
+h3. log_level
+
+The log levels are based on the constants available in JtestR::SimpleLogger. These are DEBUG, INFO, WARN, ERR. You can specify a level using the constant itself, a symbol or a String. The default is WARN.
+
+{noformat}
+log_level :DEBUG
+log_level "DEBUG"
+log_level JtestR::SimpleLogger::DEBUG
+{noformat}
+
+h3. output_level
+
+The output_level is what the result handler uses to decide how much test output should be used. The available values are NONE, QUIET, NORMAL, VERBOSE, DEFAULT. The default is QUIET. The values are defined in JtestR::GenericResultHandler, and you can use symbols or Strings exactly as with log_level:
+
+{noformat}
+output_level :NORMAL
+output_level "NORMAL"
+output_level JtestR::GenericResultHandler::NORMAL
+{noformat}
+
+h3. classpath
+
+By default JtestR tries to find the places where you have put your classes and jar files. It uses this method by default:
+
+{noformat}
+def find_existing_common_paths
+  Dir["{build,target}/{classes,test_classes}"] + Dir['{lib,build_lib}/**/*.jar']
+end
+{noformat}
+
+Of course, this is something that's not always correct, so the classpath variable allows you to specify explicitly what to put on the classpath. By default, if you set any classpath values, find_existing_common_paths will not be used. That means you will have to specify everything, even if find_existing_common_paths is correct for a part of it. See the add_common_classpath configuration value for how to get around this.
+
+The classpath value can be set any time. It should point to directories or jar files, either relative from the base of the project or absolute. You can give it arrays of file names, or single ones. A typical classpath might look like this:
+
+{noformat}
+classpath ['build/classes/foo', 'build/classes/test']
+classpath '../../commons-logging.jar'
+classpath Dir['lib/**/*.jar']
+{noformat}
+
+Make sure that if you have any JUnit tests, you include those on the classpath too, so JtestR can find them.
+
+h3. add_common_classpath
+
+As noted for the classpath configuration value, the default behavior is not add the common classpath when any classpath configurations have been made. If you still would like to have the default too, and just use classpath to add more directories or jar files, you can set add_common_classpath to true:
+
+{noformat}
+classpath '../../commons-logging.jar'
+add_common_classpath true
+{noformat}
+
+With this configuration you will get all the default directories and jars, plus the one you've explicitly specified.
+
+h3. test_unit
+
+You can use the test_unit configuration value to specify one or several files that doesn't follow the standard naming pattern. Every file you point out with this configuration value will be loaded as a Test/Unit test case, instead of as an RSpec file, a helper or a factory.
+
+{noformat}
+test_unit "test/foo_spec.rb"
+test_unit Dir["test/specs/**/*.rb"]
+{noformat}
+
+You can also make specify that all tests in this project is Test/Unit. The effect of this will be that everything will be run with Test/Unit, except for those things that are pointed out as helpers or factories, and those that follow the naming pattern of helpers and factories. You do that through the :all parameter:
+
+{noformat}
+test_unit :all
+{noformat}
+
+h3. rspec
+
+The rspec configuration works exactly like the test_unit configuration value. It also has the same :all parameter, for specifying that all tests are RSpec tests.
+
+h3. junit
+
+If you have any JUnit classes you want to test, you use the junit configuration value to point out their names. The configuration takes either Strings, arrays of Strings or Hashes. The Strings provided should be fully qualified Java class names. If you just specify a single String or an array of Strings, these tests will be run in the "other" category of tests. If you want to specify which tests are unit tests and which are functional, you can use the hash to do this. Make sure that you don't try to use a class name outside of a String, since the classpath hasn't been correctly set up when the configuration values are loaded.
+
+{noformat}
+junit "unit" => ['org.foo.AUnitTest', 'org.foo.AnotherUnitTest']
+junit "functional" => 'org.foo.functionals.SingleFunctionalTest'
+junit ['org.foo.ATestForOther']
+junit 'org.foo.AnotherOtherTest'
+{noformat}
+
+h3. after
+
+In some cases you need to clean up or do something after every test case has run. You can do this by registering an after-block. There can be many of these, and they will be run in order:
+
+{noformat}
+after do 
+  puts "First after block called"
+end
+
+after do
+  puts "Second after block called"
+end
+{noformat}
+
+h3. rspec_formatter
+
+RSpec supports many different output formats, that can be highly valuable. This configuration options makes it possible to get access to the supported RSpec output formatters. You can also specify an alternative output place for these. If not specified, the regular JtestR output will be used:
+
+{noformat}
+rspec_formatter ["s", STDERR]
+rspec_formatter "s"
+rspec_formatter AClassThatWorksLikeAFormatter
+{noformat}
+
+See the RSpec source code for more information on what the formatter should be able to handle. The available Strings you can send in to rspec_formatter are these:
+
+* specdoc, s
+* html, h
+* progress, p
+* failing_examples, e
+* failing_example_groups, g
+* profile, o
+
+For information on what these options do, check the RSpec documentation.
+
+h3. unify_rspec_output
+
+If you specify a rspec_formatter, JtestR will still use the regular unifying result_handler for RSpec by default. This means you will get two types of output if you have specified on rspec_formatter. To control this behavior, use unify_rspec_output:
+
+{noformat}
+rspec_formatter 's'
+unify_rspec_output false
+{noformat}
+
+In this case the specdoc will be the only output from any RSpec runs.
+
+h3. helper
+
+The helper configuration value helps specify helpers that doesn't follow the regular naming pattern. If you have a helper file named "foo.rb", that file will be used as a test case instead of a helper, unless you specify it. The helper configuration value works exactly like test_unit and rspec, except that you can't specify :all. 
+
+h3. factory
+
+The factory configuration value works exactly like the helper configuration.
