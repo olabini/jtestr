@@ -108,6 +108,7 @@ helper_for /^(something|other)$/ do
   def helper_method
     "Hello World"
   end
+end
 {noformat}
 
 And that helper will available in both specs. If you specify a String instead, it will look for specs that have that exact string as description.
