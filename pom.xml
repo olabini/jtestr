@@ -1,0 +1,118 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jtestr</groupId>
+  <artifactId>jtestr</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1</version>
+  <name>JtestR</name>
+    
+  <build>
+    <directory>target</directory>
+
+    <outputDirectory>target/classes</outputDirectory>
+    <sourceDirectory>src/java</sourceDirectory>
+
+    <testOutputDirectory>target/test-classes</testOutputDirectory>
+    <testSourceDirectory>src/java_test</testSourceDirectory> 
+    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+
+            <configuration>
+            <excludeArtifactIds>ant</excludeArtifactIds>
+            <artifactItem>
+              <groupId>org.jruby</groupId>
+              <artifactId>jruby-complete</artifactId>
+              <version>r5387</version>
+              <excludeArtifactIds>ant</excludeArtifactIds>
+            </artifactItem>
+          
+            
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>      
+    </plugins>
+    
+    <resources>
+      <resource>
+        <directory>src/ruby</directory>
+        <includes recurse="true">
+           <include>**/*.rb</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>target/dependency</directory>
+        <includes recurse="true">
+           <exclude>**/*.jar</exclude>
+        </includes>
+      </resource>
+    </resources>
+    
+    <extensions>
+      <extension>
+	<groupId>org.apache.maven.wagon</groupId>
+	<artifactId>wagon-webdav</artifactId>
+	<version>1.0-beta-1</version>
+      </extension>
+    </extensions>    
+    
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.6.5</version>
+    </dependency>   
+    
+   <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r5387.jar -Dversion=r5387 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>r5387</version>
+    </dependency>     
+  </dependencies> 
+  
+  <!-- this is for deploying to 
+  <distributionManagement>
+    <repository>
+      <id>org.jtestr</id>
+      <name>JtestR Central Repository</name>
+      <url>dav:https://dav.codehaus.org/repository/jtestr/</url>
+    </repository>
+    <snapshotRepository>
+      <id>org.jtestr</id>
+      <name>JtestR Dev Repository</name>
+      <url>dav:https://dav.codehaus.org/snapshots.repository/jtestr/</url>
+    </snapshotRepository>
+    <site>
+      <id>org.jtestr</id>
+      <url>dav:https://dav.codehaus.org/jtestr/</url>
+    </site>
+  </distributionManagement>
+
+</project>
