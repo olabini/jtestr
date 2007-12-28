@@ -56,4 +56,28 @@ describe "Mocking" do
 
     JtestR::Mocha.revert_mocking(java.util.HashMap)
   end
+  
+  it "should be possible to stub methods on class instances but not call them" do 
+    map = mock(java.util.HashMap)
+    map.stubs(:size).returns(42)
+  end
+
+  it "should be possible to stub methods on class instances and call them" do 
+    map = mock(java.util.HashMap)
+    map.stubs(:size).returns(42)
+    
+    map.size.should == 42
+  end
+
+  it "should be possible to stub methods on interface instances but not call them" do 
+    map = mock(java.util.Map)
+    map.stubs(:size).returns(42)
+  end
+
+  it "should be possible to stub methods on interface instances and call them" do 
+    map = mock(java.util.Map)
+    map.stubs(:size).returns(42)
+    
+    map.size.should == 42
+  end
 end
