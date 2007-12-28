@@ -9,7 +9,9 @@ The first step to get started with JtestR is to download the binary jar file fro
   <jtestr/>
 </target>
 
-Make sure that change the classpath variable of the taskdef to point to the real jtestr.jar. Now, when you run the test target in Ant, jtestr will check in several directories for the place where you have put your tests. If for example you have a directory named "test", then JtestR will automatically start running from that point. If you explicitly want to say which directory contains your tests, you can do that using the "tests" property of the jtestr task:
+Make sure that change the classpath variable of the taskdef to point to the real jtestr.jar. Now, when you run the test target in Ant, jtestr will check in several directories for the place where you have put your tests. Now, when you run the test target in Ant, jtestr will by default look for and run tests from a directory named "test" and its subdirectories.
+
+If you want to specify a different directory for your tests, use the "tests" property of the jtestr task:
 
    <jtestr tests="my_tests"/>
 
