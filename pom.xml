@@ -5,15 +5,12 @@
   <packaging>jar</packaging>
   <version>0.1</version>
   <name>JtestR</name>
-    
+  
   <build>
     <directory>target</directory>
 
     <outputDirectory>target/classes</outputDirectory>
     <sourceDirectory>src/java</sourceDirectory>
-
-    <testOutputDirectory>target/test-classes</testOutputDirectory>
-    <testSourceDirectory>src/java_test</testSourceDirectory> 
     
     <plugins>
       <plugin>
@@ -47,22 +44,22 @@
       <resource>
         <directory>src/ruby</directory>
         <includes recurse="true">
-           <include>**/*.rb</include>
+          <include>**/*.rb</include>
         </includes>
       </resource>
       <resource>
         <directory>target/dependency</directory>
         <includes recurse="true">
-           <exclude>**/*.jar</exclude>
+          <exclude>**/*.jar</exclude>
         </includes>
       </resource>
     </resources>
     
     <extensions>
       <extension>
-	<groupId>org.apache.maven.wagon</groupId>
-	<artifactId>wagon-webdav</artifactId>
-	<version>1.0-beta-1</version>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-1</version>
       </extension>
     </extensions>    
     
@@ -80,7 +77,7 @@
       <version>1.6.5</version>
     </dependency>   
     
-   <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r5387.jar -Dversion=r5387 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
+    <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r5387.jar -Dversion=r5387 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
@@ -105,5 +102,4 @@
       <url>dav:https://dav.codehaus.org/jtestr/</url>
     </site>
   </distributionManagement>
-
 </project>
