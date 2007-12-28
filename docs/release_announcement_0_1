@@ -14,8 +14,12 @@ Features:
 - Integrates with Ant and Maven
 - Includes JRuby 1.1, Test/Unit, RSpec, dust, Mocha and ActiveSupport
 - Customizes Mocha so that mocking of any Java class is possible
-- Background server for quick startup of tests
-- Can run your existing JUnit codebase as part of the build
+- Background testing server for quick startup of tests
+- Automatically runs your JUnit codebase as part of the build
 
 Getting started: http://jtestr.codehaus.org/Getting+Started
+
+Team:
+Ola Bini           - ola.bini@gmail.com
+Anda Abramovici    - anda.abramovici@gmail.com
 
