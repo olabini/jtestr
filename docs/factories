@@ -1,0 +1,51 @@
+Factories in JtestR
+-------------------
+
+JtestR factories are quite close in behavior to Helpers. In fact, they will injected following almost the same rules as helpers. The difference is that factories not only inject methods, but will also inject instance variables into test runs before the actual test is invoked. The rules are fairly simple - any file ending in _factory.rb will be loaded as a factory. You use the factory_for method to specify factories, and inside a factory every method beginning with create_ will create a new instance variable based on the method name where the factory matches.
+
+An example will make this a bit more obvious. Say that you need to have a project value in every functional test. You can do it like this:
+
+{noformat}
+factory_for :Functionals do 
+  def create_project
+    "foobar project"
+  end
+end
+{noformat}
+
+This will call create_project before every test in every functional test case, and assign the @project instance variable in that test to the return value from the create method. You can specify which classes and modules to use in the same way as for helpers, including using :all. The main difference is that factory_for can not take more than one specification on the command line. The reason for this is that you need to be able to specify which tests should have the values injected too. If you need to have the same behavior for two factories, the best way to do it is like this:
+
+{noformat}
+common_factory = proc
+  def create_something
+    1
+  end
+end
+
+factory_for :Units, &common_factory
+factory_for :Functionals, &common_factory
+{noformat}
+
+In many cases you might not want to have the factory injection happen for every test in every test case. The way to get around this is to add an options hash to the factory_for method call. Calling factory for without that hash will default to matching all tests. Test matching currently takes regular expressions, the symbol :all, a proc, or an array of these. If it's an array, any part of it can match, making the whole match.. If it's a regular expression, it will be matched against the test name or the RSpec test description. If it's :all, it will always match, and if it's a proc, that proc will be invoked. This is how it's used:
+
+{noformat}
+factory_for :"Spec::Example::ExampleGroup", :tests => /should/ do 
+  def create_something_for_all_specs_with_test_names_including_should
+    "val6"
+  end
+end
+
+factory_for :Functionals, :tests => :all do 
+  def create_something_for_all_functionals
+    "val7"
+  end
+end
+
+factory_for :all, :tests => [/project/, proc{|name| name.length == 13}] do 
+  def create_something_for_project_or_name_of_length_13
+    "val8"
+  end
+end
+{noformat}
+
+The factory mechanism should be used with caution, and it might change in the future, depending on how to do this kind of functionality in a good way.

@@ -94,6 +94,8 @@ module JtestR
         ((instance.respond_to?(:description) && instance.description) || instance.method_name) =~ tests
       when Array
         tests.any? { |t| match_method_spec(instance, t) }
+      when Proc
+        tests[((instance.respond_to?(:description) && instance.description) || instance.method_name)]
       end
     end
     
