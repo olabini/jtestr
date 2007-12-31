@@ -100,7 +100,8 @@ module JtestR
            else
              cp
            end
-      
+
+      cp.flatten!
       cp.each do |p|
         $CLASSPATH << File.expand_path(p)
       end
@@ -114,6 +115,10 @@ module JtestR
       log.debug { "finding tests" }
 
       work_files = (Dir["{#{@test_directories.join(',')}}/**/*.rb"].map{ |f| File.expand_path(f) }) - @config_files.map{ |f| File.expand_path(f) }
+      
+      ignore = @configuration.configuration_values(:ignore).flatten.map{ |f| File.expand_path(f) }
+
+      work_files = work_files - ignore
       
       helpers = @configuration.configuration_values(:helper).flatten.map{ |f| File.expand_path(f) }
       factories = @configuration.configuration_values(:factory).flatten.map{ |f| File.expand_path(f) }
