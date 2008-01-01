@@ -176,6 +176,11 @@ module JtestR
         run_rspec("#{name} specs", pattern)
         run_junit("JUnit #{name} tests", name)
       end
+      
+      #Make sure that Test::Unit won't try to fire its at_exit hook
+      Test::Unit.run = true 
+      #Make sure that RSpec won't try to fire its at_exit hook
+      Spec.run = true 
     end
     
     def choose_files(files, match_info)
