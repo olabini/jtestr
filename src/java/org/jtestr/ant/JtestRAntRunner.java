@@ -59,7 +59,7 @@ public class JtestRAntRunner extends Task {
 
     private final static List<String> OUTPUT_LEVELS = Arrays.asList("NONE","QUIET","NORMAL","VERBOSE","DEFAULT");
     public void setOutputlevel(String outputLevel) {
-        if(OUTPUT_LEVELS.contains(logging)) {
+        if(OUTPUT_LEVELS.contains(outputLevel)) {
             this.outputLevel = outputLevel;
         } else {
             throw new IllegalArgumentException("Value " + outputLevel + " is not a valid output level. The only valid levels are: " + OUTPUT_LEVELS);
