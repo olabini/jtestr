@@ -102,10 +102,16 @@ public class BackgroundServer {
         server.bind(new InetSocketAddress("127.0.0.1",port));
         debug("listening");
         while(!quit) {
-            Socket socket = server.accept();
-            debug("accepted");
-            run(socket);
-            socket.close();
+            try {
+                Socket socket = server.accept();
+                debug("accepted");
+                run(socket);
+                socket.close();
+            } catch(IOException e) {
+                debug("IO failed: " + e);
+            } catch(Exception e) {
+                debug("exception: " + e);
+            }
         }
         server.close();
     }
