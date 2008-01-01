@@ -180,3 +180,14 @@ The helper configuration value helps specify helpers that doesn't follow the reg
 h3. factory
 
 The factory configuration value works exactly like the helper configuration.
+
+h3. ignore
+
+The newly added ignore option allows you to have parts of the test directory not used by JtestR. The most useful reason for this is to allow other ruby files in there. For example, say you have some kind of functionality you want to load in the configuration file. You can add a file called do_foo.rb to test, and then configure it like this:
+
+{noformat}
+ignore 'test/do_foo.rb'
+load 'test/do_foo.rb'
+{noformat}
+
+Ignore takes any version of arrays of filenames, or single filenames, just like the other file based structures in JtestR.
