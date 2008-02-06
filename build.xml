@@ -48,7 +48,7 @@
       <classpath path="${src.ruby.dir}"/>
     </taskdef>
 
-    <jtestr/>
+    <jtestr port="20333"/>
   </target>
 
   <target name="test-server" depends="compile" description="Starts test server">

@@ -6,7 +6,8 @@ module JtestR
     include JUnitTestRunning
 
     def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
-#      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"
+      JtestR::J::reset
+      #      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"
       JtestR::logger = JtestR::SimpleLogger
       JtestR::result_handler = JtestR::GenericResultHandler
 

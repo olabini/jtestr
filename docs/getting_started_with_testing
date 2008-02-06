@@ -108,4 +108,17 @@ The structure of a typical RSpec specification uses describe to start a block de
 
 The basic ways of checking values in RSpec depend on the should and should_not methods. You send them so called "expectation matchers", and that is the test in question. The combination ends up being quite readable and natural. The matchers in RSpec are quite flexible, and there are many of them. The best way to find out about them is to look at the RSpec site at http://rspec.info and read their documentation.
 
+JtestR gives you some helpers that might be very useful in certain circumstances. Most of these are documented elsewhere, but one thing that can be good to know is the J module. If you get annoyed at having to write the fully qualified name of a Java class all the time, or having to import it, you can use the J-module:
+
+J::HashMap
+J::String
+
+By default the J module will search java.lang and java.util. If you want to change this, it's quite easy to do:
+
+J::packages << java.util.regex
+
+If you want to get J back to the default search list or remove all the cached constants that J have created for you, do it with reset:
+
+J::reset
+
 This concludes the getting started part for JtestR testing. For more information see the examples and documents about specific features.
