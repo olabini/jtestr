@@ -31,6 +31,7 @@ public class JtestRAntRunner extends Task {
     private String configFile = "jtestr_config.rb";
     private String outputLevel = "QUIET";
     private String output = "STDOUT";
+    private String groups = "";
 
     public void setFailonerror(boolean value) {
         failOnError = value;
@@ -38,6 +39,10 @@ public class JtestRAntRunner extends Task {
 
     public void setTests(String tests) {
         this.tests = tests;
+    }
+
+    public void setGroups(String groups) {
+        this.groups = groups;
     }
 
     public void setPort(int port) {
@@ -80,7 +85,7 @@ public class JtestRAntRunner extends Task {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
             try {
-                JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output);
+                JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output, groups);
             } catch(BackgroundClientException e) {
                 throw new BuildException(e.getMessage(), e.getCause());
             }
@@ -91,7 +96,7 @@ public class JtestRAntRunner extends Task {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(tests, logging, outputLevel, output);
+                boolean result = testRunner.run(tests, logging, outputLevel, output, groups.split(", ?"));
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new BuildException("Tests failed");

@@ -5,7 +5,7 @@ module JtestR
     include RSpecTestRunning
     include JUnitTestRunning
 
-    def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT)
+    def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [])
       JtestR::J::reset
       #      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"
       JtestR::logger = JtestR::SimpleLogger
@@ -15,6 +15,7 @@ module JtestR
       @output = output
       @dirname = dirname
       @log_level = log_level
+      @groups_to_run = groups_to_run.compact.select {|s| !s.empty?}
       
       @result = true
 
@@ -187,30 +188,38 @@ module JtestR
     end
     
     def run_tests
-      names = ["Unit", "Functional", "Integration", "Other"].map do |name|
-        ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit"]
-      end.flatten
-      rest_groups = groups.all_groups - names
+      if @groups_to_run.empty?
+        names = ["Unit", "Functional", "Integration", "Other"].map do |name|
+          ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit"]
+        end.flatten
+      else
+        names = @groups_to_run
+      end
+
       all_rspec = @configuration.configuration_value(:rspec) == :all
       
       names.each do |name|
-        case name
-        when /TestUnit$/i: run_test_unit(groups.send(name))
-        when /Spec$/i: run_rspec(groups.send(name))
-        when /JUnit$/i: run_junit(groups.send(name))
-        else
-          if all_rspec
-            run_rspec(groups.send(name))
-          else
-            run_test_unit(groups.send(name))
-          end
-        end
+        run_group_with(name, all_rspec)
       end
       
       #Make sure that Test::Unit won't try to fire its at_exit hook
       Test::Unit.run = true 
       #Make sure that RSpec won't try to fire its at_exit hook
       Spec.run = true 
+    end
+
+    def run_group_with(name, all_rspec)
+      case name
+      when /TestUnit$/i: run_test_unit(groups.send(name))
+      when /Spec$/i: run_rspec(groups.send(name))
+      when /JUnit$/i: run_junit(groups.send(name))
+      else
+        if all_rspec
+          run_rspec(groups.send(name))
+        else
+          run_test_unit(groups.send(name))
+        end
+      end
     end
     
     def choose_files(files, match_info)

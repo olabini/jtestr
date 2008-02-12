@@ -79,6 +79,13 @@ public class JtestRMavenMojo extends AbstractMojo {
      * @parameter expression="STDOUT"
      */
     private String output;
+
+    /**
+     * Groups to execute.
+     *
+     * @parameter expression=""
+     */
+    private String groups;
     
     public void execute() throws MojoExecutionException {
         System.out.println();
@@ -87,7 +94,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
             try {
-                JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output);
+                JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output, groups);
             } catch(BackgroundClientException e) {
                 throw new MojoExecutionException(e.getMessage(), e.getCause());
             }
@@ -98,7 +105,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(tests, logging, outputLevel, output);
+                boolean result = testRunner.run(tests, logging, outputLevel, output, groups.split(", ?"));
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new MojoExecutionException("Tests failed");

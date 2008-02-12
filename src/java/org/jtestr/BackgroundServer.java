@@ -160,6 +160,8 @@ public class BackgroundServer {
         debug("testing with outputlevel: " + outputlevel);
         String output = readBoundedName(socketInput);
         debug("testing with output: " + output);
+        String groups = readBoundedName(socketInput);
+        debug("testing with groups: " + groups);
 
         socketOutput.write(new byte[]{'2','0','1'});
         socketOutput.flush();
@@ -169,7 +171,7 @@ public class BackgroundServer {
         
         TestRunner runtime = getRuntime();
         try {
-            boolean result = runtime.run(dirname, loglevel, outputlevel, output);
+            boolean result = runtime.run(dirname, loglevel, outputlevel, output, groups.split(", ?"));
             runtime.report();
             
             resOut.flush(); resErr.flush();

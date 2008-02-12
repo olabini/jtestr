@@ -19,7 +19,7 @@ import org.jtestr.BackgroundClientException;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class JtestRAntClient {
-    public static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output) throws BackgroundClientException {
+    public static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output, String groups) throws BackgroundClientException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
@@ -33,6 +33,8 @@ public class JtestRAntClient {
             os.print(outputLevel);
             os.write((byte)output.length());
             os.print(output);
+            os.write((byte)groups.length());
+            os.print(groups);
             os.flush();
 
             byte[] status = new byte[3];
