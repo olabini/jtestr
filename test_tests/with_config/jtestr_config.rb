@@ -5,6 +5,8 @@ junit "unit" => ['org.jtestr.test.JUnit3Test', 'org.jtestr.test.JUnit4Test']
 junit ['org.jtestr.test.JUnit3Test']
 junit 'org.jtestr.test.JUnit4Test'
 
+# groups['Unit JUnit'] << /JUnit3/
+
 class FooLogger
   def initialize(*args)
     $__foo_logger_args = args

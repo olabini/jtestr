@@ -22,6 +22,13 @@ module JtestR
       into(@values)
     end
     
+    def ===(other)
+      # used to match something against this group
+      files.empty? || (files.any? do |f|
+        f === other
+      end)
+    end
+    
     private 
     def into(arr)
       arr.map do |v|
@@ -29,6 +36,7 @@ module JtestR
         when File: v.path
         when Group: v.files
         when Array: into(v)
+        when Regexp: v
         else v.to_s
         end
       end.flatten
@@ -50,9 +58,13 @@ module JtestR
       @groups.keys
     end
     
+    def [](name)
+      @groups[name.to_s.downcase.to_sym] ||= Group.new(name)
+    end
+    
     def method_missing(name, *args, &block)
       if args == []
-        @groups[name.to_s.downcase.to_sym] ||= Group.new(name)
+        self[name]
       else
         super
       end

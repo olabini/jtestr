@@ -191,13 +191,19 @@ module JtestR
         ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit"]
       end.flatten
       rest_groups = groups.all_groups - names
+      all_rspec = @configuration.configuration_value(:rspec) == :all
       
       names.each do |name|
         case name
-          when /TestUnit$/i: run_test_unit(groups.send(name))
-          when /Spec$/i: run_rspec(groups.send(name))
-          when /JUnit$/i: run_junit(groups.send(name))
-          else run_test_unit(groups.send(name))
+        when /TestUnit$/i: run_test_unit(groups.send(name))
+        when /Spec$/i: run_rspec(groups.send(name))
+        when /JUnit$/i: run_junit(groups.send(name))
+        else
+          if all_rspec
+            run_rspec(groups.send(name))
+          else
+            run_test_unit(groups.send(name))
+          end
         end
       end
       

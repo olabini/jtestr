@@ -13,8 +13,8 @@ module JtestR
       def run_junit(group)
         test_type = group.name.to_s[/(.*) JUnit$/i, 1]
         desc = "JUnit #{test_type} tests"
-        
-        test_classes = get_junit_test_classes(test_type)
+
+        test_classes = get_junit_test_classes(test_type, group)
 
         if test_classes.length > 0
           request = org.junit.runner.Request.classes(desc, test_classes)
@@ -29,7 +29,7 @@ module JtestR
         true
       end
       
-      def get_junit_test_classes(test_type)
+      def get_junit_test_classes(test_type, group)
         @junit_configuration ||= @configuration.configuration_values(:junit).inject({}) { |sum, val| 
           if Hash === val
             sum.merge val
@@ -41,14 +41,18 @@ module JtestR
             sum
           end
         }
-        
+
         (@junit_configuration[test_type.downcase] || []).map do |tc|
-          if Class === tc
-            tc.java_class
+          if group === tc.to_s
+            if Class === tc
+              tc.java_class
+            else
+              eval(tc).java_class
+            end
           else
-            eval(tc).java_class
+            nil
           end
-        end.to_java java.lang.Class
+        end.compact.to_java java.lang.Class
       end
     rescue Exception => e
       warn "JUnit 4 is not available on the classpath, so JUnit tests will not be run"
