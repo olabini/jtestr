@@ -10,9 +10,15 @@ end
 
 module JtestR
   module RSpecTestRunning
-    def run_rspec(name, match_info = {})
+   def add_rspec_groups(group, match_info)
       files = choose_files(@specs, match_info)
       files.sort!
+      group << files
+    end
+
+    def run_rspec(group)
+      name = group.name
+      files = group.files
       
       unless files.empty?
         log.debug { "running rspec[#{name}] on #{files.inspect}" }

@@ -7,12 +7,16 @@ require 'jtestr/test_unit_result_handler'
 
 module JtestR
   module TestUnitTestRunning
-    def run_test_unit(name, match_info = {})
+    def add_test_unit_groups(group, match_info)
       files = choose_files(@test_units, match_info)
       files.sort!
-      
+      group << files
+    end
+    
+    def run_test_unit(group)
+      files = group.files
       unless files.empty?
-        log.debug { "running test unit[#{name}] on #{files.inspect}" }
+        log.debug { "running test unit[#{group.name}] on #{files.inspect}" }
 
         before = test_unit_classes
         before_all = classes
@@ -26,7 +30,7 @@ module JtestR
         
         log.debug "Testing classes: #{(after-before).inspect}"
 
-        result_handler = JtestR.result_handler.new(name, "test", @output, @output_level)
+        result_handler = JtestR.result_handler.new(group.name, "test", @output, @output_level)
         
         JtestR::Helpers.apply(after_all - before_all)
         
@@ -34,7 +38,7 @@ module JtestR
           runner.collector = proc do |r|
             c = TestUnitPresetCollector.new
             c.filter = r.filters
-            c.collect(name, after-before)
+            c.collect(group.name, after-before)
           end
           
           runner.runner = proc do |r|

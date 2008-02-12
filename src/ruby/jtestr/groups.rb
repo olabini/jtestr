@@ -19,10 +19,16 @@ module JtestR
     end
     
     def files
-      @values.map do |v|
+      into(@values)
+    end
+    
+    private 
+    def into(arr)
+      arr.map do |v|
         case v
         when File: v.path
         when Group: v.files
+        when Array: into(v)
         else v.to_s
         end
       end.flatten
@@ -32,7 +38,7 @@ module JtestR
   class Groups
     class << self
       def instance
-        @instance ||= JtestR:Groups.new
+        @instance ||= JtestR::Groups.new
       end
     end
     
@@ -46,7 +52,7 @@ module JtestR
     
     def method_missing(name, *args, &block)
       if args == []
-        @groups[name] ||= Group.new(name)
+        @groups[name.to_s.downcase.to_sym] ||= Group.new(name)
       else
         super
       end

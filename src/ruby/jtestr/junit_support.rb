@@ -6,8 +6,14 @@ module JtestR
     begin 
       # Make sure that JUnit is on the path
       org.junit.runner.JUnitCore
+
+      def add_junit_groups(group, name)
+      end
       
-      def run_junit(desc, test_type)
+      def run_junit(group)
+        test_type = group.name.to_s[/(.*) JUnit$/i, 1]
+        desc = "JUnit #{test_type} tests"
+        
         test_classes = get_junit_test_classes(test_type)
 
         if test_classes.length > 0
@@ -47,6 +53,7 @@ module JtestR
     rescue Exception => e
       warn "JUnit 4 is not available on the classpath, so JUnit tests will not be run"
       def run_junit(*args); end
+      def add_junit_groups(group, name); end
     end
   end
 end

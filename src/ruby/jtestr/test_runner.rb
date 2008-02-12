@@ -180,18 +180,17 @@ module JtestR
        ["Integration", {:directory => /integration/}],
        ["Other", {:not_directory => /unit|functional|integration/}]
       ].each do |name, pattern|
-        add_test_unit_groups(groups.send(:"#{name}TestUnit"), pattern)
-        add_rspec_groups(groups.send(:"#{name}RSpec"), pattern)
-        add_junit_groups(groups.send(:"#{name}JUnit"), name)
+        add_test_unit_groups(groups.send(:"#{name} TestUnit"), pattern)
+        add_rspec_groups(groups.send(:"#{name} Spec"), pattern)
+        add_junit_groups(groups.send(:"#{name} JUnit"), name)
       end
     end
     
     def run_tests
       names = ["Unit", "Functional", "Integration", "Other"].map do |name|
-        ["#{name}TestUnit", "#{name}Spec", "#{name}JUnit"]
+        ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit"]
       end.flatten
-      
-      rest_groups = groups.all_keys - names
+      rest_groups = groups.all_groups - names
       
       names.each do |name|
         case name
