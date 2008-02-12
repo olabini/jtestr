@@ -26,6 +26,8 @@ module JtestR
 
       load_helpers
       load_factories
+
+      add_to_groups
       
       run_tests
       
@@ -172,15 +174,32 @@ module JtestR
       end
     end
 
-    def run_tests
+    def add_to_groups
       [["Unit", {:directory => /unit/}],
        ["Functional", {:directory => /functional/}],
        ["Integration", {:directory => /integration/}],
        ["Other", {:not_directory => /unit|functional|integration/}]
       ].each do |name, pattern|
-        run_test_unit("#{name} tests", pattern)
-        run_rspec("#{name} specs", pattern)
-        run_junit("JUnit #{name} tests", name)
+        add_test_unit_groups(groups.send(:"#{name}TestUnit"), pattern)
+        add_rspec_groups(groups.send(:"#{name}RSpec"), pattern)
+        add_junit_groups(groups.send(:"#{name}JUnit"), name)
+      end
+    end
+    
+    def run_tests
+      names = ["Unit", "Functional", "Integration", "Other"].map do |name|
+        ["#{name}TestUnit", "#{name}Spec", "#{name}JUnit"]
+      end.flatten
+      
+      rest_groups = groups.all_keys - names
+      
+      names.each do |name|
+        case name
+          when /TestUnit$/i: run_test_unit(groups.send(name))
+          when /Spec$/i: run_rspec(groups.send(name))
+          when /JUnit$/i: run_junit(groups.send(name))
+          else run_test_unit(groups.send(name))
+        end
       end
       
       #Make sure that Test::Unit won't try to fire its at_exit hook
