@@ -63,6 +63,10 @@ module JtestR
       output("#{@tname}: P", VERBOSE)
     end
     
+    def failed?
+      !@faults.empty?
+    end
+    
     protected
 
     def report_failures(level = DEFAULT)
@@ -74,9 +78,12 @@ module JtestR
             if fault.respond_to?(:test_header)
               output("#{fault.test_header}\n#{fault.exception.message}", level)
               output(format_java_backtrace(fault.trace), level)
-            else
+            elsif fault.respond_to?(:header)
               output("#{fault.header}\n#{fault.exception.message}", level)
               output(format_backtrace(fault.exception.backtrace), level)
+            else
+              output("#{fault.message}", level)
+              output(format_backtrace(fault.backtrace), level)
             end
           end
           nl(level) 

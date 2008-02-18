@@ -2,7 +2,9 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'rspec', 'lib')
 
 require 'spec'
 require 'spec/runner/formatter/base_formatter'
+require 'spec/story'
 require 'jtestr/rspec_result_handler'
+require 'jtestr/rspec_story_result_handler'
 
 Spec::Runner.configure do |config|
   config.mock_with :mocha
@@ -12,6 +14,12 @@ module JtestR
   module RSpecTestRunning
    def add_rspec_groups(group, match_info)
       files = choose_files(@specs, match_info)
+      files.sort!
+      group << files
+    end
+
+   def add_rspec_story_groups(group)
+      files = @stories
       files.sort!
       group << files
     end
@@ -42,8 +50,36 @@ module JtestR
     rescue Exception => e
       log.err e.inspect
       log.err e.backtrace
+      raise
     end
     
+    def run_rspec_stories(group)
+      name = group.name
+      files = group.files
+      
+      unless files.empty? && @configuration.configuration_values(:stories).empty?
+        log.debug { "running stories[#{name}] on #{files.inspect}" }
+        
+        Spec::Story::Runner.run_options.reporter = []
+
+        result_handler = JtestR.result_handler.new(name, "scenario", @output, @output_level)
+
+        options = Spec::Story::Runner.run_options
+        formatters = load_story_formatters(options, result_handler)
+        options.instance_variable_set :@formatters, formatters
+
+        files.each do |file|
+          guard("while loading #{file}") { load file }
+        end
+        
+        @result &= !result_handler.failed?
+      end
+    rescue Exception => e
+      log.err e.inspect
+      log.err e.backtrace
+      raise
+    end
+
     def load_spec_formatters(options, result_handler)
       rspec_formatters = @configuration.configuration_values(:rspec_formatter)
       formatters = rspec_formatters.map { |name, where|
@@ -63,6 +99,28 @@ module JtestR
       unification = @configuration.configuration_values(:unify_rspec_output).flatten
       unification = unification.empty? ? true : unification.first
       formatters << (!unification ? RSpecHelperFormatter.new : RSpecResultHandler.new(result_handler))
+      formatters
+    end
+
+    def load_story_formatters(options, result_handler)
+      story_formatters = @configuration.configuration_values(:story_formatter)
+      formatters = story_formatters.map { |name, where|
+        if val = ::Spec::Runner::Options::STORY_FORMATTERS[name]
+          require val[0]
+          eval("::Spec::Runner::" + val[1], binding, __FILE__, __LINE__).new(options, transform_spec_where(where || @output))
+        else
+          if Class === name
+            name.new(options, transform_spec_where(where || @output))
+          elsif String === name
+            eval(name, binding, __FILE__, __LINE__).new(options, transform_spec_where(where || @output))
+          else
+            name
+          end
+        end
+      }
+      unification = @configuration.configuration_values(:unify_story_output).flatten
+      unification = unification.empty? ? true : unification.first
+      formatters << (!unification ? RSpecHelperFormatter.new : RSpecStoryResultHandler.new(result_handler))
       formatters
     end
     

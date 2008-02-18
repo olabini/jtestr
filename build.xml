@@ -51,6 +51,16 @@
     <jtestr port="20333"/>
   </target>
 
+  <target name="smoke" depends="compile" description="Runs all tests">
+    <taskdef name="jtestr" classname="org.jtestr.ant.JtestRAntRunner">
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+      <classpath path="${src.ruby.dir}"/>
+    </taskdef>
+
+    <jtestr port="20333" groups="Stories"/>
+  </target>
+
   <target name="test-server" depends="compile" description="Starts test server">
     <java classname="org.jtestr.BackgroundServer" fork="false" spawn="false">
       <classpath refid="build.classpath"/>

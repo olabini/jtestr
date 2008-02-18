@@ -64,6 +64,7 @@ module JtestR
       @config_files = @test_directories.map {|dir| File.join(dir, "jtestr_config.rb") }.select {|file| File.exist?(file)}
       
       @configuration = Configuration.new
+
       @config_files.each do |file|
         @configuration.evaluate(File.read(file),file)
       end
@@ -127,15 +128,17 @@ module JtestR
       helpers = @configuration.configuration_values(:helper).flatten.map{ |f| File.expand_path(f) }
       factories = @configuration.configuration_values(:factory).flatten.map{ |f| File.expand_path(f) }
       spec_conf = @configuration.configuration_values(:rspec).flatten
+      story_conf = @configuration.configuration_values(:story).flatten
       tu_conf = @configuration.configuration_values(:test_unit).flatten
       
       specced = spec_conf.first == :all ? :all : spec_conf.map{ |f| File.expand_path(f) }
       tunited = tu_conf.first == :all ? :all : tu_conf.map{ |f| File.expand_path(f) }
-
+      storied = story_conf.map{ |f| File.expand_path(f) }
+      
       work_files = (work_files - helpers) - factories
 
       if specced != :all && tunited != :all
-        work_files = (work_files - specced) - tunited
+        work_files = ((work_files - specced) - storied) - tunited
       end
 
       @helpers, work_files = work_files.partition { |filename| filename =~ /_helper\.rb$/ }
@@ -145,15 +148,19 @@ module JtestR
       @factories = @factories + factories
       
       if specced == :all
-        @specs = work_files
+        @stories, @specs = work_files.partition { |filename| filenames =~ /_steps\.rb$/ }
+        @stories = @stories + storied
         @test_units = []
       elsif tunited == :all
         @test_units = work_files
         @specs = []
+        @stories = []
       else
         @specs, work_files = work_files.partition { |filename| filename =~ /_spec\.rb$/ }
+        @stories, work_files = work_files.partition { |filename| filename =~ /_steps\.rb$/ }
         @test_units = work_files
         
+        @stories = @stories + storied
         @specs = @specs + specced
         @test_units = @test_units + tunited
       end
@@ -185,13 +192,14 @@ module JtestR
         add_rspec_groups(groups.send(:"#{name} Spec"), pattern)
         add_junit_groups(groups.send(:"#{name} JUnit"), name)
       end
+      add_rspec_story_groups(groups.send(:"Stories"))
     end
     
     def run_tests
       if @groups_to_run.empty?
         names = ["Unit", "Functional", "Integration", "Other"].map do |name|
           ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit"]
-        end.flatten
+        end.flatten + ["Stories"]
       else
         names = @groups_to_run
       end
@@ -213,6 +221,7 @@ module JtestR
       when /TestUnit$/i: run_test_unit(groups.send(name))
       when /Spec$/i: run_rspec(groups.send(name))
       when /JUnit$/i: run_junit(groups.send(name))
+      when /Stories$/i: run_rspec_stories(groups.send(name))
       else
         if all_rspec
           run_rspec(groups.send(name))

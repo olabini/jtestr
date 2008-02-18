@@ -29,11 +29,16 @@ VAL
       @values[name.to_sym] || []
     end
     
+    def []=(name, value)
+      @values[name.to_sym] = value
+    end
+    
     def method_missing(name, *args, &block)
+      existing = @values.include?(name.to_sym)
       @values[name.to_sym] ||= []
       values = (args + (block.nil? ? [] : [block]))
-      values = [true] if values.empty?
-      @values[name.to_sym] = @values[name.to_sym] + values
+      @values[name.to_sym] = [true] if values.empty? && !existing
+      @values[name.to_sym] = @values[name.to_sym] + values unless values.empty?
       @values[name.to_sym]
     end
   end
