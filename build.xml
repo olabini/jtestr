@@ -21,9 +21,19 @@
     <exclude name="**/*Mojo.java"/>
   </patternset>
 
+<!--
+  <path id="emma.lib" >
+    <pathelement location="emma.jar" />
+    <pathelement location="emma_ant.jar" />
+  </path>
+
+  <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+-->
+
   <target name="prepare" description="Creates the directories needed for building">
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${classes.dir}"/>
+<!--    <mkdir dir="build/coverage"/> -->
     <mkdir dir="${classes.test.dir}"/>
     <mkdir dir="${dist.dir}"/>
   </target>
@@ -50,6 +60,22 @@
 
     <jtestr port="20333"/>
   </target>
+
+<!--
+  <target name="test-coverage" depends="compile" description="Runs all tests">
+    <emmajava libclasspathref="emma.lib" fullmetadata="yes" sourcepath="${src.dir}" classname="org.jtestr.JtestRRunner">
+      <classpath refid="build.classpath"/>
+      <classpath path="build/classes"/>
+      <classpath path="${src.ruby.dir}"/>
+
+      <filter includes="org.jtestr.*"/>
+      
+      <txt outfile="build/coverage/coverage.txt" />
+      <xml outfile="build/coverage/coverage.xml" />
+      <html outfile="build/coverage/coverage.html"  />
+    </emmajava>
+  </target>
+-->
 
   <target name="smoke" depends="compile" description="Runs all tests">
     <taskdef name="jtestr" classname="org.jtestr.ant.JtestRAntRunner">
