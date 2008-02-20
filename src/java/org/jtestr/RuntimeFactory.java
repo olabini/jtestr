@@ -13,6 +13,8 @@ import org.jruby.runtime.Block;
 import org.jruby.runtime.IAccessor;
 import org.jruby.internal.runtime.ValueAccessor;
 import org.jruby.util.KCode;
+import org.jruby.util.ClassCache;
+import org.jruby.ast.executable.Script;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -50,6 +52,7 @@ public class RuntimeFactory {
             setError(System.err);
             setLoader(loader);
         }};
+
         Ruby runtime = Ruby.newInstance(config);
         runtime.setKCode(KCode.UTF8);
         
