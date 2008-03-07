@@ -10,6 +10,10 @@ describe TestRunner do
     proc { org.jtestr.FooBar }.should raise_error(NameError)
     proc { org.non_existing_class.FooBar }.should raise_error(NameError)
   end
+
+  it "should not have RubyGems loaded" do 
+    defined?(Gem).should be_nil
+  end
   
 #  it "raise a bogus exception" do 
 #    raise "Hello world"
