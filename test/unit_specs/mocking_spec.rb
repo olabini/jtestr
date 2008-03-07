@@ -37,7 +37,7 @@ describe "Mocking" do
 
     m1.toString.should == "Hello World"
     m2.toString.should == "Hello World"
-    
+
     m1.should_not be_equal(m2)
     
     JtestR::Mocha.revert_mocking(java.util.HashMap)
