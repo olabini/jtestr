@@ -25,7 +25,7 @@ functional_tests do
 
     map.expects(:entrySet).returns(set)
 
-    assert_equals 0, HashMap.new(map).size
+    assert_equal 0, HashMap.new(map).size
   end
 end
 {noformat}
@@ -51,7 +51,7 @@ functional_tests do
 
     map.expects(:entrySet).returns(set)
 
-    assert_equals 0, HashMap.new(map).size
+    assert_equal 0, HashMap.new(map).size
   end
 end
 {noformat}

@@ -18,6 +18,12 @@ unit_tests do
     assert_nil @something_for_tests_in_specified_spec_matching_test_regexp
     assert_nil @something_for_all_specs_with_test_names_including_should
   end
+
+  test "that mocking can be done inside of test/unit testcases too" do 
+    mock = mock(java.util.Map)
+    mock.expects(:size).returns(0)
+    mock.size
+  end  
   
 #  test "exception" do 
 #    1.should == 2

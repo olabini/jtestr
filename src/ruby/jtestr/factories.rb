@@ -131,9 +131,13 @@ module Test
         yield(STARTED, name)
         @_result = result
         begin
+          mocha_setup
           __test_unit_internal_setup
           setup
           __send__(@method_name)
+          mocha_verify { add_assertion }
+        rescue Mocha::ExpectationError => e
+          add_failure(e.message, e.backtrace)
         rescue AssertionFailedError => e
           add_failure(e.message, e.backtrace)
         rescue StandardError, ScriptError
@@ -147,6 +151,7 @@ module Test
             add_error($!)
           ensure
             __test_unit_internal_teardown
+            mocha_teardown
           end
         end
         result.add_run
