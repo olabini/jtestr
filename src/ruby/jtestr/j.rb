@@ -12,8 +12,8 @@ module JtestR
       end
 
       def const_missing(name)
-        @packages.each do |p|
-          c = p.send(name) 
+        @packages.each do |package|
+          c = package.__send__(name) rescue nil
           if c
             const_set name, c
             return c
