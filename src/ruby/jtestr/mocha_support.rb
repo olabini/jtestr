@@ -19,36 +19,48 @@ module JtestR
                               'should', 'should_not'
                              ]
     def self.revert_mocking(clazz)
-      clazz.instance_variable_set :@mocking_class, nil
+      clazz.instance_variable_set :@mocking_classes, nil
     end
     
-    def self.create_mocking(clazz)
+    def self.create_mocking(clazz, preserved_methods = JtestR::Mocha::METHODS_TO_LEAVE_ALONE)
+      preserved_methods = preserved_methods.is_a?(Symbol) ? preserved_methods : preserved_methods.sort.uniq
       case clazz
       when Class
-        c = clazz.instance_variable_get :@mocking_class
+        c = clazz.instance_variable_get :@mocking_classes
         unless c
-          c = Class.new(clazz)
-          c.class_eval do 
-            undef_method *(public_instance_methods - JtestR::Mocha::METHODS_TO_LEAVE_ALONE)
-          end
-          clazz.instance_variable_set :@mocking_class, c
+          c = { }
+          clazz.instance_variable_set :@mocking_classes, c
+        end
+        unless c[preserved_methods]
+          clz = Class.new(clazz)
+          clz.class_eval do 
+            undef_method *(public_instance_methods - preserved_methods)
+          end unless preserved_methods == :preserve_all
+          c[preserved_methods] = clz
         end
       when Module
-        c = clazz.instance_variable_get :@mocking_class
+        # Maybe actually implement methods for modules here, at some point? Hmm
+
+        c = clazz.instance_variable_get :@mocking_classes
         unless c
-          c = Class.new
-          c.send :include, clazz
-          c.class_eval do 
-            undef_method *(public_instance_methods - JtestR::Mocha::METHODS_TO_LEAVE_ALONE)
-          end
-          clazz.instance_variable_set :@mocking_class, c
+          c = { }
+          clazz.instance_variable_set :@mocking_classes, c
+        end
+        unless c[preserved_methods]
+          clz = Class.new
+          clz.send :include, clazz
+          clz.class_eval do 
+            undef_method *(public_instance_methods - preserved_methods)
+          end unless preserved_methods == :preserve_all
+          c[preserved_methods] = clz
         end
       end
     end
     
-    def self.mocking_class(clazz)
-      create_mocking(clazz)
-      clazz.instance_variable_get :@mocking_class
+    def self.mocking_class(clazz, preserved_methods = JtestR::Mocha::METHODS_TO_LEAVE_ALONE)
+      preserved_methods = preserved_methods.is_a?(Symbol) ? preserved_methods : preserved_methods.sort.uniq
+      create_mocking(clazz, preserved_methods)
+      clazz.instance_variable_get(:@mocking_classes)[preserved_methods]
     end
   end
 end
@@ -81,11 +93,14 @@ module Mocha
     
     def mock(*args)
       if args.first.is_a?(Module)
-        type = args.first
-        JtestR::Mocha::mocking_class(type).new
+        JtestR::Mocha::mocking_class(*args).new
       else
         old_mock(*args)
       end
+    end
+
+    def mock_class(*args)
+      JtestR::Mocha::mocking_class(*args)
     end
   end
 end
