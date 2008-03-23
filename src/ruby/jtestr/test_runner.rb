@@ -202,8 +202,6 @@ module JtestR
       if @groups_to_run.empty?
         names = ["Unit", "Functional", "Integration", "Other"].map do |name|
           ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit", "#{name} TestNG"]
-   #["#{name} Spec", "#{name} JUnit", "#{name} TestNG"]
-   #end.flatten
         end.flatten + ["Stories"]
       else
         names = @groups_to_run
