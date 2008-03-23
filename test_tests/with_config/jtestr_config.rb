@@ -5,7 +5,9 @@ junit "unit" => ['org.jtestr.test.JUnit3Test', 'org.jtestr.test.JUnit4Test']
 junit ['org.jtestr.test.JUnit3Test']
 junit 'org.jtestr.test.JUnit4Test'
 
-# groups['Unit JUnit'] << /JUnit3/
+testng "unit" => ['org.jtestr.test.TestNG1']
+
+#groups['Unit JUnit'] << /JUnit3/
 
 class FooLogger
   def initialize(*args)

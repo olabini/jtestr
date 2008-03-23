@@ -4,6 +4,7 @@ module JtestR
     include TestUnitTestRunning
     include RSpecTestRunning
     include JUnitTestRunning
+    include NGTestRunning 
 
     def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [])
       JtestR::J::reset
@@ -16,6 +17,7 @@ module JtestR
       @dirname = dirname
       @log_level = log_level
       @groups_to_run = groups_to_run.compact.select {|s| !s.empty?}
+      
       
       @result = true
 
@@ -191,6 +193,7 @@ module JtestR
         add_test_unit_groups(groups.send(:"#{name} TestUnit"), pattern)
         add_rspec_groups(groups.send(:"#{name} Spec"), pattern)
         add_junit_groups(groups.send(:"#{name} JUnit"), name)
+        add_testng_groups(groups.send(:"#{name} TestNG"), name)
       end
       add_rspec_story_groups(groups.send(:"Stories"))
     end
@@ -198,7 +201,9 @@ module JtestR
     def run_tests
       if @groups_to_run.empty?
         names = ["Unit", "Functional", "Integration", "Other"].map do |name|
-          ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit"]
+          ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit", "#{name} TestNG"]
+   #["#{name} Spec", "#{name} JUnit", "#{name} TestNG"]
+   #end.flatten
         end.flatten + ["Stories"]
       else
         names = @groups_to_run
@@ -221,6 +226,7 @@ module JtestR
       when /TestUnit$/i: run_test_unit(groups.send(name))
       when /Spec$/i: run_rspec(groups.send(name))
       when /JUnit$/i: run_junit(groups.send(name))
+      when /TestNG$/i: run_testng(groups.send(name))
       when /Stories$/i: run_rspec_stories(groups.send(name))
       else
         if all_rspec

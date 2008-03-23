@@ -21,6 +21,8 @@ module JtestR
     end
 
     def add_fault(fault)
+      
+      
       @faults << fault
     end
 
@@ -80,7 +82,10 @@ module JtestR
               output(format_java_backtrace(fault.trace), level)
             elsif fault.respond_to?(:header)
               output("#{fault.header}\n#{fault.exception.message}", level)
-              output(format_backtrace(fault.exception.backtrace), level)
+              output(format_backtrace(fault.exception.backtrace), level)    
+            elsif fault.respond_to?(:method)
+              output("#{fault.method}\n#{fault.throwable.message}", level)
+              output(format_java_backtrace(fault.throwable.stack_trace), level)                
             else
               output("#{fault.message}", level)
               output(format_backtrace(fault.backtrace), level)
