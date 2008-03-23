@@ -19,7 +19,7 @@ module JtestR
           runner = org.testng.TestNG.new          
           runner.set_verbose(0)
           runner.set_test_classes(test_classes)
-      
+          runner.set_output_directory("build/test-output")
           result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level)
           listener = TestNGResultHandler.new(result_handler)        
 
