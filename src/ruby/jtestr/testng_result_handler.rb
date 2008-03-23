@@ -8,12 +8,12 @@ module JtestR
       @result_handler = result_handler
     end
 
-    def onStart (testContext) 
+    def onStart (test_context) 
        @result_handler.starting
     end
 
   
-    def onFinish(testContext)
+    def onFinish(test_context)
        @result_handler.ending
     end
 
@@ -41,7 +41,7 @@ module JtestR
     end
 
 
-    def onTestSkipped(testResult)
+    def onTestSkipped(test_result)
     end
     
   end  
