@@ -75,20 +75,36 @@ module JtestR
       unless @faults.empty?
         @faults.each do |fault|
           case fault
-          when Test::Unit::Error, Test::Unit::Failure: output(fault, level)
+          when Test::Unit::Error:
+            output("Error:", level)
+            output("#{fault.test_name}", level)
+            exception = fault.exception
+            trace = nil
+            message = ""
+            if exception.is_a?(NativeException)
+              exception = exception.cause
+              trace = exception.stack_trace.to_a
+              message = "#{exception.class.name}: #{exception.message}"
+            else
+              trace = exception.trace
+              message = "#{exception.class.name}: #{exception.message}"
+            end
+            output(message, level)
+            output(format_java_backtrace(trace), level)
+          when Test::Unit::Failure: output(fault, level)
           else
             if fault.respond_to?(:test_header)
               output("#{fault.test_header}\n#{fault.exception.message}", level)
               output(format_java_backtrace(fault.trace), level)
             elsif fault.respond_to?(:header)
               output("#{fault.header}\n#{fault.exception.message}", level)
-              output(format_backtrace(fault.exception.backtrace), level)    
+              output(format_java_backtrace(fault.exception.backtrace.to_a), level)    
             elsif fault.respond_to?(:method)
               output("#{fault.method}\n#{fault.throwable.message}", level)
-              output(format_java_backtrace(fault.throwable.stack_trace), level)                
+              output(format_java_backtrace(fault.throwable.stack_trace.to_a), level)                
             else
               output("#{fault.message}", level)
-              output(format_backtrace(fault.backtrace), level)
+              output(format_java_backtrace(fault.backtrace), level)
             end
           end
           nl(level) 
@@ -100,12 +116,12 @@ module JtestR
       return "" if backtrace.nil?
       have_jruby = false
       b1 = backtrace.select { |line|
-        if line =~ /org\.jruby\.javasupport\.JavaMethod\./
+        if line.to_s =~ %r[org\.jruby\.javasupport\.JavaMethod\.]
           have_jruby = true
         end
         !have_jruby
       }
-      b1[0..-5].join("") + "      ...internal JRuby stack omitted"
+      "      " + b1[0..-5].join("\n      ") + "\n      ...internal JRuby stack omitted"
     end
 
     def format_backtrace(backtrace)

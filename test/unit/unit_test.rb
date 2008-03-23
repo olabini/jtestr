@@ -33,6 +33,10 @@ unit_tests do
 #    raise "Foobar"
 #  end
 
+#  test "exception3" do 
+#    java.util.HashMap.new.key_set.iterator.next
+#  end
+
 #  test "false assertion" do 
 #    assert false
 #  end
