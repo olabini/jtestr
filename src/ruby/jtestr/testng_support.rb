@@ -10,25 +10,22 @@ module JtestR
       end
 
       def run_testng(group)
-               
         test_type = group.name.to_s[/(.*) TestNG$/i, 1]
         desc = "TestNG #{test_type} tests"
 
         test_classes = get_testng_test_classes(test_type)
         
         if test_classes.length > 0
-          
           runner = org.testng.TestNG.new          
-          runner.setVerbose(0)
-          runner.setTestClasses(test_classes)
+          runner.set_verbose(0)
+          runner.set_test_classes(test_classes)
       
           result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level)
           listener = TestNGResultHandler.new(result_handler)        
 
-          runner.addListener(listener)
-          runner.run()          
-          return runner.hasFailure()
-          
+          runner.add_listener(listener)
+          runner.run          
+          return runner.has_failure
         end
         
         true        
@@ -36,12 +33,13 @@ module JtestR
       
       def get_testng_test_classes(test_type)
         @testng_configuration ||= @configuration.configuration_values(:testng).inject({}) { |sum, val| 
-          if Hash === val
+          case val
+          when Hash: 
             sum.merge val
-          elsif Array === val
+          when Array:
             sum['other'] = (sum['other'] || []) + val
             sum
-          elsif String === val
+          when String:
             (sum['other'] ||= []) << val
             sum
           end
@@ -49,11 +47,9 @@ module JtestR
         
         
         (@testng_configuration[test_type.downcase] || []).map do |tc|
-         
-          if Class === tc
-            tc.java_class
-          else
-            eval(tc).java_class
+          case tc
+          when Class: tc.java_class
+          else eval(tc).java_class
           end
         end.to_java java.lang.Class
       end

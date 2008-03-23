@@ -31,12 +31,13 @@ module JtestR
       
       def get_junit_test_classes(test_type, group)
         @junit_configuration ||= @configuration.configuration_values(:junit).inject({}) { |sum, val| 
-          if Hash === val
+          case val
+          when Hash: 
             sum.merge val
-          elsif Array === val
+          when Array:
             sum['other'] = (sum['other'] || []) + val
             sum
-          elsif String === val
+          when String:
             (sum['other'] ||= []) << val
             sum
           end
@@ -44,10 +45,9 @@ module JtestR
 
         (@junit_configuration[test_type.downcase] || []).map do |tc|
           if group === tc.to_s
-            if Class === tc
-              tc.java_class
-            else
-              eval(tc).java_class
+            case tc
+            when Class: tc.java_class
+            else eval(tc).java_class
             end
           else
             nil
