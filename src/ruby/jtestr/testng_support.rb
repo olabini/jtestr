@@ -56,6 +56,7 @@ module JtestR
     rescue Exception => e
       warn "TestNG is not available on the classpath, so TestNG tests will not be run"
       def run_testng(*args); end
+      def add_testng_groups(group, name); end
     end
   end
 end
