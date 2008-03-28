@@ -34,7 +34,7 @@ module JtestR
       
       run_tests
       
-      @configuration.configuration_values(:after).flatten.each { |o| o.call }
+      @configuration.configuration_values(:after).flatten.each &:call
 #      output.puts "Finished test run: #{@result && (!@errors || @errors.empty?) ? 'SUCCESSFUL' : 'FAILED'}"
       @result && (!@errors || @errors.empty?)
     rescue Exception => e
