@@ -5,6 +5,7 @@ module JtestR
     include RSpecTestRunning
     include JUnitTestRunning
     include NGTestRunning 
+    include ExpectationsTestRunning
 
     def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [])
       JtestR::J::reset
@@ -132,13 +133,13 @@ module JtestR
       spec_conf = @configuration.configuration_values(:rspec).flatten
       story_conf = @configuration.configuration_values(:story).flatten
       tu_conf = @configuration.configuration_values(:test_unit).flatten
-      
+      expectations_conf = @configuration.configuration_values(:expectations).flatten
       specced = spec_conf.first == :all ? :all : spec_conf.map{ |f| File.expand_path(f) }
       tunited = tu_conf.first == :all ? :all : tu_conf.map{ |f| File.expand_path(f) }
       storied = story_conf.map{ |f| File.expand_path(f) }
-      
+      expected = expectations_conf.first == :all ? :all : expectations_conf.map{ |f| File.expand_path(f) }
       work_files = (work_files - helpers) - factories
-
+      
       if specced != :all && tunited != :all
         work_files = ((work_files - specced) - storied) - tunited
       end
@@ -165,6 +166,7 @@ module JtestR
         @stories = @stories + storied
         @specs = @specs + specced
         @test_units = @test_units + tunited
+        @expectation_group = expected
       end
     end
 
@@ -192,6 +194,7 @@ module JtestR
       ].each do |name, pattern|
         add_test_unit_groups(groups.send(:"#{name} TestUnit"), pattern)
         add_rspec_groups(groups.send(:"#{name} Spec"), pattern)
+        add_expectations_groups(groups.send(:"#{name} Expectations"), name)
         add_junit_groups(groups.send(:"#{name} JUnit"), name)
         add_testng_groups(groups.send(:"#{name} TestNG"), name)
       end
@@ -201,7 +204,7 @@ module JtestR
     def run_tests
       if @groups_to_run.empty?
         names = ["Unit", "Functional", "Integration", "Other"].map do |name|
-          ["#{name} TestUnit", "#{name} Spec", "#{name} JUnit", "#{name} TestNG"]
+          ["#{name} TestUnit", "#{name} Spec", "#{name} Expectations", "#{name} JUnit", "#{name} TestNG"]
         end.flatten + ["Stories"]
       else
         names = @groups_to_run
@@ -223,6 +226,7 @@ module JtestR
       case name
       when /TestUnit$/i: run_test_unit(groups.send(name))
       when /Spec$/i: run_rspec(groups.send(name))
+      when /Expectations$/i: run_expectations(groups.send(name))
       when /JUnit$/i: run_junit(groups.send(name))
       when /TestNG$/i: run_testng(groups.send(name))
       when /Stories$/i: run_rspec_stories(groups.send(name))
