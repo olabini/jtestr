@@ -107,7 +107,7 @@
       </fileset>
       <zipfileset src="${lib.dir}/jruby-complete-r6349.jar"/>
       <zipfileset src="${lib.dir}/junit-4.4.jar"/>
-      <zipfileset src="${lib.dir}/testng-5.7.1beta-jdk15.jar"/>
+      <zipfileset src="${lib.dir}/testng-5.8-jdk15.jar"/>
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
       </manifest>
