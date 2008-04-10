@@ -14,7 +14,7 @@ describe TestRunner do
   it "should not have RubyGems loaded" do 
     defined?(Gem).should be_nil
   end
-  
+
 #  it "raise a bogus exception" do 
 #    raise "Hello world"
 #  end

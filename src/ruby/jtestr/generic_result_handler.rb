@@ -86,7 +86,7 @@ module JtestR
               trace = exception.stack_trace.to_a
               message = "#{exception.class.name}: #{exception.message}"
             else
-              trace = exception.trace
+              trace = exception.backtrace
               message = "#{exception.class.name}: #{exception.message}"
             end
             output(message, level)

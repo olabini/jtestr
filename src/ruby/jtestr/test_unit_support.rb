@@ -4,6 +4,7 @@ require 'test/unit'
 require 'dust'
 require 'jtestr/test_unit_preset_collector'
 require 'jtestr/test_unit_result_handler'
+require 'jtestr/test_unit_exception_patching'
 
 module JtestR
   module TestUnitTestRunning

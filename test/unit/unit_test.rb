@@ -24,6 +24,22 @@ unit_tests do
     mock.expects(:size).returns(0)
     mock.size
   end  
+
+  test "it's possible to match a specific Java exception" do 
+    assert_raises(java.util.NoSuchElementException) do 
+      java.util.HashMap.new.key_set.iterator.next
+    end
+
+    assert_raise(java.util.NoSuchElementException) do 
+      java.util.HashMap.new.key_set.iterator.next
+    end
+
+    assert_nothing_raised(java.util.NoSuchElementException) do 
+      m = java.util.HashMap.new
+      m.put("a", "b")
+      m.key_set.iterator.next
+    end
+  end
   
 #  test "exception" do 
 #    1.should == 2
