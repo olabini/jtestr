@@ -70,7 +70,7 @@ public class JtestRRunner {
         if(output.equals("STDOUT") || output.equals("STDERR")) {
             this.output = output;
         } else {
-            this.output = "File.open(' " + output + "', 'a+')";
+            this.output = "File.open('" + output + "', 'a+')";
         }
     }
 
