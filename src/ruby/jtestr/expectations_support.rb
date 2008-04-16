@@ -16,20 +16,14 @@ module JtestR
       files = group.files      
       unless files.empty?
         log.debug { "running expectations [#{group.name}] on #{files.inspect}" }
-
-        before = expectations_classes
-        before_all = classes
+        
+        suite_runner = Expectations::SuiteRunner.instance
         
         files.each do |file|
           guard("while loading #{file}") { load file }
         end
-
-        after = expectations_classes
-        after_all = classes      
         
-        log.debug "Testing classes: #{(after-before).inspect}"
-        
-        suite_runner = Expectations::SuiteRunner.instance
+        result = suite_runner.suite.execute()
         
       end
     rescue Exception => e
@@ -37,24 +31,5 @@ module JtestR
       log.err e.backtrace
     end
 
-    def classes
-      all = []
-      
-      ObjectSpace.each_object(Class) do |klass|
-        all << klass
-      end
-
-      all
-    end
-
-    def expectations_classes
-      all = []
-      ObjectSpace.each_object(Class) do |klass|
-        if Expectations::Expectation > klass
-          all << klass
-        end
-      end
-      all
-    end
   end
 end
