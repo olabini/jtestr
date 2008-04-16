@@ -140,8 +140,8 @@ module JtestR
       expected = expectations_conf.first == :all ? :all : expectations_conf.map{ |f| File.expand_path(f) }
       work_files = (work_files - helpers) - factories
       
-      if specced != :all && tunited != :all
-        work_files = ((work_files - specced) - storied) - tunited
+      if specced != :all && tunited != :all && expected != :all
+        work_files = (((work_files - specced) - storied) - tunited) - expected
       end
 
       @helpers, work_files = work_files.partition { |filename| filename =~ /_helper\.rb$/ }
@@ -154,10 +154,17 @@ module JtestR
         @stories, @specs = work_files.partition { |filename| filenames =~ /_steps\.rb$/ }
         @stories = @stories + storied
         @test_units = []
+        @expectation_group = []
       elsif tunited == :all
         @test_units = work_files
         @specs = []
         @stories = []
+        @expectation_group = []
+      elsif expected == :all
+        @test_units = []
+        @specs = []
+        @stories = []
+        @expectation_group = work_files
       else
         @specs, work_files = work_files.partition { |filename| filename =~ /_spec\.rb$/ }
         @stories, work_files = work_files.partition { |filename| filename =~ /_steps\.rb$/ }
@@ -167,6 +174,7 @@ module JtestR
         @specs = @specs + specced
         @test_units = @test_units + tunited
         @expectation_group = expected
+
       end
     end
 
