@@ -3,6 +3,10 @@ These are the steps that should be done for a new release:
 
 * Update docs in repository (remember to update version numbers of everything)
 * Update docs on site
+* Build release version
+* Upload release to dist-directory
+* Push maven release out
+* Upload new jruby-complete to dist
 * Post announcement to:
  * Include in announcement info about fixed things and new features
  * Site
@@ -10,10 +14,6 @@ These are the steps that should be done for a new release:
  * JtestR lists
  * JRuby lists
  * Ruby-talk
-* Build release version
-* Upload release to dist-directory
-* Push maven release out
-* Upload new jruby-complete to dist
 * Tag repository
 * Update Maven version number in trunk
 * Close all JIRA's resolved in this release

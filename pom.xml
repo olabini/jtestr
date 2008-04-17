@@ -5,7 +5,7 @@
   <groupId>org.jtestr</groupId>
   <artifactId>jtestr</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2</version>
   <name>JtestR</name>
   
   <build>
@@ -60,11 +60,11 @@
       <version>1.6.5</version>
     </dependency>   
     
-    <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r5387.jar -Dversion=r5387 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
+    <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r6349.jar -Dversion=r6349 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>r5387</version>
+      <version>r6349</version>
     </dependency>     
   </dependencies> 
 

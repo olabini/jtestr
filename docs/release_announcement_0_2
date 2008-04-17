@@ -1,0 +1,42 @@
+JtestR 0.2 Released
+-------------------
+
+JtestR allows you to test your Java code with Ruby frameworks.
+
+Homepage: http://jtestr.codehaus.org
+Download: http://dist.codehaus.org/jtestr
+
+JtestR 0.2 is the current release of the JtestR testing tool. JtestR integrates JRuby with several Ruby frameworks to allow painless testing of Java code, using RSpec, Test/Unit, Expectations, dust and Mocha.
+
+Features:
+- Integrates with Ant and Maven
+- Includes JRuby 1.1, Test/Unit, RSpec, Expectations, dust, Mocha and ActiveSupport
+- Customizes Mocha so that mocking of any Java class is possible
+- Background testing server for quick startup of tests
+- Automatically runs your JUnit and TestNG codebase as part of the build
+
+Getting started: http://jtestr.codehaus.org/Getting+Started
+
+New and fixed in this release:
+JTESTR-10   It should be possible to run TestNG tests
+JTESTR-12 	Buildr support
+JTESTR-13 	CC.rb should be able to run JtestR tests
+JTESTR-17 	Tests should be groupable and runnable per groups
+JTESTR-21 	Support RSpec stories
+JTESTR-28 	JtestR should include expectations
+JTESTR-30 	code coverage support
+JTESTR-31 	Autoloading of Java constants
+JTESTR-32 	Can't load IA 32-bit .so on a IA 32-bit platform
+JTESTR-33 	JtestR should use latest version of JRuby
+JTESTR-34 	Errors when project is in path with spaces on Windows XP
+JTESTR-37 	Can't expect a specific Java exception correctly
+JTESTR-38 	Problem with mocking Java classes
+JTESTR-39 	RSpec story runner seems to require rubygems
+JTESTR-40 	Package missing or.jruby.exceptions.RaiseException
+JTESTR-43 	It should be possible to get the generated mock class without instantiation
+JTESTR-44 	New output files start with a whitespace
+JTESTR-45 	RSpec raise_error and Test/Unit assert_raise and assert_nothing_raised handled JRuby NativeException stuff correctly.
+
+Team:
+Ola Bini           - ola.bini@gmail.com
+Anda Abramovici    - anda.abramovici@gmail.com
