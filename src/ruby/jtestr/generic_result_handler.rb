@@ -92,6 +92,28 @@ module JtestR
             output(message, level)
             output(format_java_backtrace(trace), level)
           when Test::Unit::Failure: output(fault, level)
+          when Expectations::Results::Error
+            output("Error:", level)
+            output("#{fault.file}:#{fault.line}", level)
+            exception = fault.exception
+            trace = nil
+            message = ""
+            if exception.is_a?(NativeException)
+              exception = exception.cause
+              trace = exception.stack_trace.to_a
+              message = "#{exception.class.name}: #{exception.message}"
+            else
+              trace = exception.backtrace
+              message = "#{exception.class.name}: #{exception.message}"
+            end
+            output(message, level)
+            output(format_java_backtrace(trace), level)
+            
+          when Expectations::Results
+            output("Failure:", level)
+            output("#{fault.file}:#{fault.line}", level)
+            output("#{fault.message}\n", level)
+
           else
             if fault.respond_to?(:test_header)
               output("#{fault.test_header}\n#{fault.exception.message}", level)
@@ -121,7 +143,11 @@ module JtestR
         end
         !have_jruby
       }
-      "      " + b1[0..-5].join("\n      ") + "\n      ...internal JRuby stack omitted"
+      if have_jruby
+        "      " + b1[0..-5].join("\n      ") + "\n      ...internal JRuby stack omitted"
+      else
+        "      " + b1[0..-5].join("\n      ")
+      end
     end
 
     def format_backtrace(backtrace)

@@ -202,7 +202,7 @@ module JtestR
       ].each do |name, pattern|
         add_test_unit_groups(groups.send(:"#{name} TestUnit"), pattern)
         add_rspec_groups(groups.send(:"#{name} Spec"), pattern)
-        add_expectations_groups(groups.send(:"#{name} Expectations"), name)
+        add_expectations_groups(groups.send(:"#{name} Expectations"), pattern)
         add_junit_groups(groups.send(:"#{name} JUnit"), name)
         add_testng_groups(groups.send(:"#{name} TestNG"), name)
       end
@@ -219,9 +219,10 @@ module JtestR
       end
 
       all_rspec = @configuration.configuration_value(:rspec) == :all
+      all_exp = @configuration.configuration_value(:expectations) == :all
       
       names.each do |name|
-        run_group_with(name, all_rspec)
+        run_group_with(name, all_rspec, all_exp)
       end
       
       #Make sure that Test::Unit won't try to fire its at_exit hook
@@ -230,7 +231,7 @@ module JtestR
       Spec.run = true 
     end
 
-    def run_group_with(name, all_rspec)
+    def run_group_with(name, all_rspec, all_expectations)
       case name
       when /TestUnit$/i: run_test_unit(groups.send(name))
       when /Spec$/i: run_rspec(groups.send(name))
@@ -241,6 +242,8 @@ module JtestR
       else
         if all_rspec
           run_rspec(groups.send(name))
+        elsif all_expectations
+          run_expectations(groups.send(name))
         else
           run_test_unit(groups.send(name))
         end

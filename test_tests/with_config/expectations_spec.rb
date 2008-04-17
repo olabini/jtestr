@@ -6,6 +6,19 @@ Expectations do
     1 + 1
   end
 
+=begin
+  expect 3 do 
+    1 + 1
+  end
+
+  expect 1 do 
+    raise "Hello World"
+  end
+
+  expect 1 do 
+    java.util.HashMap.new.entrySet.iterator.next
+  end
+=end
 end  
 
 
