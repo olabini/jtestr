@@ -116,6 +116,10 @@ h3. rspec
 
 The rspec configuration works exactly like the test_unit configuration value. It also has the same :all parameter, for specifying that all tests are RSpec tests.
 
+h3. expectation
+
+The expectation configuration works exactly like the test_unit configuration value. It also has the same :all parameter, for specifying that all tests are Expectations.
+
 h3. junit
 
 If you have any JUnit classes you want to test, you use the junit configuration value to point out their names. The configuration takes either Strings, arrays of Strings or Hashes. The Strings provided should be fully qualified Java class names. If you just specify a single String or an array of Strings, these tests will be run in the "other" category of tests. If you want to specify which tests are unit tests and which are functional, you can use the hash to do this. Make sure that you don't try to use a class name outside of a String, since the classpath hasn't been correctly set up when the configuration values are loaded.
@@ -126,6 +130,10 @@ junit "functional" => 'org.foo.functionals.SingleFunctionalTest'
 junit ['org.foo.ATestForOther']
 junit 'org.foo.AnotherOtherTest'
 {noformat}
+
+h3. testng
+
+If you have any TestNG classes you want to include in the test runs, you can do that using this configuration option. It works in the same manner as the junit option.
 
 h3. after
 
@@ -191,3 +199,20 @@ load 'test/do_foo.rb'
 {noformat}
 
 Ignore takes any version of arrays of filenames, or single filenames, just like the other file based structures in JtestR.
+
+h3. groups
+
+The groups option allows you to modify the selection mechanism used for group selection. You can either create a new group with it, or modify an existing one. You can specify a group selection in several different ways - you can point out a file, you can use another group, you can use an array of group selectors or you can use a regular expression. Some examples might look like this:
+
+{noformat}
+# Add a regexp to the Unit JUnit group
+groups['Unit JUnit'] << /JUnit3/
+
+# Add an array of file names
+groups['My tests'] << Dir["**/my/*.rb"]
+
+# Combine two groups
+groups['Unit and Functional specs'] << [groups["Unit Spec"], groups["Functional Spec"]]
+{noformat}
+
+To run a specific group, you need to use the group option in the Ant/Maven configuration.

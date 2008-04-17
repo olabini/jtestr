@@ -1,9 +1,9 @@
 Getting started with JtestR - testing
 -------------------------------------
 
-When using JtestR for testing, you have several choices for test engine. The Ruby libraries Test::Unit and RSpec are both included, and you can write Test::Unit tests using either the regular way of doing Test::Unit, or with dust syntax. This guide will quickly show you examples using each of these technologies. Unless you change it in the configuration file, all files ending with _spec.rb will be run using RSpec, and everything else will use Test::Unit. Of course, your existing JUnit tests can also be integrated and run together with the rest of the tsts in JtestR.
+When using JtestR for testing, you have several choices for test engine. The Ruby libraries Test::Unit, RSpec and Expectations are both included, and you can write Test::Unit tests using either the regular way of doing Test::Unit, or with dust syntax. This guide will quickly show you examples using each of these technologies. Unless you change it in the configuration file, all files ending with _spec.rb will be run using RSpec, and everything else will use Test::Unit. Of course, your existing JUnit and TestNG tests can also be integrated and run together with the rest of the tsts in JtestR.
 
-You will notice that the way Ruby test frameworks usually work is that you have a test directory that contains all the tests. They are usually organized in a directory structure with three different base directories: unit, functional and integration. In JtestR, all directories named unit will run first, then the directories named functional, then the integration directories, and finally all files that hasn't been run yet. You will see that as JtestR reports what it's doing. You will also notice that Test::Unit, RSpec and JUnit tests are run separately. This is because RSpec allows you to change output formats in different ways from the other engines.
+You will notice that the way Ruby test frameworks usually work is that you have a test directory that contains all the tests. They are usually organized in a directory structure with three different base directories: unit, functional and integration. In JtestR, all directories named unit will run first, then the directories named functional, then the integration directories, and finally all files that hasn't been run yet. You will see that as JtestR reports what it's doing. You will also notice that Test::Unit, RSpec, Expectations, JUnit and TestNG tests are run separately. This is because RSpec allows you to change output formats in different ways from the other engines.
 
 Lets first take a look at a few tests for java.util.HashMap, written using classical Test::Unit style:
 
@@ -107,6 +107,10 @@ end
 The structure of a typical RSpec specification uses describe to start a block describing something. The description of the thing under test should more or less match the common thing for all examples in that group. Each example is described with the it-method. You use before(:each) to do something before every test, and before(:all) to run something once, before all the examples are executed. There are corresponding after-methods. If you don't give a block to the it-method, you have created a pending test. That's legal and will be reported separately when run through JtestR.
 
 The basic ways of checking values in RSpec depend on the should and should_not methods. You send them so called "expectation matchers", and that is the test in question. The combination ends up being quite readable and natural. The matchers in RSpec are quite flexible, and there are many of them. The best way to find out about them is to look at the RSpec site at http://rspec.info and read their documentation.
+
+JtestR also have support for RSpec stories. To use that, first read up on RSpec stories, then check out the example in the JtestR test suite (in test/stories).
+
+The Expectations support is brand new, and allows you to decide if you want to use Expectations instead of any of the other formats. You need to specifically point this out in the configuration file for it to work, but after you have done that it works exactly like the Test::Unit and RSpec support.
 
 JtestR gives you some helpers that might be very useful in certain circumstances. Most of these are documented elsewhere, but one thing that can be good to know is the J module. If you get annoyed at having to write the fully qualified name of a Java class all the time, or having to import it, you can use the J-module:
 

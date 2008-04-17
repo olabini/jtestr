@@ -20,10 +20,12 @@ Where my_tests is a directory relative from the build.xml file. The jtestr task 
 - failOnError (boolean, default is true): Whether JtestR should fail the Ant build when the testing fails.
 - port (int, default is 22332): The port to try checking for a JtestR server on.
 - tests (String, default is "test"): The directory to look for JtestR configuration file and tests.
+- groups (String, default is ""): The groups to run, separated by comma. If not specificed, runs default groups.
 - logging (String, default is "WARN"): The logging level, valid values are: "NONE","ERR","WARN","INFO","DEBUG"
 - configFile (String, default is "jtestr_config.rb"): The name of the config file. Note that this is not a path, just the name of the file itself.
 - outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
 - output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
+
 
 If you are running your tests often - as you should - you will soon realize that it takes some time for JtestR to get started. This is because the JRuby runtime is a bit heavy weight to start. To solve this problem, there is a second ant task available that starts a background server. If a background server is started, the regular jtestr task will automatically use that instead. Both jtestr and jtestr-server takes an optional port to use for the server:
 

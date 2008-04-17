@@ -13,6 +13,7 @@ These are the steps that should be done for a new release:
 * Build release version
 * Upload release to dist-directory
 * Push maven release out
+* Upload new jruby-complete to dist
 * Tag repository
 * Update Maven version number in trunk
 * Close all JIRA's resolved in this release

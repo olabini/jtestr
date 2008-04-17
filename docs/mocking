@@ -138,4 +138,12 @@ map.expects(:put).with{|first, second| first.is_a?(String) && second == 3}
 
 The second example could have been done easier without the block, but this shows how you can use a block to make any kind of matching on parameters possible. There are quite a few parameters matchers, but the most interesting except for those you have seen is probably anything and any_parameters. Anything will match any one parameter, while any_parameters will match any number of arguments with any value.
 
+h3. Creating mocks and stubs
+
+As mentioned, JtestR has changed some of the methods of Mocha to make it easier to work with Java integration features. The mock-method is one of them. There are some other things that might be good to know about:
+
+- JtestR::Mocha::revert_mocking(clazz): If you want to get rid of mocking settings for a class, you can use this method
+- mock(type, preserved_methods = JtestR::Mocha::METHODS_TO_LEAVE_ALONE): When creating a mocking of a class, you sometimes need to leave methods alone so the standard behavior works. This can be done with the second parameter to the mock method.
+- mock_class(type, preserved_methods = JtestR::Mocha::METHODS_TO_LEAVE_ALONE)): If you want to use a custom constructor, you need to get this mocking class with this method and create it explicitly. It takes the same parameters as the mock-method.
+
 More information about Mocha can be found at [http://mocha.rubyforge.org/].
