@@ -7,6 +7,7 @@ You will notice that the way Ruby test frameworks usually work is that you have 
 
 Lets first take a look at a few tests for java.util.HashMap, written using classical Test::Unit style:
 
+{noformat}
 class HashMapTests < Test::Unit::TestCase
   def setup
     @map = java.util.HashMap.new
@@ -27,10 +28,12 @@ class HashMapTests < Test::Unit::TestCase
     end
   end
 end
+{noformat}
 
 
 As you can see, this code looks quite a lot like typical JUnit code. You have a setup method where a new HashMap is created. This gets called for every test. Test::Unit will use all methods that begin with test_ and run these. Test::Unit also includes several standard assertions that can be used to check expectations. You see three of them in the example above, assert, assert_equal and assert_raises. Available assertions can be found in the module Test::Unit::Assertions:
 
+{noformat}
  assert
  assert_equal
  assert_in_delta
@@ -50,6 +53,7 @@ As you can see, this code looks quite a lot like typical JUnit code. You have a 
  assert_respond_to
  assert_same
  assert_throws
+{noformat}
 
 Note that for testing exceptions, you should use assert_raise and assert_nothing_raised. The methods assert_throws and assert_nothing_thrown is for a different language feature in Ruby, that really doesn't have a counterpart in Java.
 
@@ -57,6 +61,7 @@ Testing with Test::Unit can also have a teardown method that runs after each tes
 
 Many developers feel that the way Test::Unit requires you to specify tests is a bit unnatural and verbose. Jay Fields created dust to get around this problem. You can use dust anywhere in JtestR instead of regular Test::Unit syntax. Note that you still use the same assertions, setup and teardown methods with dust. The only thing that is different is how you define your tests:
 
+{noformat}
 unit_tests do 
   test "that foo is not equal to bar" do 
     assert_not_equal "foo", "bar"
@@ -68,12 +73,14 @@ functional_tests do
     assert_not_equal "foo", "bar"
   end
 end
+{noformat}
 
 And that's really all there is to dust. Behind the covers, a Ruby class wil be generated based on the file name this code resides in. 
 
 RSpec is a bit more different. The framework has a different goal than Test::Unit, but it works very well for most testing tasks. In JtestR all files ending in _spec.rb will be run with RSpec. You can change which files are used with the configuration file, though. A typical RSpec test file contains descriptions about something, and examples of how the behavior of it should work. In practical terms it looks like this:
 
 
+{noformat}
 import java.util.HashMap
 
 describe "An empty", HashMap do 
@@ -102,6 +109,7 @@ describe "An empty", HashMap do
     end.should raise_error(java.util.NoSuchElementException)
   end
 end
+{noformat}
 
 
 The structure of a typical RSpec specification uses describe to start a block describing something. The description of the thing under test should more or less match the common thing for all examples in that group. Each example is described with the it-method. You use before(:each) to do something before every test, and before(:all) to run something once, before all the examples are executed. There are corresponding after-methods. If you don't give a block to the it-method, you have created a pending test. That's legal and will be reported separately when run through JtestR.
@@ -114,15 +122,21 @@ The Expectations support is brand new, and allows you to decide if you want to u
 
 JtestR gives you some helpers that might be very useful in certain circumstances. Most of these are documented elsewhere, but one thing that can be good to know is the J module. If you get annoyed at having to write the fully qualified name of a Java class all the time, or having to import it, you can use the J-module:
 
+{noformat}
 J::HashMap
 J::String
+{noformat}
 
 By default the J module will search java.lang and java.util. If you want to change this, it's quite easy to do:
 
+{noformat}
 J::packages << java.util.regex
+{noformat}
 
 If you want to get J back to the default search list or remove all the cached constants that J have created for you, do it with reset:
 
+{noformat}
 J::reset
+{noformat}
 
 This concludes the getting started part for JtestR testing. For more information see the examples and documents about specific features.
