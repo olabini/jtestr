@@ -105,7 +105,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(tests, logging, outputLevel, output, groups.split(", ?"));
+                boolean result = testRunner.run(tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"));
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new MojoExecutionException("Tests failed");
