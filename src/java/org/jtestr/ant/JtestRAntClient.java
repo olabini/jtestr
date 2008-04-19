@@ -19,22 +19,28 @@ import org.jtestr.BackgroundClientException;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class JtestRAntClient {
+    private static void printLengthAndValue(PrintStream os, String output) throws IOException {
+        if(output == null) {
+            os.write((byte)0);
+        } else {
+            os.write((byte)output.length());
+            os.print(output);
+        }
+    }
+
     public static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output, String groups) throws BackgroundClientException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
 
             os.print("TEST");
-            os.write((byte)tests.length());
-            os.print(tests);
-            os.write((byte)logLevel.length());
-            os.print(logLevel);
-            os.write((byte)outputLevel.length());
-            os.print(outputLevel);
-            os.write((byte)output.length());
-            os.print(output);
-            os.write((byte)groups.length());
-            os.print(groups);
+
+            printLengthAndValue(os, tests);
+            printLengthAndValue(os, logLevel);
+            printLengthAndValue(os, outputLevel);
+            printLengthAndValue(os, output);
+            printLengthAndValue(os, groups);
+
             os.flush();
 
             byte[] status = new byte[3];
