@@ -21,8 +21,6 @@ module JtestR
     end
 
     def add_fault(fault)
-      
-      
       @faults << fault
     end
 
@@ -137,12 +135,12 @@ module JtestR
     def format_java_backtrace(backtrace)
       return "" if backtrace.nil?
       have_jruby = false
-      b1 = backtrace.select { |line|
+      b1 = backtrace.select do |line|
         if line.to_s =~ %r[org\.jruby\.javasupport\.JavaMethod\.]
           have_jruby = true
         end
         !have_jruby
-      }
+      end
       if have_jruby
         "      " + b1[0..-5].join("\n      ") + "\n      ...internal JRuby stack omitted"
       else
@@ -154,6 +152,7 @@ module JtestR
       return "" if backtrace.nil?
       backtrace.map { |line| backtrace_line(line) }.join("\n")
     end
+
     def backtrace_line(line)
       line.sub(/\A([^:]+:\d+)$/, '\\1:')
     end
@@ -168,7 +167,9 @@ module JtestR
     end
 
     def report_stats(level = DEFAULT)
-      output("#@name: #@count #@type_name#{@count == 1 ? '' : 's'}, #@failures #{@failures == 1 ? 'failure' : 'failures'}, #@errors #{@errors == 1 ? 'error' : 'errors'}" +
+      output("#@name: #@count #@type_name#{@count == 1 ? '' : 's'}, "+
+             "#@failures #{@failures == 1 ? 'failure' : 'failures'}, "+
+             "#@errors #{@errors == 1 ? 'error' : 'errors'}" +
              (@pending.empty? ? '' : ", #{@pending.size} pending"), level)
     end
     

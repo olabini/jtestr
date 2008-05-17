@@ -27,7 +27,6 @@ public class RuntimeFactory {
     private boolean debug;
     ClassLoader loader;
 
-
     public RuntimeFactory(String programName) {
         this(programName, RuntimeFactory.class.getClassLoader());
     }

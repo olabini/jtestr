@@ -134,6 +134,7 @@ module JtestR
       story_conf = @configuration.configuration_values(:story).flatten
       tu_conf = @configuration.configuration_values(:test_unit).flatten
       expectations_conf = @configuration.configuration_values(:expectations).flatten
+
       specced = spec_conf.first == :all ? :all : spec_conf.map{ |f| File.expand_path(f) }
       tunited = tu_conf.first == :all ? :all : tu_conf.map{ |f| File.expand_path(f) }
       storied = story_conf.map{ |f| File.expand_path(f) }
