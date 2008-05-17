@@ -66,10 +66,10 @@ You can provide two other pieces of configuration that is only for the backgroun
 
 The port argument affects both the test goal and the server goal.
 
-There might be a problem with a dependency in the Maven build on a non-standard JRuby complete. This will be fixed in future revisions, but for now the best way of handling it is to download the file from [http://dist.codehaus.org/jtestr/jruby-complete-r6349.jar], and install it locally using this command:
+There might be a problem with a dependency in the Maven build on a non-standard JRuby complete. This will be fixed in future revisions, but for now the best way of handling it is to download the file from [http://dist.codehaus.org/jtestr/jruby-complete-r6728.jar], and install it locally using this command:
 
 {noformat}
-mvn install:install-file -Dfile=jruby-complete-r6349.jar -Dversion=r6349 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby
+mvn install:install-file -Dfile=jruby-complete-r6349.jar -Dversion=r6728 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby
 {noformat}
 
 That is really all there is to the Maven2 integration.
