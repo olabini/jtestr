@@ -3,6 +3,7 @@
  */
 package org.jtestr.ant;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -94,12 +95,17 @@ public class JtestRSuite implements Test {
             return output;
         }
 
-        private void readMatch(Socket sock, char sentinel) {
+        private void readMatch(Socket sock, char sentinel) throws EOFException {
             try {
-                char read = (char)sock.getInputStream().read();
-                if(read != sentinel) {
+                int read = sock.getInputStream().read();
+                if(read == -1) {
+                    throw new EOFException();
+                }
+                if((char)read != sentinel) {
                     throw new RuntimeException("Corrupted wire format. Expected sentinel " + sentinel + " but got " + read);
                 }
+            } catch(EOFException e) {
+                throw e;
             } catch(IOException e) {
             }
         }
@@ -123,19 +129,7 @@ public class JtestRSuite implements Test {
                 return getName();
             }
         }
-        /*
-        private static class RubyStackTraceElement extends StackTraceElement {
-            private String line;
-            public RubyStackTraceElement(String line) {
-                super(null, null, null, -1);
-                this.line = line;
-            }
 
-            public String toString() {
-                return this.line;
-            }
-        }
-        */
         private static class FakeException extends Throwable {
             private String extra;
             private String[] trace;
@@ -264,12 +258,14 @@ public class JtestRSuite implements Test {
             try {
                 sock = server.accept();
 
-                readMatch(sock, 'S');
+                while(sock.isConnected() && !sock.isClosed() && !sock.isInputShutdown() && sock.isBound()) {
+                    readMatch(sock, 'S');
 
-                String name = readBounded(sock);
-                String type = readBounded(sock);
+                    String name = readBounded(sock);
+                    String type = readBounded(sock);
 
-                dispatchOnSentinels(sock, name, type);
+                    dispatchOnSentinels(sock, name, type);
+                }
             } catch(IOException e) {
             } finally {
                 try {

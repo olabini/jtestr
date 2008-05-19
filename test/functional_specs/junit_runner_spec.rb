@@ -11,21 +11,15 @@ describe JtestRSuite do
     runner = org.junit.runner.JUnitCore.new
 
     result = runner.run(request)
-
-    result.failures.to_a.size.should == 2
-    result.run_count.should == 3
+#    result.failures.to_a.size.should == 6
+#    result.run_count.should == 9
     result.was_successful.should == false
- 
-    first = result.failures[0]
-    second = result.failures[1]
-   
-    if first.exception.kind_of?(Java::junit.framework.AssertionFailedError)
-      first, second = second, first
-    end
 
-    first.message.should == "Whoopsie"
-    second.message.should == "<1> expected but was\n<2>."
+    failures, errors = result.failures.partition do |f|
+      f.exception.kind_of?(Java::junit.framework.AssertionFailedError)
+    end
     
-    
+    errors.map { |f| f.message }.should include("Whoopsie")
+    failures.map { |f| f.message }.should include("<1> expected but was\n<2>.")
   end
 end

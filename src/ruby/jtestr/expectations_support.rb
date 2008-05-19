@@ -33,6 +33,11 @@ module JtestR
         log.debug { "running expectations [#{group.name}] on #{files.inspect}" }
         
         suite_runner = Expectations::SuiteRunner.instance
+
+        old_suite = suite_runner.suite
+        old_suite.do_not_run
+
+        suite_runner.suite = Expectations::Suite.new
         
         files.each do |file|
           guard("while loading #{file}") { load file }
@@ -42,10 +47,11 @@ module JtestR
           $__running_jtestr_expectations = JtestR.result_handler.new(group.name, "example", @output, @output_level)
 
           result = suite_runner.suite.execute
-
+          
           @result &= result.succeeded?
         ensure
           $__running_jtestr_expectations = nil
+          suite_runner.suite = old_suite
         end
 
       end

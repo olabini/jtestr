@@ -13,6 +13,8 @@ module JtestR
       JtestR::logger = JtestR::SimpleLogger
       JtestR::result_handler = rhandler
 
+      JtestR::result_handler.before
+      
       @output_level = outp_level
       @output = output
       @dirname = dirname
@@ -44,6 +46,8 @@ module JtestR
         log.err bline
       end
       false
+    ensure 
+      JtestR::result_handler.after
     end
 
     def report

@@ -1,5 +1,13 @@
 module JtestR
   class GenericResultHandler
+    class << self
+      def before        
+      end
+      
+      def after
+      end
+    end
+    
     NONE = 0
     QUIET = 1
     NORMAL = 2

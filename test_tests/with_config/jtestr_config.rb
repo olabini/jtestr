@@ -21,6 +21,12 @@ class FooLogger
 end
 
 class IgnoringResultHandler
+  class << self
+    def before
+    end
+    def after
+    end
+  end
   def initialize(name, type_name, output = STDOUT, level = DEFAULT)
     @name = name
     @level = level
