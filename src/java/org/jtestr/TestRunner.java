@@ -30,7 +30,7 @@ public class TestRunner {
         return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{runtime.newString(dirname)}).isTrue();
     }
 
-    public boolean run(String dirname, String logLevel, String outputLevel, String output, String[] groups) {
+    public boolean run(String dirname, String logLevel, String outputLevel, String output, String[] groups, String resultHandler) {
         IRubyObject[] arr = new IRubyObject[groups.length];
         for(int i=0;i<arr.length;i++) {
             arr[i] = runtime.newString(groups[i]);
@@ -41,7 +41,8 @@ public class TestRunner {
                 runtime.evalScriptlet("JtestR::SimpleLogger::" + logLevel),
                 runtime.evalScriptlet("JtestR::GenericResultHandler::" + outputLevel),
                 runtime.evalScriptlet(output),
-                runtime.newArrayNoCopy(arr)
+                runtime.newArrayNoCopy(arr),
+                runtime.evalScriptlet(resultHandler)
             }).isTrue();
     }
 

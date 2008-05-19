@@ -27,6 +27,7 @@ public class JtestRRunner {
     private String outputLevel = "QUIET";
     private String output = "STDOUT";
     private String groups = "";
+    private String resultHandler = "JtestR::GenericResultHandler";
 
     public void setFailonerror(boolean value) {
         failOnError = value;
@@ -46,6 +47,10 @@ public class JtestRRunner {
 
     public void setConfigurationfile(String configFile) {
         this.configFile = configFile;
+    }
+
+    public void setResultHandler(String resultHandler) {
+        this.resultHandler = resultHandler;
     }
 
     private final static List<String> LOGGING_LEVELS = Arrays.asList("NONE","ERR","WARN","INFO","DEBUG");
@@ -79,7 +84,7 @@ public class JtestRRunner {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
-            JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output, groups);
+            JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output, groups, resultHandler);
             ran = true;
         } catch(IOException e) {}
         
@@ -87,7 +92,7 @@ public class JtestRRunner {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"));
+                boolean result = testRunner.run(tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), resultHandler);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new RuntimeException("Tests failed");

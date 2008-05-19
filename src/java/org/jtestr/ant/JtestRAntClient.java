@@ -28,7 +28,7 @@ public class JtestRAntClient {
         }
     }
 
-    public static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output, String groups) throws BackgroundClientException {
+    public static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output, String groups, String rhandler) throws BackgroundClientException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
@@ -40,6 +40,7 @@ public class JtestRAntClient {
             printLengthAndValue(os, outputLevel);
             printLengthAndValue(os, output);
             printLengthAndValue(os, groups);
+            printLengthAndValue(os, rhandler);
 
             os.flush();
 

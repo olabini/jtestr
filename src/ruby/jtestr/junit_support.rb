@@ -1,5 +1,6 @@
 
 require 'jtestr/junit_result_handler'
+require 'jtestr/junit_result_sender'
 
 module JtestR
   module JUnitTestRunning

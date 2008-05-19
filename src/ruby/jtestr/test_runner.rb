@@ -7,11 +7,11 @@ module JtestR
     include NGTestRunning 
     include ExpectationsTestRunning
 
-    def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [])
+    def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [], rhandler = JtestR::GenericResultHandler)
       JtestR::J::reset
       #      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"
       JtestR::logger = JtestR::SimpleLogger
-      JtestR::result_handler = JtestR::GenericResultHandler
+      JtestR::result_handler = rhandler
 
       @output_level = outp_level
       @output = output
