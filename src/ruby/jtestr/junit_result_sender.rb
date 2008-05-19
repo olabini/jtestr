@@ -74,12 +74,14 @@ module JtestR
         trace = fault.location
       when Expectations::Results
         message = fault.message
-        $stderr.puts "fault: #{fault.inspect}"
-        trace = []
+        trace = ["in #{fault.file}:#{fault.line}"]
+      when Spec::Runner::Reporter::Failure
+        message = fault.exception.message
+        trace = fault.exception.backtrace
       else
         message = "bladibla"
         trace = []
-        $stderr.puts "DON'T KNOW HOW TO HANDLE: #{fault.class}"
+        $stderr.puts "DON'T KNOW HOW TO HANDLE: #{fault.inspect}"
       end
       
       write_bounded(message)
