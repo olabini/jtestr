@@ -15,5 +15,17 @@ describe JtestRSuite do
     result.failures.to_a.size.should == 2
     result.run_count.should == 3
     result.was_successful.should == false
+ 
+    first = result.failures[0]
+    second = result.failures[1]
+   
+    if first.exception.kind_of?(Java::junit.framework.AssertionFailedError)
+      first, second = second, first
+    end
+
+    first.message.should == "Whoopsie"
+    second.message.should == "<1> expected but was\n<2>."
+    
+    
   end
 end

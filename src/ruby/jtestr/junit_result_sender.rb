@@ -48,6 +48,35 @@ module JtestR
     def error_single(name = nil)
       @socket.write "X"
     end
+
+    def add_fault(fault)
+      @socket.write "D"
+      message = ""
+      trace = []
+      exception = nil
+      case fault
+      when Test::Unit::Error
+        exception = fault.exception
+        message = exception.message
+        if exception.is_a?(NativeException)
+          exception = exception.cause
+          trace = exception.stack_trace.to_a
+        else
+          trace = exception.backtrace
+        end
+      when Test::Unit::Failure
+        message = fault.message
+        trace = fault.location
+      end
+      
+      write_bounded(message)
+      if exception
+        write_bounded(exception.class.name)
+      else
+        write_bounded("")
+      end
+      write_bounded_array(trace)
+    end
     
     def method_missing(name, *args, &block)
 #      $stderr.puts "method_missing(#{name.inspect}, #{args.inspect})"
@@ -61,6 +90,16 @@ module JtestR
       @socket.write len.length.chr
       @socket.write len
       @socket.write str
+    end
+
+    def write_bounded_array(arr)
+      arr = arr.to_a
+      len = arr.length.to_s
+      @socket.write len.length.chr
+      @socket.write len
+      arr.each do |e|
+        write_bounded(e)
+      end
     end
   end
 end

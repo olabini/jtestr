@@ -96,6 +96,20 @@
     </java>
   </target>
 
+  <target name="test-junit" depends="compile" description="Runs all tests">
+    <junit haltonfailure="false" fork="yes">
+      <jvmarg value="-Djtestr.junit.tests=test_tests/one_of_each"/>
+
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+      <classpath path="${src.ruby.dir}"/>
+
+      <formatter type="xml" usefile="false"/>
+
+      <test name="org.jtestr.ant.JtestRSuite"/> 
+    </junit>
+  </target>
+
   <target name="jar" depends="test" description="Create the distribution file">
     <jar destfile="${dist.dir}/jtestr.jar" filesonly="false">
       <fileset dir="${classes.dir}">
