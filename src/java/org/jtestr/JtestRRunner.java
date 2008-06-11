@@ -19,6 +19,7 @@ import org.jtestr.ant.JtestRAntClient;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class JtestRRunner {
+    public final static String DEFAULT_RESULT_HANDLER = "JtestR::GenericResultHandler";
     private boolean failOnError = true;
     private int port = 22332;
     private String tests = "test";
@@ -27,7 +28,7 @@ public class JtestRRunner {
     private String outputLevel = "QUIET";
     private String output = "STDOUT";
     private String groups = "";
-    private String resultHandler = "JtestR::GenericResultHandler";
+    private String resultHandler = DEFAULT_RESULT_HANDLER;
 
     public void setFailonerror(boolean value) {
         failOnError = value;

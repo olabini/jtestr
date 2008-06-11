@@ -15,6 +15,7 @@ import org.jruby.Ruby;
 
 import org.jtestr.RuntimeFactory;
 import org.jtestr.TestRunner;
+import org.jtestr.JtestRRunner;
 
 import org.jtestr.ant.JtestRAntClient;
 
@@ -94,7 +95,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
             try {
-                JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output, groups);
+                JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output, groups, JtestRRunner.DEFAULT_RESULT_HANDLER);
             } catch(BackgroundClientException e) {
                 throw new MojoExecutionException(e.getMessage(), e.getCause());
             }
@@ -105,7 +106,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"));
+                boolean result = testRunner.run(tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), JtestRRunner.DEFAULT_RESULT_HANDLER);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new MojoExecutionException("Tests failed");
