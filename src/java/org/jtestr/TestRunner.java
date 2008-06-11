@@ -30,10 +30,15 @@ public class TestRunner {
         return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{runtime.newString(dirname)}).isTrue();
     }
 
-    public boolean run(String cwd, String dirname, String logLevel, String outputLevel, String output, String[] groups, String resultHandler) {
+    public boolean run(String cwd, String dirname, String logLevel, String outputLevel, String output, String[] groups, String resultHandler, String[] classPath) {
         IRubyObject[] arr = new IRubyObject[groups.length];
         for(int i=0;i<arr.length;i++) {
             arr[i] = runtime.newString(groups[i]);
+        }
+
+        IRubyObject[] cp = new IRubyObject[classPath.length];
+        for(int i=0;i<cp.length;i++) {
+            cp[i] = runtime.newString(classPath[i]);
         }
 
         runtime.setCurrentDirectory(cwd);
@@ -44,7 +49,8 @@ public class TestRunner {
                 runtime.evalScriptlet("JtestR::GenericResultHandler::" + outputLevel),
                 runtime.evalScriptlet(output),
                 runtime.newArrayNoCopy(arr),
-                runtime.evalScriptlet(resultHandler)
+                runtime.evalScriptlet(resultHandler),
+                runtime.newArrayNoCopy(cp)
             }).isTrue();
     }
 

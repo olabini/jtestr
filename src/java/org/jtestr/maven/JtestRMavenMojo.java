@@ -96,22 +96,20 @@ public class JtestRMavenMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         System.out.println();
         String cwd = config.getBasedir().toString();
+        String[] classPath = new String[0];
 
-        /*
-        System.err.println("CONFIG: " + config);
-        System.err.println("PROFILES: " + config.getActiveProfiles());
-        System.err.println("EXECUTIONPROJECT: " + config.getExecutionProject());
-        if(config.getExecutionProject() != null) {
-            System.err.println("EXECUTIONPROJECT.BASEDIR: " + config.getExecutionProject().getBasedir());
+        try {
+            classPath = (String[])(config.getTestClasspathElements().toArray(classPath));
+        } catch(Exception e) {
+            // Ignore
         }
-        */
 
         boolean ran = false;
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
             try {
-                JtestRAntClient.executeClient(socket, cwd, tests, logging, outputLevel, output, groups, JtestRRunner.DEFAULT_RESULT_HANDLER);
+                JtestRAntClient.executeClient(socket, cwd, tests, logging, outputLevel, output, groups, JtestRRunner.DEFAULT_RESULT_HANDLER, classPath);
             } catch(BackgroundClientException e) {
                 throw new MojoExecutionException(e.getMessage(), e.getCause());
             }
@@ -122,7 +120,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(cwd, tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), JtestRRunner.DEFAULT_RESULT_HANDLER);
+                boolean result = testRunner.run(cwd, tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), JtestRRunner.DEFAULT_RESULT_HANDLER, classPath);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new MojoExecutionException("Tests failed");

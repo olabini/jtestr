@@ -98,7 +98,7 @@ public class JtestRRunner {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
-            JtestRAntClient.executeClient(socket, workingDirectory, tests, logging, outputLevel, output, groups, resultHandler);
+            JtestRAntClient.executeClient(socket, workingDirectory, tests, logging, outputLevel, output, groups, resultHandler, new String[0]);
             ran = true;
         } catch(IOException e) {}
         
@@ -106,7 +106,7 @@ public class JtestRRunner {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(workingDirectory, tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), resultHandler);
+                boolean result = testRunner.run(workingDirectory, tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), resultHandler, new String[0]);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new RuntimeException("Tests failed");

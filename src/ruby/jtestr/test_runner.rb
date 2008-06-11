@@ -7,7 +7,7 @@ module JtestR
     include NGTestRunning 
     include ExpectationsTestRunning
 
-    def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [], rhandler = JtestR::GenericResultHandler)
+    def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [], rhandler = JtestR::GenericResultHandler, cp=[])
       JtestR::J::reset
       #      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"
       JtestR::logger = JtestR::SimpleLogger
@@ -27,7 +27,7 @@ module JtestR
       load_configuration
       setup_logger
       
-      setup_classpath
+      setup_classpath(cp)
       find_tests
 
       load_helpers
@@ -101,8 +101,12 @@ module JtestR
       @logger = JtestR.logger.new(@output, @log_level)
     end
     
-    def setup_classpath
-      cp = @configuration.configuration_values(:classpath)
+    def setup_classpath(cp_param)
+      cp = cp_param
+      if cp.nil? || cp.empty?
+        cp = @configuration.configuration_values(:classpath)
+      end
+
       add = @configuration.configuration_value(:add_common_classpath)
 
       cp = if cp.empty?
@@ -114,6 +118,7 @@ module JtestR
            end
 
       cp.flatten!
+      cp.uniq!
       cp.each do |p|
         $CLASSPATH << File.expand_path(p)
       end

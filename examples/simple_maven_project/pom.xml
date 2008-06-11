@@ -17,7 +17,7 @@
       <plugin>
         <groupId>org.jtestr</groupId>
         <artifactId>jtestr</artifactId>
-        <version>0.2.1</version>
+        <version>0.3-SNAPSHOT</version>
         <configuration>
           <port>20333</port>
         </configuration>
@@ -31,4 +31,11 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2</version>
+    </dependency>
+  </dependencies>
 </project>

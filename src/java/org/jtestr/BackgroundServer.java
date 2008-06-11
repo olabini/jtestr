@@ -128,6 +128,15 @@ public class BackgroundServer {
         return new String(buffer, 0, toRead);
     }
 
+    private String[] readBoundedArray(InputStream input) throws IOException {
+        int toRead = (int)input.read();
+        String[] out = new String[toRead];
+        for(int i=0;i<toRead;i++) {
+            out[i] = readBoundedName(input);
+        }
+        return out;
+    }
+
     private void run(Socket socket) throws IOException {
         InputStream socketInput = socket.getInputStream();
         OutputStream socketOutput = socket.getOutputStream();
@@ -166,6 +175,7 @@ public class BackgroundServer {
         debug("testing with groups: " + groups);
         String rhandler = readBoundedName(socketInput);
         debug("testing with result handler: " + rhandler);
+        String[] classPath = readBoundedArray(socketInput);
 
         socketOutput.write(new byte[]{'2','0','1'});
         socketOutput.flush();
@@ -175,7 +185,7 @@ public class BackgroundServer {
         
         TestRunner runtime = getRuntime();
         try {
-            boolean result = runtime.run(cwd, dirname, loglevel, outputlevel, output, groups.split(", ?"), rhandler);
+            boolean result = runtime.run(cwd, dirname, loglevel, outputlevel, output, groups.split(", ?"), rhandler, classPath);
             runtime.report();
             
             resOut.flush(); resErr.flush();

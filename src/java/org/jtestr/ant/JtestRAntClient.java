@@ -19,6 +19,13 @@ import org.jtestr.BackgroundClientException;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class JtestRAntClient {
+    private static void printLengthAndValue(PrintStream os, String[] output) throws IOException {
+        os.write((byte)output.length);
+        for(String cp : output) {
+            printLengthAndValue(os, cp);
+        }
+    }
+
     private static void printLengthAndValue(PrintStream os, String output) throws IOException {
         if(output == null) {
             os.write((byte)0);
@@ -28,7 +35,7 @@ public class JtestRAntClient {
         }
     }
 
-    public static void executeClient(Socket socket, String cwd, String tests, String logLevel, String outputLevel, String output, String groups, String rhandler) throws BackgroundClientException {
+    public static void executeClient(Socket socket, String cwd, String tests, String logLevel, String outputLevel, String output, String groups, String rhandler, String[] classPath) throws BackgroundClientException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
@@ -42,6 +49,7 @@ public class JtestRAntClient {
             printLengthAndValue(os, output);
             printLengthAndValue(os, groups);
             printLengthAndValue(os, rhandler);
+            printLengthAndValue(os, classPath);
 
             os.flush();
 
