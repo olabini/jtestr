@@ -29,6 +29,19 @@ public class JtestRRunner {
     private String output = "STDOUT";
     private String groups = "";
     private String resultHandler = DEFAULT_RESULT_HANDLER;
+    private String workingDirectory = getCurrentDirectory();;
+
+    private static String getCurrentDirectory() {
+        try {
+            return new java.io.File(".").getCanonicalPath();
+        } catch(Exception e) {
+            return ".";
+        }
+    }
+
+    public void setWorkingDirectory(String value) {
+        workingDirectory = value;
+    }
 
     public void setFailonerror(boolean value) {
         failOnError = value;
@@ -85,7 +98,7 @@ public class JtestRRunner {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
-            JtestRAntClient.executeClient(socket, tests, logging, outputLevel, output, groups, resultHandler);
+            JtestRAntClient.executeClient(socket, workingDirectory, tests, logging, outputLevel, output, groups, resultHandler);
             ran = true;
         } catch(IOException e) {}
         
@@ -93,7 +106,7 @@ public class JtestRRunner {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), resultHandler);
+                boolean result = testRunner.run(workingDirectory, tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), resultHandler);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new RuntimeException("Tests failed");

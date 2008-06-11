@@ -1,0 +1,15 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>jtestr-maven-multimodule</artifactId>
+    <groupId>playground</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>playground</groupId>
+  <artifactId>child-two</artifactId>
+  <name>child-two</name>
+  <version>1.0-SNAPSHOT</version>
+  <url>http://maven.apache.org</url>
+
+</project>

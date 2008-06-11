@@ -28,13 +28,14 @@ public class JtestRAntClient {
         }
     }
 
-    public static void executeClient(Socket socket, String tests, String logLevel, String outputLevel, String output, String groups, String rhandler) throws BackgroundClientException {
+    public static void executeClient(Socket socket, String cwd, String tests, String logLevel, String outputLevel, String output, String groups, String rhandler) throws BackgroundClientException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
 
             os.print("TEST");
 
+            printLengthAndValue(os, cwd);
             printLengthAndValue(os, tests);
             printLengthAndValue(os, logLevel);
             printLengthAndValue(os, outputLevel);

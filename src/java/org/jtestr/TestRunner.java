@@ -30,11 +30,13 @@ public class TestRunner {
         return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{runtime.newString(dirname)}).isTrue();
     }
 
-    public boolean run(String dirname, String logLevel, String outputLevel, String output, String[] groups, String resultHandler) {
+    public boolean run(String cwd, String dirname, String logLevel, String outputLevel, String output, String[] groups, String resultHandler) {
         IRubyObject[] arr = new IRubyObject[groups.length];
         for(int i=0;i<arr.length;i++) {
             arr[i] = runtime.newString(groups[i]);
         }
+
+        runtime.setCurrentDirectory(cwd);
 
         return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{
                 runtime.newString(dirname),

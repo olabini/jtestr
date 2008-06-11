@@ -152,6 +152,8 @@ public class BackgroundServer {
             return;
         }
 
+        String cwd = readBoundedName(socketInput);
+        debug("testing with cwd: " + cwd);
         String dirname = readBoundedName(socketInput);
         debug("testing from directory: " + dirname);
         String loglevel = readBoundedName(socketInput);
@@ -173,7 +175,7 @@ public class BackgroundServer {
         
         TestRunner runtime = getRuntime();
         try {
-            boolean result = runtime.run(dirname, loglevel, outputlevel, output, groups.split(", ?"), rhandler);
+            boolean result = runtime.run(cwd, dirname, loglevel, outputlevel, output, groups.split(", ?"), rhandler);
             runtime.report();
             
             resOut.flush(); resErr.flush();
