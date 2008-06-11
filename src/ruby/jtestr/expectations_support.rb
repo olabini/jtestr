@@ -29,7 +29,7 @@ module JtestR
     
     def run_expectations(group)
       files = group.files      
-      unless files.empty?
+      unless files.empty? || !@test_filters.empty?
         log.debug { "running expectations [#{group.name}] on #{files.inspect}" }
         
         suite_runner = Expectations::SuiteRunner.instance

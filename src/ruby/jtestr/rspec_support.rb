@@ -100,7 +100,7 @@ module JtestR
       name = group.name
       files = group.files
       
-      unless files.empty? && @configuration.configuration_values(:stories).empty?
+      unless (files.empty? && @configuration.configuration_values(:stories).empty?) || !@test_filters.empty?
         log.debug { "running stories[#{name}] on #{files.inspect}" }
         
         Spec::Story::Runner.run_options.reporter = []
