@@ -16,6 +16,7 @@ require 'jtestr/factories'
 require 'jtestr/test_runner'
 require 'jtestr/j'
 require 'jtestr/groups'
+require 'jtestr/filters'
 
 module JtestR
   class << self

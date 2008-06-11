@@ -14,6 +14,17 @@ module JtestR
       group << files
     end
     
+    class TestUnitFilter
+      def initialize(filters)
+        @filters = filters
+      end
+      def [](tc)
+        @filters.all? do |f|
+          f.accept?(tc.class, tc.method_name)
+        end
+      end
+    end
+
     def run_test_unit(group)
       files = group.files
       unless files.empty?
@@ -31,14 +42,18 @@ module JtestR
         
         log.debug "Testing classes: #{(after-before).inspect}"
 
-        result_handler = JtestR.result_handler.new(group.name, "test", @output, @output_level)
+        result_handler = JtestR.result_handler.new( 
+                                                   @test_filters.empty? ? group.name : Filters.name(@test_filters), 
+                                                   "test", 
+                                                   @output, 
+                                                   @output_level)
         
         JtestR::Helpers.apply(after_all - before_all)
         
         @result = @result & Test::Unit::AutoRunner.new(false) do |runner|
           runner.collector = proc do |r|
             c = TestUnitPresetCollector.new
-            c.filter = r.filters
+            c.filter = r.filters + [TestUnitFilter.new(@test_filters)]
             c.collect(group.name, after-before)
           end
           

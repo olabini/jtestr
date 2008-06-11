@@ -61,6 +61,10 @@ module JtestR
     def [](name)
       @groups[name.to_s.downcase.to_sym] ||= Group.new(name)
     end
+
+    def []=(name, value)
+      @groups[name.to_s.downcase.to_sym] = value
+    end
     
     def method_missing(name, *args, &block)
       if args == []

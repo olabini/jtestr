@@ -10,7 +10,48 @@ Spec::Runner.configure do |config|
   config.mock_with :mocha
 end
 
+
 module JtestR
+  ::Spec::Example::OldExampleMatcher = ::Spec::Example::ExampleMatcher
+
+  class RSpecFilterMatcher < ::Spec::Example::OldExampleMatcher
+    def initialize(example_group_description, example_name)
+      @example_group_description = example_group_description
+      @example_name = example_name
+    end
+    
+    def matches?(spec)
+      spec.is_a?(Array) && spec.all? do |s|
+        s.is_a?(::JtestR::RSpecFilter)
+      end ? spec.all? { |s| s.accept?(@example_group_description, @example_name) } : super
+    end
+  end
+  
+  class << ::Spec::Example::ExampleMatcher
+    def new(*args)
+      matcher = JtestR::RSpecFilterMatcher.allocate
+      matcher.send :initialize, *args
+      matcher
+    end
+  end
+
+  class RSpecFilter
+    def initialize(filters)
+      @filters = filters
+    end
+
+    def accept?(description, name)
+      @filters.all? do |f|
+        f.accept?(description, name)
+      end
+    end
+
+    # This one will never return a string that returns true for File.file? ... hopefully
+    def to_str
+      "!!!!!!!!!!!!!!!!!!!!!!!"
+    end
+  end
+  
   module RSpecTestRunning
    def add_rspec_groups(group, match_info)
       files = choose_files(@specs, match_info)
@@ -36,7 +77,9 @@ module JtestR
         parser = ::Spec::Runner::OptionParser.new(out, out)
         parser.order!(files)
         options = parser.options
-        
+
+        options.parse_example(RSpecFilter.new(@test_filters)) if !@test_filters.empty?
+
         result_handler = JtestR.result_handler.new(name, "example", @output, @output_level)
         
         formatters = load_spec_formatters(options, result_handler)

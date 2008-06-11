@@ -175,10 +175,12 @@ module JtestR
     end
 
     def report_stats(level = DEFAULT)
-      output("#@name: #@count #@type_name#{@count == 1 ? '' : 's'}, "+
-             "#@failures #{@failures == 1 ? 'failure' : 'failures'}, "+
-             "#@errors #{@errors == 1 ? 'error' : 'errors'}" +
-             (@pending.empty? ? '' : ", #{@pending.size} pending"), level)
+      if @count != 0
+        output("#@name: #@count #@type_name#{@count == 1 ? '' : 's'}, "+
+               "#@failures #{@failures == 1 ? 'failure' : 'failures'}, "+
+               "#@errors #{@errors == 1 ? 'error' : 'errors'}" +
+               (@pending.empty? ? '' : ", #{@pending.size} pending"), level)
+      end
     end
     
     def nl(level = DEFAULT)

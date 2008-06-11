@@ -13,18 +13,25 @@ module JtestR
       JtestR::logger = JtestR::SimpleLogger
       JtestR::result_handler = rhandler
 
+      single_test = J::System.get_property("jtestr.test")
+      
       JtestR::result_handler.before
       
       @output_level = outp_level
       @output = output
       @dirname = dirname
       @log_level = log_level
-      @groups_to_run = groups_to_run.compact.select {|s| !s.empty?}
-      
+      @groups_to_run = groups_to_run.compact.select {|s| !s.empty?}      
+      @test_filters = []
       
       @result = true
 
       load_configuration
+
+      if single_test
+        @test_filters << NameFilter.new(single_test)
+      end
+      
       setup_logger
       
       setup_classpath(cp)
@@ -41,6 +48,7 @@ module JtestR
 #      output.puts "Finished test run: #{@result && (!@errors || @errors.empty?) ? 'SUCCESSFUL' : 'FAILED'}"
       @result && (!@errors || @errors.empty?)
     rescue Exception => e
+$stderr.puts e
       log.err e.inspect
       e.backtrace.each do |bline|
         log.err bline

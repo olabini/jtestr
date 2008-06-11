@@ -59,7 +59,15 @@ public class JtestRAntRunner extends Task {
         runner.setOutput(output);
     }
 
+    private void copyProperty(String name) {
+        if(System.getProperty(name) == null && getProject().getProperty(name) != null) {
+            System.setProperty(name, getProject().getProperty(name));
+        }
+    }
+
     public void execute() throws BuildException {
+        copyProperty("jtestr.test");
+
         try {
             runner.execute();
         } catch(BackgroundClientException e) {
