@@ -6,6 +6,7 @@ describe JtestRSuite do
   it "should be possible to run a full jtestr suite with it" do 
 
     J::System.setProperty("jtestr.junit.tests", "test_tests/one_of_each")
+#    J::System.setProperty("jtestr.junit.logging", "DEBUG")
 
     request = org.junit.runner.Request.classes("JtestR suite", [JtestRSuite.java_class].to_java(J::Class))
     runner = org.junit.runner.JUnitCore.new

@@ -105,6 +105,7 @@ module JtestR
       self.class.socket.write len.length.chr
       self.class.socket.write len
       self.class.socket.write str
+      self.class.socket.flush
     end
 
     def write_bounded_array(arr)

@@ -25,6 +25,7 @@ import junit.framework.TestResult;
  *
  * <ul>
  *  <li><i>jtestr.junit.tests</i>: Sets the directory to run the tests from.</li>
+ *  <li><i>jtestr.junit.logging</i>: Sets the logging level.</li>
  * </ul>
  *
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -248,6 +249,7 @@ public class JtestRSuite implements Test {
                     }
                 }
             } catch(IOException e) {
+                e.printStackTrace();
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -287,6 +289,9 @@ public class JtestRSuite implements Test {
         if((val=System.getProperty("jtestr.junit.tests")) != null) {
             runner.setTests(val);
         }
+        if((val=System.getProperty("jtestr.junit.logging")) != null) {
+            runner.setLogging(val);
+        }
 
         ResultListener listener = new ResultListener(result);
 
@@ -297,15 +302,18 @@ public class JtestRSuite implements Test {
         t.start();
 
         try {
-            runner.execute();
+            try {
+                runner.execute();
+            } catch(RuntimeException e) {
+                if(!"Tests failed".equals(e.getMessage())) {
+                    throw e;
+                }
+            }
             t.join();
         } catch(BackgroundClientException e) {
             throw new RuntimeException(e.getMessage(), e.getCause());
-        } catch(RuntimeException e) {
-            if(!"Tests failed".equals(e.getMessage())) {
-                throw e;
-            }
         } catch(InterruptedException e) {
+            e.printStackTrace();
         } finally {
             listener.close();
         }
