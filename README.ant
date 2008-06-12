@@ -1,0 +1,10 @@
+
+Troubleshooting:
+----------------
+
+If ant is running out of memory, while building the JAR file, you need to add an ~/.antrc file that contains something like this:
+export ANT_OPTS=-Xmx512m
+
+That should allow ant to finish compilation and packaging without trouble.
+
+
