@@ -31,6 +31,99 @@ import junit.framework.TestResult;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class JtestRSuite implements Test {
+
+    private static String transformFile(String file) {
+        if(file.startsWith("in ")) {
+            return file.substring(3);
+        }
+        return file;
+    }
+
+    private static String transformOther(String other, String file) {
+        String o2 = other;
+        if(o2.startsWith("in `")) {
+            int o = o2.indexOf("'");
+            if(o != -1) {
+                o2 = o2.substring(4,o);
+                if(o2.equals(file)) {
+                    o2 = "";
+                }
+            }
+        }
+        return o2;
+    }
+    
+    /*
+     * Refer to the tests for what this method should do
+     */
+    public static String[] separateStackTraceElements(String input) {
+        String[] geh = input.split(":");
+        String file = null;
+        String other = null;
+        String temp = null;
+        int index = 0;
+        int colons = 0;
+
+        switch(geh.length) {
+        case 2:
+            // Handle cases like "<eval>:13"
+            // or "/abc.rb:13"
+            // or "in /abc.rb:13"
+            return new String[]{"", transformFile(geh[0]), geh[1]};
+
+        default:
+            // When we have more than two elements we know
+            // that either we have windows paths, or we have
+            // file: paths, or possibly both, or possibly just
+            // a simple three parter. This makes the
+            // logic slightly more complicated... =)
+
+            if(input.startsWith("in ")) {
+                index = 3;
+            }
+
+            if(input.substring(index).startsWith("file://")) {
+                index += 7;
+                colons++;
+            } else if(input.substring(index).startsWith("file:")) {
+                index += 5;
+                colons++;
+            }
+
+            // Check windows:
+            if(input.length() > index+3) {
+                temp = input.substring(index+1, index+3);
+                if(temp.equals(":/") || temp.equals(":\\")) {
+                    colons++;
+                }
+            }
+
+            file = geh[0];
+            for(int i=0;i<colons;i++) {
+                file += (":" + geh[i+1]);
+            }
+
+            file = transformFile(file);
+
+            other = "";
+            if(geh.length > colons+2) {
+                other = geh[colons+2];
+                for(int i=colons+3;i<geh.length;i++) {
+                    other += (":" + geh[i]);
+                }
+
+                other = transformOther(other, file);
+            }
+
+            return new String[]{other, file, geh[colons+1]};
+        }
+    }
+
+    public static StackTraceElement stackTraceElementFrom(String input) {
+        String[] elements = separateStackTraceElements(input);
+        return new StackTraceElement(elements[0], "", elements[1], Integer.parseInt(elements[2]));
+    }
+
     private static class ResultListener implements Runnable {
         private ServerSocket server;
         private TestResult result;
@@ -142,23 +235,7 @@ public class JtestRSuite implements Test {
 
                 StackTraceElement[] strace = new StackTraceElement[trace.length];
                 for(int i=0;i<trace.length;i++) {
-                    String[] geh = trace[i].split(":");
- 
-                    String file = geh[0];
-                    String ll = geh[1];
-                    String other = geh.length > 2 ? geh[2] : "";
-                    if(geh.length > 3) {
-                        file = geh[1];
-                        ll = geh[geh.length-2];
-                        other = geh[geh.length-1];
-                    }
-
-                    if(other.startsWith("in `")) {
-                        int o = other.indexOf("'");
-                        other = other.substring(4,o);
-                    }
-                    
-                    strace[i] = new StackTraceElement(other, "", file, Integer.parseInt(ll));
+                    strace[i] = stackTraceElementFrom(trace[i]);
                 }
                 setStackTrace(strace);
             }
@@ -181,23 +258,7 @@ public class JtestRSuite implements Test {
 
                 StackTraceElement[] strace = new StackTraceElement[trace.length];
                 for(int i=0;i<trace.length;i++) {
-                    String[] geh = trace[i].split(":");
- 
-                    String file = geh[0];
-                    String ll = geh[1];
-                    String other = geh.length > 2 ? geh[2] : "";
-                    if(geh.length > 3) {
-                        file = geh[1];
-                        ll = geh[geh.length-2];
-                        other = geh[geh.length-1];
-                    }
-
-                    if(other.startsWith("in `")) {
-                        int o = other.indexOf("'");
-                        other = other.substring(4,o);
-                    }
-                    
-                    strace[i] = new StackTraceElement(other, "", file, Integer.parseInt(ll));
+                    strace[i] = stackTraceElementFrom(trace[i]);
                 }
                 setStackTrace(strace);
             }
