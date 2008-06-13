@@ -82,6 +82,10 @@ public class JtestRSuite implements Test {
                 index = 3;
             }
 
+            if(input.substring(index).startsWith("/") && input.charAt(index+2) == ':') {
+                index++;
+            }
+
             if(input.substring(index).startsWith("file://")) {
                 index += 7;
                 colons++;
