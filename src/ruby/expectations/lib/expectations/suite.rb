@@ -10,8 +10,7 @@ class Expectations::Suite
     Expectations::XmlString.new(string)
   end
   
-  def execute(out=STDOUT)
-    suite_result = Expectations::SuiteResults.new(out)
+  def execute(out=STDOUT, suite_result = Expectations::SuiteResults.new(out))
     return suite_result if @do_not_run
     benchmark = Benchmark.measure do
       expectations_for(ENV["LINE"]).each { |expectation| suite_result << expectation.execute }

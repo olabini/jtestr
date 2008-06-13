@@ -70,4 +70,15 @@ Expectations do
     suite.expectations.first.file
   end
   
+  expect o = Object.new do 
+    suite = Expectations::Suite.new
+    suite.do_not_run
+    suite.execute(Silent, o)
+  end
+
+  expect Expectations::SuiteResults do 
+    suite = Expectations::Suite.new
+    suite.do_not_run
+    suite.execute(Silent)
+  end
 end

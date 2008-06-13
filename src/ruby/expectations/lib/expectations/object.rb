@@ -1,4 +1,26 @@
 class Object
+  module MochaExpectsMethod
+    expects_method = Object.instance_method(:expects)
+    define_method :expects do |*args|
+      expects_method.bind(self).call(*args)
+    end
+  end
+  
+  module ExpectationsExpectsMethod
+    def expects(*args)
+      Expectations::StandardError.print "expects method called from #{caller[2].chomp(":in `__instance_exec0'")}\n"
+      MochaExpectsMethod.instance_method(:expects).bind(self).call(*args)
+    end
+  end
+  
+  attr_accessor :__which_expects__
+  include MochaExpectsMethod
+  include ExpectationsExpectsMethod
+
+  def expects(*args)
+    (__which_expects__ || MochaExpectsMethod).instance_method(:expects).bind(self).call(*args)
+  end
+  
   def to
     Expectations::Recorder.new(self)
   end

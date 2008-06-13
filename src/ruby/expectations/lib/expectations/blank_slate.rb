@@ -14,7 +14,7 @@
 # BlankSlate is useful as a base class when writing classes that
 # depend upon <tt>method_missing</tt> (e.g. dynamic proxies).
 #
-class BlankSlate
+class Expectations::BlankSlate
   class << self
 
     # Hide the method named +name+ in the BlankSlate class.  Don't
@@ -64,7 +64,7 @@ module Kernel
     define_method :method_added do |name|
       result = unbound_method.call(name)
       return result if self != Kernel
-      BlankSlate.hide(name)
+      Expectations::BlankSlate.hide(name)
       result
     end
   end
@@ -81,7 +81,7 @@ class Object
     define_method :method_added do |name|
       result = unbound_method.call(name)
       return result if self != Object
-      BlankSlate.hide(name)
+      Expectations::BlankSlate.hide(name)
       result
     end
 
@@ -104,7 +104,7 @@ class Module
     result = unbound_method.bind(self).call(mod)
     return result if mod != Object
     instance_methods.each do |name|
-      BlankSlate.hide(name)
+      Expectations::BlankSlate.hide(name)
     end
     result
   end

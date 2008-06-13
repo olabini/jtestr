@@ -11,4 +11,15 @@ class Expectations::Expectation
     end
   end
   
+  def mock(*args)
+    Expectations::StandardError.print "mock method called from #{caller.first.chomp(":in `__instance_exec0'")}\n"
+    super
+  end
+  
+  def warn_for_expects
+    Object.__which_expects__ = ExpectationsExpectsMethod
+    yield
+  ensure
+    Object.__which_expects__ = MochaExpectsMethod
+  end
 end
