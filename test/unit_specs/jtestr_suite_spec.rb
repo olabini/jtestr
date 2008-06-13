@@ -17,6 +17,20 @@ describe JtestRSuite do
       result.should == ['run_group_with', '/C:\dev\jtestr0.2\trunk\jtestr\test_tests\one_of_each\simple.rb', '256']
     end
 
+    it "should return correct elements for a hybrid unix/windows path beginning with file:" do 
+      result = JtestRSuite::separateStackTraceElements("file:/C:/dev/jtestr0.2/trunk/jtestr/test_tests/one_of_each/simple.rb:5:in `instance_eval'").to_a
+      result.should == ['instance_eval', 'file:/C:/dev/jtestr0.2/trunk/jtestr/test_tests/one_of_each/simple.rb', '5']
+
+      result = JtestRSuite::separateStackTraceElements("file:/C:/dev/jtestr0.2/trunk/jtestr/test_tests/one_of_each/simple.rb:256:in `run_group_with'").to_a
+      result.should == ['run_group_with', 'file:/C:/dev/jtestr0.2/trunk/jtestr/test_tests/one_of_each/simple.rb', '256']
+
+      result = JtestRSuite::separateStackTraceElements('file:/C:\dev\jtestr0.2\trunk\jtestr\test_tests\one_of_each\simple.rb:5:in `instance_eval\'').to_a
+      result.should == ['instance_eval', 'file:/C:\dev\jtestr0.2\trunk\jtestr\test_tests\one_of_each\simple.rb', '5']
+
+      result = JtestRSuite::separateStackTraceElements('file:/C:\dev\jtestr0.2\trunk\jtestr\test_tests\one_of_each\simple.rb:256:in `run_group_with\'').to_a
+      result.should == ['run_group_with', 'file:/C:\dev\jtestr0.2\trunk\jtestr\test_tests\one_of_each\simple.rb', '256']
+    end
+    
     it "should return correct elements for a double hybrid unix/windows path" do 
       result = JtestRSuite::separateStackTraceElements("/C:/dev/jtestr0.2/trunk/jtestr/test_tests/one_of_each/simple.rb:5:in `/C:/dev/jtestr0.2/trunk/jtestr/test_tests/one_of_each/simple.rb'").to_a
       result.should == ['', '/C:/dev/jtestr0.2/trunk/jtestr/test_tests/one_of_each/simple.rb', '5']
