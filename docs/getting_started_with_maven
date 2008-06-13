@@ -8,7 +8,7 @@ JtestR currently only supports Maven2. It should be fairly simple to integrate i
   <plugin>
     <groupId>org.jtestr</groupId>
     <artifactId>jtestr</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
     <executions>
       <execution>
         <goals>
@@ -27,7 +27,7 @@ That's the basic parts needed for standalone test execution. Exactly like with A
   <plugin>
     <groupId>org.jtestr</groupId>
     <artifactId>jtestr</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
     <configuration>
       <tests>ruby_tests</tests>
     </configuration>
@@ -66,10 +66,10 @@ You can provide two other pieces of configuration that is only for the backgroun
 
 The port argument affects both the test goal and the server goal.
 
-There might be a problem with a dependency in the Maven build on a non-standard JRuby complete. This will be fixed in future revisions, but for now the best way of handling it is to download the file from [http://dist.codehaus.org/jtestr/jruby-complete-r6728.jar], and install it locally using this command:
+There might be a problem with a dependency in the Maven build on a non-standard JRuby complete. This will be fixed in future revisions, but for now the best way of handling it is to download the file from [http://dist.codehaus.org/jtestr/jruby-complete-r6947.jar], and install it locally using this command:
 
 {noformat}
-mvn install:install-file -Dfile=jruby-complete-r6349.jar -Dversion=r6728 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby
+mvn install:install-file -Dfile=jruby-complete-r6947.jar -Dversion=r6947 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby
 {noformat}
 
 That is really all there is to the Maven2 integration.
