@@ -160,24 +160,34 @@ public class BackgroundServer {
             socketOutput.flush();
             return;
         }
+        
+        JtestRConfig config = JtestRConfig.config();
 
-        String cwd = readBoundedName(socketInput);
-        debug("testing with cwd: " + cwd);
-        String dirname = readBoundedName(socketInput);
-        debug("testing from directory: " + dirname);
-        String loglevel = readBoundedName(socketInput);
-        debug("testing with loglevel: " + loglevel);
-        String outputlevel = readBoundedName(socketInput);
-        debug("testing with outputlevel: " + outputlevel);
-        String output = readBoundedName(socketInput);
-        debug("testing with output: " + output);
-        String groups = readBoundedName(socketInput);
-        debug("testing with groups: " + groups);
-        String rhandler = readBoundedName(socketInput);
-        debug("testing with result handler: " + rhandler);
+        config = config.workingDirectory(readBoundedName(socketInput));
+        debug("testing with cwd: " + config.workingDirectory());
+
+        config = config.tests(readBoundedName(socketInput));
+        debug("testing from directory: " + config.tests());
+
+        config = config.logging(readBoundedName(socketInput));
+        debug("testing with loglevel: " + config.logging());
+
+        config = config.outputLevel(readBoundedName(socketInput));
+        debug("testing with outputlevel: " + config.outputLevel());
+
+        config = config.output(readBoundedName(socketInput));
+        debug("testing with output: " + config.output());
+
+        config = config.groups(readBoundedName(socketInput));
+        debug("testing with groups: " + config.groupsAsString());
+
+        config = config.resultHandler(readBoundedName(socketInput));
+        debug("testing with result handler: " + config.resultHandler());
+
         String[] classPath = readBoundedArray(socketInput);
-        String test = readBoundedName(socketInput);
-        debug("testing with test: " + test);
+
+        config = config.test(readBoundedName(socketInput));
+        debug("testing with test: " + config.test());
 
         socketOutput.write(new byte[]{'2','0','1'});
         socketOutput.flush();
@@ -185,13 +195,13 @@ public class BackgroundServer {
         resOut.setOutput(socketOutput);
         resErr.setOutput(socketOutput);
         
-        if(test != null && test.length() > 0) {
-            System.setProperty("jtestr.test", test);
+        if(config.test() != null && config.test().length() > 0) {
+            System.setProperty("jtestr.test", config.test());
         }
 
         TestRunner runtime = getRuntime();
         try {
-            boolean result = runtime.run(cwd, dirname, loglevel, outputlevel, output, groups.split(", ?"), rhandler, classPath);
+            boolean result = runtime.run(config, classPath);
             runtime.report();
             
             resOut.flush(); resErr.flush();

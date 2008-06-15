@@ -354,6 +354,7 @@ public class JtestRSuite implements Test {
     public void run(final TestResult result) {
         JtestRRunner runner = new JtestRRunner();
 
+        // TODO: make config have a "readFromSystemProperties" that can be used here
         String val;
         if((val=System.getProperty("jtestr.junit.tests")) != null) {
             runner.setTests(val);

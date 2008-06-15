@@ -19,29 +19,11 @@ import org.jtestr.ant.JtestRAntClient;
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
 public class JtestRRunner {
-    public final static String DEFAULT_RESULT_HANDLER = "JtestR::GenericResultHandler";
+    private JtestRConfig config = JtestRConfig.config();
     private boolean failOnError = true;
-    private int port = 22332;
-    private String tests = "test";
-    private String logging = "WARN";
-    private String configFile = "jtestr_config.rb";
-    private String outputLevel = "QUIET";
-    private String output = "STDOUT";
-    private String groups = "";
-    private String resultHandler = DEFAULT_RESULT_HANDLER;
-    private String workingDirectory = getCurrentDirectory();
-    private String test = System.getProperty("jtestr.test");
-
-    private static String getCurrentDirectory() {
-        try {
-            return new java.io.File(".").getCanonicalPath();
-        } catch(Exception e) {
-            return ".";
-        }
-    }
 
     public void setWorkingDirectory(String value) {
-        workingDirectory = value;
+        config = config.workingDirectory(value);
     }
 
     public void setFailonerror(boolean value) {
@@ -49,33 +31,33 @@ public class JtestRRunner {
     }
 
     public void setTests(String tests) {
-        this.tests = tests;
+        config = config.tests(tests);
     }
 
     public void setGroups(String groups) {
-        this.groups = groups;
+        config = config.groups(groups);
     }
 
     public void setPort(int port) {
-        this.port = port;
+        config = config.port(port);
     }
 
     public void setTest(String test) {
-        this.test = test;;
+        config = config.test(test);
     }
 
     public void setConfigurationfile(String configFile) {
-        this.configFile = configFile;
+        config = config.configFile(configFile);
     }
 
     public void setResultHandler(String resultHandler) {
-        this.resultHandler = resultHandler;
+        config = config.resultHandler(resultHandler);
     }
 
     private final static List<String> LOGGING_LEVELS = Arrays.asList("NONE","ERR","WARN","INFO","DEBUG");
     public void setLogging(String logging) {
         if(LOGGING_LEVELS.contains(logging)) {
-            this.logging = logging;
+            config = config.logging(logging);
         } else {
             throw new IllegalArgumentException("Value " + logging + " is not a valid logging level. The only valid levels are: " + LOGGING_LEVELS);
         }
@@ -84,17 +66,20 @@ public class JtestRRunner {
     private final static List<String> OUTPUT_LEVELS = Arrays.asList("NONE","QUIET","NORMAL","VERBOSE","DEFAULT");
     public void setOutputlevel(String outputLevel) {
         if(OUTPUT_LEVELS.contains(outputLevel)) {
-            this.outputLevel = outputLevel;
+            config = config.outputLevel(outputLevel);
         } else {
             throw new IllegalArgumentException("Value " + outputLevel + " is not a valid output level. The only valid levels are: " + OUTPUT_LEVELS);
         }
     }
 
     public void setOutput(String output) {
-        if(output.equals("STDOUT") || output.equals("STDERR")) {
-            this.output = output;
+        if(output.equals("STDOUT") || 
+           output.equals("STDERR") || 
+           output.charAt(0) == '$' || 
+           output.charAt(0) == '@') {
+            config = config.output(output);
         } else {
-            this.output = "File.open('" + output + "', 'a+')";
+            config = config.output("File.open('" + output + "', 'a+')");
         }
     }
 
@@ -102,8 +87,8 @@ public class JtestRRunner {
         boolean ran = false;
         try {
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("127.0.0.1",port));
-            JtestRAntClient.executeClient(socket, workingDirectory, tests, logging, outputLevel, output, groups, resultHandler, new String[0], test);
+            socket.connect(new InetSocketAddress("127.0.0.1",config.port()));
+            JtestRAntClient.executeClient(socket, config, new String[0]);
             ran = true;
         } catch(IOException e) {}
         
@@ -111,7 +96,7 @@ public class JtestRRunner {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(workingDirectory, tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), resultHandler, new String[0]);
+                boolean result = testRunner.run(config, new String[0]);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new RuntimeException("Tests failed");

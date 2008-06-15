@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jtestr.BackgroundClientException;
+import org.jtestr.JtestRConfig;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -35,22 +36,22 @@ public class JtestRAntClient {
         }
     }
 
-    public static void executeClient(Socket socket, String cwd, String tests, String logLevel, String outputLevel, String output, String groups, String rhandler, String[] classPath, String test) throws BackgroundClientException {
+    public static void executeClient(Socket socket, JtestRConfig config,  String[] classPath) throws BackgroundClientException {
         try {
             InputStream is = socket.getInputStream();
             PrintStream os = new PrintStream(socket.getOutputStream());
 
             os.print("TEST");
 
-            printLengthAndValue(os, cwd);
-            printLengthAndValue(os, tests);
-            printLengthAndValue(os, logLevel);
-            printLengthAndValue(os, outputLevel);
-            printLengthAndValue(os, output);
-            printLengthAndValue(os, groups);
-            printLengthAndValue(os, rhandler);
+            printLengthAndValue(os, config.workingDirectory());
+            printLengthAndValue(os, config.tests());
+            printLengthAndValue(os, config.logging());
+            printLengthAndValue(os, config.outputLevel());
+            printLengthAndValue(os, config.output());
+            printLengthAndValue(os, config.groupsAsString());
+            printLengthAndValue(os, config.resultHandler());
             printLengthAndValue(os, classPath);
-            printLengthAndValue(os, test);
+            printLengthAndValue(os, config.test());
 
             os.flush();
 

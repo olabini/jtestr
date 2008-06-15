@@ -1,6 +1,7 @@
 
 TestRunner = org.jtestr.TestRunner unless defined?(TestRunner)
 RuntimeFactory = org.jtestr.RuntimeFactory unless defined?(RuntimeFactory)
+JtestRConfig = org.jtestr.JtestRConfig unless defined?(JtestRConfig)
 
 describe TestRunner, "with tests having a configuration file" do 
   before(:each) do 
@@ -8,6 +9,6 @@ describe TestRunner, "with tests having a configuration file" do
   end
   
   it "should load the configuration file correctly" do 
-    @runner.run("test_tests/with_config").should be_true
+    @runner.run(JtestRConfig::config.tests("test_tests/with_config"), [].to_java(:String)).should be_true
   end
 end

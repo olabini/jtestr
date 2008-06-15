@@ -23,17 +23,13 @@ public class TestRunner {
     }
 
     public boolean run() {
-        return run("test");
+        return run(JtestRConfig.config().tests("test"), new String[0]);
     }
 
-    public boolean run(String dirname) {
-        return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{runtime.newString(dirname)}).isTrue();
-    }
-
-    public boolean run(String cwd, String dirname, String logLevel, String outputLevel, String output, String[] groups, String resultHandler, String[] classPath) {
-        IRubyObject[] arr = new IRubyObject[groups.length];
+    public boolean run(JtestRConfig config, String[] classPath) {
+        IRubyObject[] arr = new IRubyObject[config.groups().length];
         for(int i=0;i<arr.length;i++) {
-            arr[i] = runtime.newString(groups[i]);
+            arr[i] = runtime.newString(config.groups()[i]);
         }
 
         IRubyObject[] cp = new IRubyObject[classPath.length];
@@ -41,15 +37,15 @@ public class TestRunner {
             cp[i] = runtime.newString(classPath[i]);
         }
 
-        runtime.setCurrentDirectory(cwd);
+        runtime.setCurrentDirectory(config.workingDirectory());
 
         return runner.callMethod(runtime.getCurrentContext(), "run", new IRubyObject[]{
-                runtime.newString(dirname),
-                runtime.evalScriptlet("JtestR::SimpleLogger::" + logLevel),
-                runtime.evalScriptlet("JtestR::GenericResultHandler::" + outputLevel),
-                runtime.evalScriptlet(output),
+                runtime.newString(config.tests()),
+                runtime.evalScriptlet("JtestR::SimpleLogger::" + config.logging()),
+                runtime.evalScriptlet("JtestR::GenericResultHandler::" + config.outputLevel()),
+                runtime.evalScriptlet(config.output()),
                 runtime.newArrayNoCopy(arr),
-                runtime.evalScriptlet(resultHandler),
+                runtime.evalScriptlet(config.resultHandler()),
                 runtime.newArrayNoCopy(cp)
             }).isTrue();
     }

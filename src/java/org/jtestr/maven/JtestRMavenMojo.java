@@ -16,6 +16,7 @@ import org.jruby.Ruby;
 import org.jtestr.RuntimeFactory;
 import org.jtestr.TestRunner;
 import org.jtestr.JtestRRunner;
+import org.jtestr.JtestRConfig;
 
 import org.jtestr.ant.JtestRAntClient;
 
@@ -109,12 +110,25 @@ public class JtestRMavenMojo extends AbstractMojo {
             test = System.getProperty("jtestr.test");
         }
 
+        JtestRConfig config = JtestRConfig.config()
+            .test(test)
+            .workingDirectory(cwd)
+            .port(port)
+            .tests(tests)
+            .logging(logging)
+            .outputLevel(outputLevel)
+            .output(output)
+            .groups(groups);
+            
+            
+        
+
         boolean ran = false;
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
             try {
-                JtestRAntClient.executeClient(socket, cwd, tests, logging, outputLevel, output, groups, JtestRRunner.DEFAULT_RESULT_HANDLER, classPath, test);
+                JtestRAntClient.executeClient(socket, config, classPath);
             } catch(BackgroundClientException e) {
                 throw new MojoExecutionException(e.getMessage(), e.getCause());
             }
@@ -125,7 +139,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
                 TestRunner testRunner = new TestRunner(runtime);
-                boolean result = testRunner.run(cwd, tests, logging, outputLevel, output, (groups == null) ? new String[0] : groups.split(", ?"), JtestRRunner.DEFAULT_RESULT_HANDLER, classPath);
+                boolean result = testRunner.run(config, classPath);
                 testRunner.report();
                 if(failOnError && !result) {
                     throw new MojoExecutionException("Tests failed");
