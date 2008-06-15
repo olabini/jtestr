@@ -1,7 +1,7 @@
 Getting started with JtestR - with ant
 --------------------------------------
 
-The first step to get started with JtestR is to download the binary jar file from http://dist.codehaus.org/jtestr. The file is quite large, since it contains several interesting libraries. Once you have downloaded the jar file, the only thing you need to get started is to add it to your classpath for the project you want to test, and then make sure you define the tasks necessary for JtestR to work. There are two tasks you might be interested in adding to your buid.xml. The first one is for general testing:
+The first step to get started with JtestR is to download the binary jar file from http://dist.codehaus.org/jtestr. The file is quite large, since it contains several interesting libraries. Once you have downloaded the jar file, the only thing you need to get started is to add it to your classpath for the project you want to test, and then make sure you define the tasks necessary for JtestR to work. There are two tasks you might be interested in adding to your build.xml. The first one is for general testing:
 
 {noformat}
 <target name="test" description="Runs all tests">
@@ -30,6 +30,11 @@ Where my_tests is a directory relative from the build.xml file. The jtestr task 
 - outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
 - output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
 
+You can also set a system property to use a specific test. This isn't one of the options to configure, but instead is only a Java system property:
+
+- jtestr.test (String, default is ""): The name of a specific test to run. If empty it isn't used.
+
+If you set this as an Ant property, it will be picked up and inserted as a system property too.
 
 If you are running your tests often - as you should - you will soon realize that it takes some time for JtestR to get started. This is because the JRuby runtime is a bit heavy weight to start. To solve this problem, there is a second ant task available that starts a background server. If a background server is started, the regular jtestr task will automatically use that instead. Both jtestr and jtestr-server takes an optional port to use for the server:
 

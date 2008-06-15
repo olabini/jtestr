@@ -53,6 +53,10 @@ The configurations supported are:
 * outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
 * output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
 
+You can also set a system property to use a specific test. This isn't one of the options to configure, but instead is only a Java system property:
+
+* jtestr.test (String, default is ""): The name of a specific test to run. If empty it isn't used.
+
 You can use another Maven goal to start a background server, just like with Ant. The best way of starting it is by running this command:
 
 {noformat}
@@ -71,5 +75,9 @@ There might be a problem with a dependency in the Maven build on a non-standard 
 {noformat}
 mvn install:install-file -Dfile=jruby-complete-r6947.jar -Dversion=r6947 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby
 {noformat}
+
+Also note that JtestR work as expected in projects using submodules. Look in the source distribution, in the examples/multi_maven_project for an example that shows how it could look.
+
+If you define your project dependencies in the Maven POM you do not need to add these dependencies to the classpath in the configuration file. The default classpath in a Maven2 project will instead be the default test classpath that Maven uses.
 
 That is really all there is to the Maven2 integration.

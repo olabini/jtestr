@@ -1,0 +1,26 @@
+Getting started with JtestR - with JUnit
+-----------------------------------------
+
+From JtestR 0.3, you can also use a JUnit harness to run your JtestR code. The reasons you would want to do this are several. Maybe the most interesting one is for IDE integration. If you IDE supports JUnit, it's extremely easy to get it to work with JtestR. If you want standard XML output from your tests, the JUnit integration makes this possible too.
+
+Too configure for JUnit XML output, you can do it like this:
+
+{noformat}
+<junit haltonfailure="false" fork="yes">
+  <jvmarg value="-Djtestr.junit.tests=test_tests/one_of_each"/>
+
+  <formatter type="xml" usefile="false"/>
+
+  <test name="org.jtestr.ant.JtestRSuite"/> 
+</junit>
+{noformat}
+
+As you can see, this example uses the JtestRSuite class, and this is the way you would configure any JUnit integration. The JtestRSuite takes care of everything for you, and you can configure the output just as you would any other JUnit test run.
+
+There are a few configuration options you can send to the system, but since JUnit doesn't provide a standard way of configuring suites, this is done through system properties for JtestR. The available system properties you can set are these:
+
+- jtestr.junit.tests (String, default is "test"): The directory to look for JtestR configuration file and tests.
+- jtestr.junit.logging (String, default is "WARN"): The logging level, valid values are: "NONE","ERR","WARN","INFO","DEBUG"
+- jtestr.test (String, default is ""): The name of a specific test to run. If empty it isn't used.
+
+

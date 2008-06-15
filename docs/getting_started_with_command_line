@@ -1,0 +1,38 @@
+Getting started with JtestR - command line interface
+----------------------------------------------------
+
+If you want to, you can also run JtestR independent of any specific build system. This will pick up and use the same configuration as the Ant and Maven2 configuration, but might be of use in certain circumstances when you want to try out more interesting tools on JtestR. The command line interface looks like this, assuming your classpath is set up correctly:
+
+{noformat}
+java org.jtestr.JtestRRunner [port] [tests] [logging] [configFile] [outputLevel] [output] [groups]
+{noformat}
+
+All command line arguments are optional:
+
+- port (int, default is 22332): The port to try checking for a JtestR server on.
+- tests (String, default is "test"): The directory to look for JtestR configuration file and tests.
+- logging (String, default is "WARN"): The logging level, valid values are: "NONE","ERR","WARN","INFO","DEBUG"
+- configFile (String, default is "jtestr_config.rb"): The name of the config file. Note that this is not a path, just the name of the file itself.
+- outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
+- output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
+- groups (String, default is ""): The groups to run, separated by comma. If not specificed, runs default groups.
+
+You can also set a system property to use a specific test. This isn't one of the options to configure, but instead is only a Java system property:
+
+- jtestr.test (String, default is ""): The name of a specific test to run. If empty it isn't used.
+
+The main reason for using the standalone runner instead of a more simple build integration would be to facilitate using a test coverage framework like Emma. You can do this from Ant using something like this:
+
+{noformat}
+<emmajava libclasspathref="emma.lib" fullmetadata="yes" sourcepath="${src.dir}" classname="org.jtestr.JtestRRunner">
+  <classpath refid="build.classpath"/>
+  <classpath path="build/classes"/>
+  <classpath path="${src.ruby.dir}"/>
+
+  <filter includes="org.jtestr.*"/>
+      
+  <txt outfile="build/coverage/coverage.txt" />
+  <xml outfile="build/coverage/coverage.xml" />
+  <html outfile="build/coverage/coverage.html"  />
+</emmajava>
+{noformat}
