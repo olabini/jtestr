@@ -27,9 +27,9 @@ module JtestR
       end
     end
 
-    def example_pending(behaviour_name, example_name, message)
-      @result_handler.add_pending("#{example_name}(#{behaviour_name}): #{message}")
-      @result_handler.pending_single(example_name)
+    def example_pending(example, message)
+      @result_handler.add_pending("#{example.description}: #{message}")
+      @result_handler.pending_single(example.description)
     end
 
     def dump_summary(*args)
