@@ -17,7 +17,7 @@ public class JtestRConfig {
     private String[] groups = new String[0];
     private String resultHandler = DEFAULT_RESULT_HANDLER;
     private String workingDirectory = getCurrentDirectory();
-    private String test = System.getProperty("jtestr.test");
+    private String test = System.getProperty("jtestr.test", "");
 
     private static String getCurrentDirectory() {
         try {
@@ -237,5 +237,24 @@ public class JtestRConfig {
      */
     public String test() {
         return this.test;
+    }
+
+    public boolean equals(Object other) {
+        boolean res = this == other;
+        if(!res && other instanceof JtestRConfig) {
+            JtestRConfig c = (JtestRConfig)other;
+            res = 
+                this.port == c.port &&
+                ((this.tests == null) ? c.tests == null : this.tests.equals(c.tests)) && 
+                ((this.logging == null) ? c.logging == null : this.logging.equals(c.logging)) && 
+                ((this.configFile == null) ? c.configFile == null : this.configFile.equals(c.configFile)) && 
+                ((this.outputLevel == null) ? c.outputLevel == null : this.outputLevel.equals(c.outputLevel)) && 
+                ((this.output == null) ? c.output == null : this.output.equals(c.output)) && 
+                ((this.groups == null) ? c.groups == null : java.util.Arrays.equals(this.groups, c.groups)) && 
+                ((this.resultHandler == null) ? c.resultHandler == null : this.resultHandler.equals(c.resultHandler)) && 
+                ((this.workingDirectory == null) ? c.workingDirectory == null : this.workingDirectory.equals(c.workingDirectory)) && 
+                ((this.test == null) ? c.test == null : this.test.equals(c.test));
+        }
+        return res;
     }
 }// JtestRConfig
