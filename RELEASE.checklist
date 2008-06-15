@@ -1,7 +1,9 @@
 These are the steps that should be done for a new release:
 ----------------------------------------------------------
 
+* Update versions from -SNAPSHOT to real
 * Update docs in repository (remember to update version numbers of everything)
+ * Base this on resolved items in JIRA
 * Update docs on site
 * Build release version
 * Upload release to dist-directory
@@ -15,6 +17,7 @@ These are the steps that should be done for a new release:
  * JRuby lists
  * Ruby-talk
 * Tag repository
+
 * Update Maven version number in trunk
 * Close all JIRA's resolved in this release
 * Create new version numbers in JIRA to track
