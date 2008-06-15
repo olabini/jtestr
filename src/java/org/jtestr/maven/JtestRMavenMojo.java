@@ -103,13 +103,18 @@ public class JtestRMavenMojo extends AbstractMojo {
         } catch(Exception e) {
             // Ignore
         }
+        
+        String test = "";
+        if(System.getProperty("jtestr.test") != null) {
+            test = System.getProperty("jtestr.test");
+        }
 
         boolean ran = false;
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
             try {
-                JtestRAntClient.executeClient(socket, cwd, tests, logging, outputLevel, output, groups, JtestRRunner.DEFAULT_RESULT_HANDLER, classPath);
+                JtestRAntClient.executeClient(socket, cwd, tests, logging, outputLevel, output, groups, JtestRRunner.DEFAULT_RESULT_HANDLER, classPath, test);
             } catch(BackgroundClientException e) {
                 throw new MojoExecutionException(e.getMessage(), e.getCause());
             }

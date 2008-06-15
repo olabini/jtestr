@@ -176,6 +176,8 @@ public class BackgroundServer {
         String rhandler = readBoundedName(socketInput);
         debug("testing with result handler: " + rhandler);
         String[] classPath = readBoundedArray(socketInput);
+        String test = readBoundedName(socketInput);
+        debug("testing with test: " + test);
 
         socketOutput.write(new byte[]{'2','0','1'});
         socketOutput.flush();
@@ -183,6 +185,10 @@ public class BackgroundServer {
         resOut.setOutput(socketOutput);
         resErr.setOutput(socketOutput);
         
+        if(test != null && test.length() > 0) {
+            System.setProperty("jtestr.test", test);
+        }
+
         TestRunner runtime = getRuntime();
         try {
             boolean result = runtime.run(cwd, dirname, loglevel, outputlevel, output, groups.split(", ?"), rhandler, classPath);

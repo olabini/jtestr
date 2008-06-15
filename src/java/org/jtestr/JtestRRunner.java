@@ -29,7 +29,8 @@ public class JtestRRunner {
     private String output = "STDOUT";
     private String groups = "";
     private String resultHandler = DEFAULT_RESULT_HANDLER;
-    private String workingDirectory = getCurrentDirectory();;
+    private String workingDirectory = getCurrentDirectory();
+    private String test = System.getProperty("jtestr.test");
 
     private static String getCurrentDirectory() {
         try {
@@ -57,6 +58,10 @@ public class JtestRRunner {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public void setTest(String test) {
+        this.test = test;;
     }
 
     public void setConfigurationfile(String configFile) {
@@ -98,7 +103,7 @@ public class JtestRRunner {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("127.0.0.1",port));
-            JtestRAntClient.executeClient(socket, workingDirectory, tests, logging, outputLevel, output, groups, resultHandler, new String[0]);
+            JtestRAntClient.executeClient(socket, workingDirectory, tests, logging, outputLevel, output, groups, resultHandler, new String[0], test);
             ran = true;
         } catch(IOException e) {}
         
