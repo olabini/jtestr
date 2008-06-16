@@ -120,9 +120,7 @@ public class JtestRMavenMojo extends AbstractMojo {
             .output(output)
             .groups(groups);
             
-            
-        
-
+       
         boolean ran = false;
         try {
             Socket socket = new Socket();

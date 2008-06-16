@@ -3,6 +3,9 @@
  */
 package org.jtestr;
 
+import java.util.List;
+import java.util.Arrays;
+
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
  */
@@ -85,13 +88,19 @@ public class JtestRConfig {
         return this.tests;
     }
 
+    private final static List<String> LOGGING_LEVELS = Arrays.asList("NONE","ERR","WARN","INFO","DEBUG");
+
     /**
      * Setter
      */
     public JtestRConfig logging(String logging) {
-        JtestRConfig local = new JtestRConfig(this);
-        local.logging = logging;
-        return local;
+        if(LOGGING_LEVELS.contains(logging)) {
+            JtestRConfig local = new JtestRConfig(this);
+            local.logging = logging;
+            return local;
+        } else {
+            throw new IllegalArgumentException("Value " + logging + " is not a valid logging level. The only valid levels are: " + LOGGING_LEVELS);
+        }
     }
 
     /**
@@ -117,13 +126,19 @@ public class JtestRConfig {
         return this.configFile;
     }
 
+    private final static List<String> OUTPUT_LEVELS = Arrays.asList("NONE","QUIET","NORMAL","VERBOSE","DEFAULT");
+
     /**
      * Setter
      */
     public JtestRConfig outputLevel(String outputLevel) {
-        JtestRConfig local = new JtestRConfig(this);
-        local.outputLevel = outputLevel;
-        return local;
+        if(OUTPUT_LEVELS.contains(outputLevel)) {
+            JtestRConfig local = new JtestRConfig(this);
+            local.outputLevel = outputLevel;
+            return local;
+        } else {
+            throw new IllegalArgumentException("Value " + outputLevel + " is not a valid output level. The only valid levels are: " + OUTPUT_LEVELS);
+        }
     }
 
     /**
@@ -138,7 +153,16 @@ public class JtestRConfig {
      */
     public JtestRConfig output(String output) {
         JtestRConfig local = new JtestRConfig(this);
-        local.output = output;
+
+        if(output.equals("STDOUT") || 
+           output.equals("STDERR") || 
+           output.charAt(0) == '$' || 
+           output.charAt(0) == '@') {
+            local.output = output;
+        } else {
+            local.output = "File.open('" + output + "', 'a+')";
+        }
+
         return local;
     }
 
@@ -162,7 +186,7 @@ public class JtestRConfig {
      * Setter
      */
     public JtestRConfig groups(String groups) {
-        if(groups == null) {
+        if(groups == null || groups.equals("")) {
             return groups(new String[0]);
         } else {
             return groups(groups.split(", ?"));

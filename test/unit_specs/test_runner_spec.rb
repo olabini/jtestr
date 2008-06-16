@@ -15,6 +15,8 @@ describe TestRunner do
     defined?(Gem).should be_nil
   end
 
+  it "should handle pending examples"
+  
 #  it "raise a bogus exception" do 
 #    raise "Hello world"
 #  end

@@ -54,33 +54,16 @@ public class JtestRRunner {
         config = config.resultHandler(resultHandler);
     }
 
-    private final static List<String> LOGGING_LEVELS = Arrays.asList("NONE","ERR","WARN","INFO","DEBUG");
     public void setLogging(String logging) {
-        if(LOGGING_LEVELS.contains(logging)) {
-            config = config.logging(logging);
-        } else {
-            throw new IllegalArgumentException("Value " + logging + " is not a valid logging level. The only valid levels are: " + LOGGING_LEVELS);
-        }
+        config = config.logging(logging);
     } 
 
-    private final static List<String> OUTPUT_LEVELS = Arrays.asList("NONE","QUIET","NORMAL","VERBOSE","DEFAULT");
     public void setOutputlevel(String outputLevel) {
-        if(OUTPUT_LEVELS.contains(outputLevel)) {
-            config = config.outputLevel(outputLevel);
-        } else {
-            throw new IllegalArgumentException("Value " + outputLevel + " is not a valid output level. The only valid levels are: " + OUTPUT_LEVELS);
-        }
+        config = config.outputLevel(outputLevel);
     }
 
     public void setOutput(String output) {
-        if(output.equals("STDOUT") || 
-           output.equals("STDERR") || 
-           output.charAt(0) == '$' || 
-           output.charAt(0) == '@') {
-            config = config.output(output);
-        } else {
-            config = config.output("File.open('" + output + "', 'a+')");
-        }
+        config = config.output(output);
     }
 
     public void execute() throws BackgroundClientException {
