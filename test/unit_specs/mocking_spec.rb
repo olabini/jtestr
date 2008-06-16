@@ -124,4 +124,18 @@ describe "Mocking" do
     
     map.size.should == 42
   end
+  
+  it "should be possible to create a Java stubbed interface from a hash" do 
+    iter = mock(java.util.Iterator)
+    iter.expects(:hasNext).returns(false)
+
+    set = mock(java.util.Set)
+    set.expects(:iterator).returns(iter)
+    
+    map = jstub(java.util.Map,
+                :size => 0,
+                :entrySet => set)
+
+    java.util.HashMap.new(map).size.should == 0
+  end
 end

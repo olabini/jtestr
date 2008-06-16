@@ -105,5 +105,15 @@ module Mocha
     def mock_class(*args)
       JtestR::Mocha::mocking_class(*args)
     end
+    
+    def jstub(type, hash = {})
+      mock = mock(type)
+
+      hash.each do |key, value|
+        mock.stubs(key).returns(value)
+      end
+      
+      mock
+    end
   end
 end
