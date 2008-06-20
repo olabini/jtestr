@@ -146,4 +146,26 @@ As mentioned, JtestR has changed some of the methods of Mocha to make it easier 
 - mock(type, preserved_methods = JtestR::Mocha::METHODS_TO_LEAVE_ALONE): When creating a mocking of a class, you sometimes need to leave methods alone so the standard behavior works. This can be done with the second parameter to the mock method.
 - mock_class(type, preserved_methods = JtestR::Mocha::METHODS_TO_LEAVE_ALONE)): If you want to use a custom constructor, you need to get this mocking class with this method and create it explicitly. It takes the same parameters as the mock-method.
 
+h3. Mocking methods that return primitive values
+
+There is one little gotcha that might actually be very hard to identify. You can get basically any kind of exception, and the line number doesn't necessarily make sense either. This usually happens when you have set up an expectation on a method that returns a primitive Java value, but you don't actually returns something from the expectation, so the return value will be nil. Say we have a Java method like this:
+
+{noformat}
+public boolean foo() { return true; }
+{noformat}
+
+And you set up the expectation like this:
+
+{noformat}
+obj.expects(:foo)
+{noformat}
+
+This will blow up in very strange ways. The reason for this is that the Java stack expects a primitive return value, but you're giving it a null instead. So when setting expectations on methods that return primitive values, you must _always_ return a value that maps to that domain. The example above can be fixed by:
+ 
+{noformat}
+obj.expects(:foo).returns(false)
+{noformat}
+
+h3. More information
+
 More information about Mocha can be found at [http://mocha.rubyforge.org/].
