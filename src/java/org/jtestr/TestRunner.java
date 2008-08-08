@@ -18,7 +18,7 @@ public class TestRunner {
 
     public TestRunner(Ruby runtime) {
         this.runtime = runtime;
-        RubyKernel.require(runtime.getTopSelf(), runtime.newString("jtestr"), Block.NULL_BLOCK);
+        RubyKernel.require(runtime.getTopSelf(), runtime.newString("jtestr.rb"), Block.NULL_BLOCK);
         runner = runtime.evalScriptlet("JtestR::TestRunner.new");
     }
 

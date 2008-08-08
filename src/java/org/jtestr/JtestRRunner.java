@@ -94,7 +94,7 @@ public class JtestRRunner {
                     System.err.println(trace[i]);
                 }
 
-                throw new RuntimeException("Exception while running", e);
+                throw new RuntimeException("Exception while running: " + e.getException().inspect().toString(), e);
             } finally {
                 try {
                     runtime.tearDown();
