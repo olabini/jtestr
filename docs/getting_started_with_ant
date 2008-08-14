@@ -11,7 +11,7 @@ The first step to get started with JtestR is to download the binary jar file fro
 </target>
 {noformat}
 
-Make sure that change the classpath variable of the taskdef to point to the real jtestr.jar. Now, when you run the test target in Ant, jtestr will check in several directories for the place where you have put your tests. Now, when you run the test target in Ant, jtestr will by default look for and run tests from a directory named "test" and its subdirectories.
+Make sure that change the classpath variable of the taskdef to point to the real jtestr.jar. Having the build.xml and jtestr.jar files in the same directory will not work. When you run the test target in Ant, jtestr will check in several directories for the place where you have put your tests. When you run the test target in Ant, jtestr will by default look for and run tests from a directory named "test" and its subdirectories.
 
 If you want to specify a different directory for your tests, use the "tests" property of the jtestr task:
 
@@ -46,13 +46,15 @@ If you are running your tests often - as you should - you will soon realize that
   </target>
 {noformat}
 
+Classes and resources loaded by the server JVM classloader from the taskdef classpath will not be dynamically replaced when you rerun your tests. It is therefore recommended that you keep the server classpath to a minimum (i.e. just the jtestr.jar).
+
 The jtestr-server task takes these arguments:
 
 - port (int, default is 22332): The port to start the JtestR server on.
 - runtimes (int, default is 3): How many runtimes to cycle through for testing. 
 - debug (boolean, default is true): Should the server write information about each connection or not?
 
-Note that the server also takes an optional argument for how many JRuby runtimes to start. In most cases 2 or 3 is good enough. It will take some time for the server to start, but once it's started it will cycle through runtimes so you should be able to start test runs very quickly. You need to keep the test-server ant task running to keep the server running. The task also provides some logging for every time it runs a test task.
+The server takes an optional argument for how many JRuby runtimes to start. In most cases 2 or 3 is good enough. It will take some time for the server to start, but once it's started it will cycle through runtimes so you should be able to start test runs very quickly. You need to keep the test-server ant task running to keep the server running. The task also provides some logging for every time it runs a test task.
 
 And that's really all you need to know on how to get started from the Ant side of things. The next step in getting started is to look at how to get started with Maven integration, or how to get started writing tests with JtestR.
 
