@@ -122,6 +122,8 @@ module JtestR
         formatters = load_story_formatters(options, result_handler)
         options.instance_variable_set :@formatters, formatters
 
+        Spec::Story::Runner.story_runner.stories = []
+
         files.each do |file|
           guard("while loading #{file}") { load file }
         end
