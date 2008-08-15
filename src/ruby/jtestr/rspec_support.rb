@@ -3,6 +3,17 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'rspec', 'lib')
 require 'spec'
 require 'spec/runner/formatter/base_formatter'
 require 'spec/story'
+module Spec
+  module Story
+    module Runner
+      class << self
+        def register_exit_hook # :nodoc:
+        end
+      end
+    end
+  end
+end
+
 require 'jtestr/rspec_result_handler'
 require 'jtestr/rspec_story_result_handler'
 
@@ -65,7 +76,7 @@ module JtestR
       group << files
     end
 
-    def run_rspec(group)
+    def run_rspec(group, aggr)
       name = group.name
       files = group.files
       
@@ -80,7 +91,7 @@ module JtestR
 
         options.parse_example(RSpecFilter.new(@test_filters)) if !@test_filters.empty?
 
-        result_handler = JtestR.result_handler.new(name, "example", @output, @output_level)
+        result_handler = JtestR.result_handler.new(name, "example", @output, @output_level, aggr)
         
         formatters = load_spec_formatters(options, result_handler)
         
@@ -96,7 +107,7 @@ module JtestR
       raise
     end
     
-    def run_rspec_stories(group)
+    def run_rspec_stories(group, aggr)
       name = group.name
       files = group.files
       
@@ -105,7 +116,7 @@ module JtestR
         
         Spec::Story::Runner.run_options.reporter = []
 
-        result_handler = JtestR.result_handler.new(name, "scenario", @output, @output_level)
+        result_handler = JtestR.result_handler.new(name, "scenario", @output, @output_level, aggr)
 
         options = Spec::Story::Runner.run_options
         formatters = load_story_formatters(options, result_handler)
@@ -114,6 +125,8 @@ module JtestR
         files.each do |file|
           guard("while loading #{file}") { load file }
         end
+
+        Spec::Story::Runner.story_runner.run_stories
         
         @result &= !result_handler.failed?
       end

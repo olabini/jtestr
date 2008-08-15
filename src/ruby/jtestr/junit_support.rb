@@ -11,7 +11,7 @@ module JtestR
       def add_junit_groups(group, name)
       end
       
-      def run_junit(group)
+      def run_junit(group, aggr)
         test_type = group.name.to_s[/(.*) JUnit$/i, 1]
         desc = "JUnit #{test_type} tests"
 
@@ -21,7 +21,7 @@ module JtestR
           request = org.junit.runner.Request.classes(desc, test_classes)
           runner = org.junit.runner.JUnitCore.new
 
-          result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level)
+          result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level, aggr)
           
           runner.addListener(JUnitResultHandler.new(result_handler))
           result = runner.run(request)

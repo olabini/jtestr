@@ -9,7 +9,7 @@ module JtestR
       def add_testng_groups(group, name)
       end
 
-      def run_testng(group)
+      def run_testng(group, aggr)
         test_type = group.name.to_s[/(.*) TestNG$/i, 1]
         desc = "TestNG #{test_type} tests"
 
@@ -20,7 +20,7 @@ module JtestR
           runner.set_verbose(0)
           runner.set_test_classes(test_classes)
           runner.set_output_directory("build/test-output")
-          result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level)
+          result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level, aggr)
           listener = TestNGResultHandler.new(result_handler)        
 
           runner.add_listener(listener)

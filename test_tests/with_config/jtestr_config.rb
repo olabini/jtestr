@@ -27,13 +27,13 @@ class IgnoringResultHandler
     def after
     end
   end
-  def initialize(name, type_name, output = STDOUT, level = DEFAULT)
+  def initialize(name, type_name, output = STDOUT, level = DEFAULT, aggregator = nil)
     @name = name
     @level = level
     @output = output
     @type_name = type_name
     $__result_handler_args = [name, type_name, output, level]
-    @internal = JtestR::GenericResultHandler.new(name, type_name, output, level)
+    @internal = JtestR::GenericResultHandler.new(name, type_name, output, level, aggregator)
   end
 
   def starting_single(name = nil)

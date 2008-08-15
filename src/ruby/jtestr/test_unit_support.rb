@@ -25,7 +25,7 @@ module JtestR
       end
     end
 
-    def run_test_unit(group)
+    def run_test_unit(group, aggr)
       files = group.files
       unless files.empty?
         log.debug { "running test unit[#{group.name}] on #{files.inspect}" }
@@ -46,7 +46,8 @@ module JtestR
                                                    @test_filters.empty? ? group.name : Filters.name(@test_filters), 
                                                    "test", 
                                                    @output, 
-                                                   @output_level)
+                                                   @output_level,
+                                                   aggr)
         
         JtestR::Helpers.apply(after_all - before_all)
         

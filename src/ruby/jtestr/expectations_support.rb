@@ -11,7 +11,7 @@ module JtestR
       group << files
     end
     
-    def run_expectations(group)
+    def run_expectations(group, aggr)
       files = group.files      
       unless files.empty? || !@test_filters.empty?
         log.debug { "running expectations [#{group.name}] on #{files.inspect}" }
@@ -28,7 +28,7 @@ module JtestR
         end
 
         begin 
-          result_handler = JtestR::ExpectationsResultHandler.new(JtestR.result_handler.new(group.name, "example", @output, @output_level))
+          result_handler = JtestR::ExpectationsResultHandler.new(JtestR.result_handler.new(group.name, "example", @output, @output_level, aggr))
 
           result = suite_runner.suite.execute(STDOUT, result_handler)
           

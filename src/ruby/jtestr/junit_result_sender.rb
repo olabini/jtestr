@@ -21,7 +21,7 @@ module JtestR
       end
     end
     
-    def initialize(name, type_name, ignored_output = STDOUT, ignored_level = DEFAULT)
+    def initialize(name, type_name, ignored_output = STDOUT, ignored_level = DEFAULT, aggregator = nil)
       @name = name
       @type_name = type_name
     end

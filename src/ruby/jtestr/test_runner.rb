@@ -16,6 +16,7 @@ module JtestR
       single_test = J::System.get_property("jtestr.test")
       
       JtestR::result_handler.before
+      @aggregator = JtestR::Aggregator.new
       
       @output_level = outp_level
       @output = output
@@ -43,6 +44,8 @@ module JtestR
       add_to_groups
       
       run_tests
+      
+      @aggregator.report_to @output
       
       @configuration.configuration_values(:after).flatten.each &:call
 #      output.puts "Finished test run: #{@result && (!@errors || @errors.empty?) ? 'SUCCESSFUL' : 'FAILED'}"
@@ -251,19 +254,19 @@ $stderr.puts e
 
     def run_group_with(name, all_rspec, all_expectations)
       case name
-      when /TestUnit$/i: run_test_unit(groups.send(name))
-      when /Spec$/i: run_rspec(groups.send(name))
-      when /Expectations$/i: run_expectations(groups.send(name))
-      when /JUnit$/i: run_junit(groups.send(name))
-      when /TestNG$/i: run_testng(groups.send(name))
-      when /Stories$/i: run_rspec_stories(groups.send(name))
+      when /TestUnit$/i: run_test_unit(groups.send(name), @aggregator)
+      when /Spec$/i: run_rspec(groups.send(name), @aggregator)
+      when /Expectations$/i: run_expectations(groups.send(name), @aggregator)
+      when /JUnit$/i: run_junit(groups.send(name), @aggregator)
+      when /TestNG$/i: run_testng(groups.send(name), @aggregator)
+      when /Stories$/i: run_rspec_stories(groups.send(name), @aggregator)
       else
         if all_rspec
-          run_rspec(groups.send(name))
+          run_rspec(groups.send(name), @aggregator)
         elsif all_expectations
-          run_expectations(groups.send(name))
+          run_expectations(groups.send(name), @aggregator)
         else
-          run_test_unit(groups.send(name))
+          run_test_unit(groups.send(name), @aggregator)
         end
       end
     end

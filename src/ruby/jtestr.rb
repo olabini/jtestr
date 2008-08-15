@@ -1,5 +1,6 @@
 require 'java'
 
+require 'jtestr/aggregator'
 require 'jtestr/simple_logger'
 require 'jtestr/generic_result_handler'
 # RSpec needs to be loaded before the Test/Unit things, because of the stupid test/unit interop features

@@ -18,7 +18,7 @@ module JtestR
     #
     # usage: GenericResultHandler.new("Unit tests", "example")
     #
-    def initialize(name, type_name, output = STDOUT, level = DEFAULT)
+    def initialize(name, type_name, output = STDOUT, level = DEFAULT, aggregator = nil)
       @name = name
       @level = level
       @output = output
@@ -26,6 +26,7 @@ module JtestR
       @count = @failures = @errors = 0
       @faults = []
       @pending = []
+      @aggregator = aggregator
     end
 
     def add_fault(fault)
@@ -49,6 +50,7 @@ module JtestR
     end
 
     def starting_single(name = nil)
+      @aggregator.add_count if @aggregator
       @tname = name
       @count += 1
     end
@@ -58,16 +60,19 @@ module JtestR
     end
 
     def fail_single(name = nil)
+      @aggregator.add_failure if @aggregator
       output("#{@tname}: F", VERBOSE)
       @failures += 1
     end
 
     def error_single(name = nil)
+      @aggregator.add_error if @aggregator
       output("#{@tname}: E", VERBOSE)
       @errors += 1
     end
 
     def pending_single(name = nil)
+      @aggregator.add_pending if @aggregator
       output("#{@tname}: P", VERBOSE)
     end
     
