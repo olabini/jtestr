@@ -138,4 +138,13 @@ describe "Mocking" do
 
     java.util.HashMap.new(map).size.should == 0
   end
+
+  it "should be possible to selectively override some methods and have real code call them" do 
+    client = mock(org.jtestr.test.FooBean, JtestR::Mocha::METHODS_TO_LEAVE_ALONE + ['assignValue', 'value'])
+    client.stubs(:createValue).returns("stubbed value")
+    
+    client.createValue.should == "stubbed value"
+    client.assignValue
+    client.value.should == "stubbed value"
+  end
 end
