@@ -7,6 +7,8 @@ module JtestR
     include NGTestRunning 
     include ExpectationsTestRunning
 
+    attr_reader :aggregator
+    
     def run(dirname = nil, log_level = JtestR::SimpleLogger::DEBUG, outp_level = JtestR::GenericResultHandler::QUIET, output = STDOUT, groups_to_run = [], rhandler = JtestR::GenericResultHandler, cp=[])
       JtestR::J::reset
       #      output.puts "Running from #{dirname || Dir['{test,src/test,tests,src/tests}'].join(',')}"

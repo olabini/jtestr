@@ -26,6 +26,10 @@ public class TestRunner {
         return run(JtestRConfig.config().tests("test"), new String[0]);
     }
 
+    public IRubyObject getAggregator() {
+        return runner.callMethod(runtime.getCurrentContext(), "aggregator"); 
+    }
+
     public boolean run(JtestRConfig config, String[] classPath) {
         IRubyObject[] arr = new IRubyObject[config.groups().length];
         for(int i=0;i<arr.length;i++) {

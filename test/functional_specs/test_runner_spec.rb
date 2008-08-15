@@ -10,5 +10,9 @@ describe TestRunner, "with tests having a configuration file" do
   
   it "should load the configuration file correctly" do 
     @runner.run(JtestRConfig::config.tests("test_tests/with_config"), [].to_java(:String)).should be_true
+    @runner.aggregator.count.should == 17
+    @runner.aggregator.failures.should == 0
+    @runner.aggregator.errors.should == 0
+    @runner.aggregator.pending.should == 0
   end
 end
