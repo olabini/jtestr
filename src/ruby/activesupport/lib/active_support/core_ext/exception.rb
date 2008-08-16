@@ -1,3 +1,11 @@
+module ActiveSupport
+  if RUBY_VERSION >= '1.9'
+    FrozenObjectError = RuntimeError
+  else
+    FrozenObjectError = TypeError
+  end
+end
+
 class Exception # :nodoc:
   def clean_message
     Pathname.clean_within message
@@ -8,8 +16,8 @@ class Exception # :nodoc:
   
   def clean_backtrace
     backtrace.collect do |line|
-      Pathname.clean_within(TraceSubstitutions.inject(line) do |line, (regexp, sub)|
-        line.gsub regexp, sub
+      Pathname.clean_within(TraceSubstitutions.inject(line) do |result, (regexp, sub)|
+        result.gsub regexp, sub
       end)
     end
   end

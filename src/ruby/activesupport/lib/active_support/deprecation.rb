@@ -85,7 +85,7 @@ module ActiveSupport
     module ClassMethods #:nodoc:
       # Declare that a method has been deprecated.
       def deprecate(*method_names)
-        options = method_names.last.is_a?(Hash) ? method_names.pop : {}
+        options = method_names.extract_options!
         method_names = method_names + options.keys
         method_names.each do |method_name|
           alias_method_chain(method_name, :deprecation) do |target, punctuation|
@@ -144,10 +144,12 @@ module ActiveSupport
         end
     end
 
-    # Stand-in for @request, @attributes, @params, etc which emits deprecation
-    # warnings on any method call (except #inspect).
+    # Stand-in for <tt>@request</tt>, <tt>@attributes</tt>, <tt>@params</tt>, etc.
+    # which emits deprecation warnings on any method call (except +inspect+).
     class DeprecatedInstanceVariableProxy #:nodoc:
-      instance_methods.each { |m| undef_method m unless m =~ /^__/ }
+      silence_warnings do
+        instance_methods.each { |m| undef_method m unless m =~ /^__/ }
+      end
 
       def initialize(instance, method, var = "@#{method}")
         @instance, @method, @var = instance, method, var
@@ -173,6 +175,7 @@ module ActiveSupport
           ActiveSupport::Deprecation.warn("#{@var} is deprecated! Call #{@method}.#{called} instead of #{@var}.#{called}. Args: #{args.inspect}", callstack)
         end
     end
+
   end
 end
 
