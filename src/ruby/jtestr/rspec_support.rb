@@ -79,7 +79,7 @@ module JtestR
     def run_rspec(group, aggr)
       name = group.name
       files = group.files
-      
+
       unless files.empty?
         log.debug { "running rspec[#{name}] on #{files.inspect}" }
 
@@ -96,7 +96,7 @@ module JtestR
         formatters = load_spec_formatters(options, result_handler)
         
         options.instance_variable_set :@formatters, formatters
-        
+
         res = ::Spec::Runner::CommandLine.run(options)
 
         @result &= res

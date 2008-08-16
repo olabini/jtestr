@@ -11,7 +11,7 @@ module JtestR
                               'send', 'equal?', 'eql?', 'to_s',
                               # Things for Java Integration
                               '__jcreate!', '__jsend!', 'java_object=', 'java_object', 
-                              'to_java_object',
+                              'to_java_object', 'initialize',
                               # Things for Mocha
                               'mocha', 'reset_mocha', 'stubba_method', 
                               'stubba_object', 'expects', 'stubs', 'verify',

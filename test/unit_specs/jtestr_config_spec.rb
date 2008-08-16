@@ -2,11 +2,11 @@
 JtestRConfig = org.jtestr.JtestRConfig unless defined?(JtestRConfig)
 
 describe JtestRConfig do
-  it "shouldn't be instantiable" do 
-    proc do 
-      JtestRConfig.new
-    end.should raise_error
-  end
+#   it "shouldn't be instantiable" do 
+#     proc do 
+#       JtestRConfig.new
+#     end.should raise_error
+#   end
 
   describe "newly created" do 
     before(:each) do 

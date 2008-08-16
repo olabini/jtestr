@@ -59,6 +59,17 @@
     </taskdef>
 
     <jtestr port="20333"/>
+<!--    <jtestr port="20333" logging="DEBUG" outputLevel="VERBOSE"/>-->
+  </target>
+
+  <target name="test-one" depends="compile" description="Runs all tests">
+    <taskdef name="jtestr" classname="org.jtestr.ant.JtestRAntRunner">
+      <classpath refid="build.classpath"/>
+      <classpath path="${classes.dir}"/>
+      <classpath path="${src.ruby.dir}"/>
+    </taskdef>
+    
+    <jtestr port="20333" logging="DEBUG" outputLevel="VERBOSE" groups="Unit Spec"/>
   </target>
 
 <!--
@@ -119,7 +130,7 @@
       <fileset dir="${src.ruby.dir}">
         <include name="**/*.rb"/>
       </fileset>
-      <zipfileset src="${lib.dir}/jruby-complete-r6947.jar"/>
+      <zipfileset src="${lib.dir}/jruby-complete-r7479.jar"/>
       <zipfileset src="${lib.dir}/junit-4.4.jar"/>
       <zipfileset src="${lib.dir}/testng-5.8-jdk15.jar"/>
       <manifest>

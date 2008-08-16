@@ -71,11 +71,11 @@
       <version>1.6.5</version>
     </dependency>   
     
-    <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r6728.jar -Dversion=r6349 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
+    <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r7471.jar -Dversion=r7471 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>r6947</version>
+      <version>r7471</version>
     </dependency>     
   </dependencies> 
 
