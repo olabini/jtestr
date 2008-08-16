@@ -41,11 +41,14 @@ public class BackgroundServer {
 
     private boolean running = false; // is the creator thread running?
 
-    public BackgroundServer(int port, int count, boolean debug) {
+    private String load = null;
+
+    public BackgroundServer(int port, int count, boolean debug, String load) {
         //        originalStandardErr.println("createing new BackgroundServer");
 
         this.port = port;
         this.debug = debug;
+        this.load = load;
 
         runtimes = new TestRunner[count];
 
@@ -89,7 +92,7 @@ public class BackgroundServer {
                 debug("creating runtime " + (next+1));
                 
                 Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
-                TestRunner runner = new TestRunner(runtime);
+                TestRunner runner = new TestRunner(runtime, load);
 
                 synchronized(runtimes) {
                     runtimes[++next] = runner;
@@ -267,6 +270,6 @@ public class BackgroundServer {
                 count = Integer.parseInt(args[1]);
             }
         }
-        new BackgroundServer(port, count, true).startServer();
+        new BackgroundServer(port, count, true, null).startServer();
     }
 }// BackgroundServer

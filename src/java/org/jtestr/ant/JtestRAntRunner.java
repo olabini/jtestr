@@ -59,6 +59,10 @@ public class JtestRAntRunner extends Task {
         runner.setOutput(output);
     }
 
+    public void setLoad(String load) {
+        runner.setLoad(load);
+    }
+
     private void copyProperty(String name) {
         if(System.getProperty(name) == null && getProject().getProperty(name) != null) {
             System.setProperty(name, getProject().getProperty(name));

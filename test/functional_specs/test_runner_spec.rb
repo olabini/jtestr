@@ -5,7 +5,7 @@ JtestRConfig = org.jtestr.JtestRConfig unless defined?(JtestRConfig)
 
 describe TestRunner, "with tests having a configuration file" do 
   before(:each) do 
-    @runner = TestRunner.new RuntimeFactory.new("<test script>").create_runtime
+    @runner = TestRunner.new(RuntimeFactory.new("<test script>").create_runtime, nil)
   end
   
   it "should load the configuration file correctly" do 

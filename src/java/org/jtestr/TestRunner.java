@@ -3,10 +3,15 @@
  */
 package org.jtestr;
 
-import org.jruby.runtime.builtin.IRubyObject;
+import java.util.HashMap;
+import java.util.Map;
 import org.jruby.Ruby;
+import org.jruby.RubyArray;
+import org.jruby.RubyHash;
 import org.jruby.RubyKernel;
 import org.jruby.runtime.Block;
+import org.jruby.runtime.GlobalVariable;
+import org.jruby.runtime.builtin.IRubyObject;
 
 /**
  * @author <a href="mailto:ola.bini@gmail.com">Ola Bini</a>
@@ -16,8 +21,23 @@ public class TestRunner {
 
     private IRubyObject runner;
 
-    public TestRunner(Ruby runtime) {
+    public TestRunner(Ruby runtime, String load) {
         this.runtime = runtime;
+        if(load != null) {
+            String[] parts = load.split(";\\s*");
+            Map<IRubyObject, IRubyObject> valueMap = new HashMap<IRubyObject, IRubyObject>();
+            for(String part : parts) {
+                String[] values = part.split("\\s*=\\s*");
+                String key = values[0];
+                String[] paths = values[1].split(",\\s*");
+                RubyArray ary = runtime.newArray(paths.length);
+                for(String path : paths) {
+                    ary.append(runtime.newString(path));
+                }
+                valueMap.put(runtime.newString(key), ary);
+            }
+            runtime.defineVariable(new GlobalVariable(runtime, "$JTESTR_LOAD_STRATEGY", RubyHash.newHash(runtime, valueMap, runtime.getNil())));
+        }
         RubyKernel.require(runtime.getTopSelf(), runtime.newString("jtestr.rb"), Block.NULL_BLOCK);
         runner = runtime.evalScriptlet("JtestR::TestRunner.new");
     }
@@ -69,7 +89,7 @@ public class TestRunner {
     public static void main(String[] args) {
         Ruby runtime = new RuntimeFactory("<test script>").createRuntime();
         try {
-            TestRunner testRunner = new TestRunner(runtime);
+            TestRunner testRunner = new TestRunner(runtime, null);
             System.err.println("succeeded: " + testRunner.run());
         } finally {
             runtime.tearDown();

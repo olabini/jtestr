@@ -66,6 +66,10 @@ public class JtestRRunner {
         config = config.output(output);
     }
 
+    public void setLoad(String load) {
+        config = config.load(load);
+    }
+
     public void execute() throws BackgroundClientException {
         boolean ran = false;
         try {
@@ -78,7 +82,7 @@ public class JtestRRunner {
         if(!ran) {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
-                TestRunner testRunner = new TestRunner(runtime);
+                TestRunner testRunner = new TestRunner(runtime, config.load());
                 boolean result = testRunner.run(config, new String[0]);
                 testRunner.report();
                 if(failOnError && !result) {

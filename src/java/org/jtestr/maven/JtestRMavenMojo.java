@@ -93,6 +93,13 @@ public class JtestRMavenMojo extends AbstractMojo {
      * @parameter expression=""
      */
     private String groups;
+
+    /**
+     * Load strategy to use.
+     *
+     * @parameter expression=""
+     */
+    private String load;
     
     public void execute() throws MojoExecutionException {
         System.out.println();
@@ -118,7 +125,8 @@ public class JtestRMavenMojo extends AbstractMojo {
             .logging(logging)
             .outputLevel(outputLevel)
             .output(output)
-            .groups(groups);
+            .groups(groups)
+            .load(load);
             
        
         boolean ran = false;
@@ -136,7 +144,7 @@ public class JtestRMavenMojo extends AbstractMojo {
         if(!ran) {
             Ruby runtime = new RuntimeFactory("<test script>", this.getClass().getClassLoader()).createRuntime();
             try {
-                TestRunner testRunner = new TestRunner(runtime);
+                TestRunner testRunner = new TestRunner(runtime, load);
                 boolean result = testRunner.run(config, classPath);
                 testRunner.report();
                 if(failOnError && !result) {

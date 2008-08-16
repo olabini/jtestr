@@ -8,7 +8,7 @@ module JtestR
     # and the value is a string or an array of strings which include
     # all the needed load paths for the specific name.
     def self.load(default_path, name)
-      paths = (Array($JTESTR_LOAD_STRATEGY[name]) rescue nil) || Array(default_path)
+      paths = Array(($JTESTR_LOAD_STRATEGY[name] rescue nil) || default_path)
 
       paths.each do |p|
         $:.unshift File.expand_path(p)

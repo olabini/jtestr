@@ -28,7 +28,7 @@ describe BackgroundServer, "without runtimes" do
   end
   
   before(:each) do 
-    @server = BackgroundServer.new($CONNECT_PORT, 0, false)
+    @server = BackgroundServer.new($CONNECT_PORT, 0, false, nil)
 
     @t = Thread.new do 
       @server.startServer

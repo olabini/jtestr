@@ -21,6 +21,7 @@ public class JtestRConfig {
     private String resultHandler = DEFAULT_RESULT_HANDLER;
     private String workingDirectory = getCurrentDirectory();
     private String test = System.getProperty("jtestr.test", "");
+    private String load = null;
 
     private static String getCurrentDirectory() {
         try {
@@ -50,6 +51,7 @@ public class JtestRConfig {
         this.resultHandler = orig.resultHandler;
         this.workingDirectory = orig.workingDirectory;
         this.test = orig.test;
+        this.load = orig.load;
     }
 
     public static JtestRConfig config() {
@@ -228,6 +230,22 @@ public class JtestRConfig {
      */
     public String resultHandler() {
         return this.resultHandler;
+    }
+
+    /**
+     * Setter
+     */
+    public JtestRConfig load(String load) {
+        JtestRConfig local = new JtestRConfig(this);
+        local.load = load;
+        return local;
+    }
+
+    /**
+     * Getter
+     */
+    public String load() {
+        return this.load;
     }
 
     /**

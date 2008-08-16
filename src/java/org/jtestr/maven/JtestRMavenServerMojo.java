@@ -35,10 +35,17 @@ public class JtestRMavenServerMojo extends AbstractMojo {
      * @parameter expression="3"
      */
     private int runtimes;
+
+    /**
+     * Load strategy to use.
+     *
+     * @parameter expression=""
+     */
+    private String load;
     
     public void execute() throws MojoExecutionException {
         try {
-            new BackgroundServer(port, runtimes, debug).startServer();
+            new BackgroundServer(port, runtimes, debug, load).startServer();
         } catch(java.io.IOException e) {
             throw new MojoExecutionException("Build server failed", e);
         }

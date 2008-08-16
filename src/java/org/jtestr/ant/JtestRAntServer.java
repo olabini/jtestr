@@ -15,6 +15,7 @@ public class JtestRAntServer extends Task {
     private int port = 22332;
     private int runtimes = 3;
     private boolean debug = true;
+    private String load = null;
 
     public void setPort(int port) {
         this.port = port;
@@ -28,9 +29,13 @@ public class JtestRAntServer extends Task {
         this.debug = debug;
     }
 
+    public void setLoad(String load) {
+        this.load = load;
+    }
+
     public void execute() throws BuildException {
         try {
-            new BackgroundServer(port, runtimes, debug).startServer();
+            new BackgroundServer(port, runtimes, debug, load).startServer();
         } catch(java.io.IOException e) {
             throw new BuildException("Build server failed", e);
         }
