@@ -1,5 +1,6 @@
 require 'java'
 
+require 'jtestr/load_strategy'
 require 'jtestr/aggregator'
 require 'jtestr/simple_logger'
 require 'jtestr/generic_result_handler'

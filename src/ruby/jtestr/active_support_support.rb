@@ -1,3 +1,1 @@
-$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..', 'activesupport', 'lib'))
-
-require 'active_support'
+JtestR::LoadStrategy.load(File.join(File.dirname(__FILE__), '..', 'activesupport', 'lib'), 'active_support')

@@ -1,6 +1,5 @@
-$:.unshift File.join(File.dirname(__FILE__), '..', 'rspec', 'lib')
+JtestR::LoadStrategy.load(File.join(File.dirname(__FILE__), '..', 'rspec', 'lib'), 'spec')
 
-require 'spec'
 require 'spec/runner/formatter/base_formatter'
 require 'spec/story'
 module Spec

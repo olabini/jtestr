@@ -1,6 +1,5 @@
-$:.unshift File.join(File.dirname(__FILE__), '..', 'expectations', 'lib')
+JtestR::LoadStrategy.load(File.join(File.dirname(__FILE__), '..', 'expectations', 'lib'), 'expectations')
 
-require 'expectations'
 require 'jtestr/expectations_result_handler'
 
 module JtestR

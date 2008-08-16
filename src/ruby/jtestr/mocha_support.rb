@@ -1,6 +1,4 @@
-$:.unshift File.join(File.dirname(__FILE__), '..', 'mocha', 'lib')
-
-require 'mocha'
+JtestR::LoadStrategy.load(File.join(File.dirname(__FILE__), '..', 'mocha', 'lib'), 'mocha')
 
 module JtestR
   module Mocha
