@@ -29,6 +29,7 @@ Where my_tests is a directory relative from the build.xml file. The jtestr task 
 - configFile (String, default is "jtestr_config.rb"): The name of the config file. Note that this is not a path, just the name of the file itself.
 - outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
 - output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
+- load (String, default is ""): A string detailing the load strategy to use if any needed. Format: "rspec = abc, foo; active_support=another,dir"
 
 You can also set a system property to use a specific test. This isn't one of the options to configure, but instead is only a Java system property:
 
@@ -55,6 +56,8 @@ The jtestr-server task takes these arguments:
 - debug (boolean, default is true): Should the server write information about each connection or not?
 
 The server takes an optional argument for how many JRuby runtimes to start. In most cases 2 or 3 is good enough. It will take some time for the server to start, but once it's started it will cycle through runtimes so you should be able to start test runs very quickly. You need to keep the test-server ant task running to keep the server running. The task also provides some logging for every time it runs a test task.
+
+The option for specifying load strategy is a bit special and needs to be explained. JtestR includes several different libraries, and uses these internal libraries for everything. In some cases this might not be ideal, and in that case you might want to use a version of a library that you have locally instead. You accomplish that by setting the "load" parameter. This parameter should be a list of keys and values. The values can be separated with commas, while each key value pair should be separated with semi colons. The value should be one or more directories where the code for the library lives. So for example, say that you have ActiveSupport in the directory /usr/lib/ActiveSupport-2.1.1, and you need something else on the load path for ActiveSupport to work, which lives in /usr/lib/RubyFoobar-1.2. Then you can specify this by setting load to be the string "active_support = /usr/lib/ActiveSupport-2.1.1, /usr/lib/RubyFoobar-1.2". Note that spaces are ignored and can be added for readability. The only keys supported at this point is: "active_support", "expectations", "mocha, "spec" and "dust". Using this feature might fail in strange ways, since JtestR is written based on the versions of the libraries bundled.
 
 And that's really all you need to know on how to get started from the Ant side of things. The next step in getting started is to look at how to get started with Maven integration, or how to get started writing tests with JtestR.
 

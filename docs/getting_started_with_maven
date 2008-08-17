@@ -8,7 +8,7 @@ JtestR currently only supports Maven2. It should be fairly simple to integrate i
   <plugin>
     <groupId>org.jtestr</groupId>
     <artifactId>jtestr</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.3.1</version>
     <executions>
       <execution>
         <goals>
@@ -27,7 +27,7 @@ That's the basic parts needed for standalone test execution. Exactly like with A
   <plugin>
     <groupId>org.jtestr</groupId>
     <artifactId>jtestr</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.3.1</version>
     <configuration>
       <tests>ruby_tests</tests>
     </configuration>
@@ -52,6 +52,7 @@ The configurations supported are:
 * configFile (String, default is "jtestr_config.rb"): The name of the config file. Note that this is not a path, just the name of the file itself.
 * outputLevel (String, default is "QUIET"): The unified result handling in JtestR has different levels of verbosity. Valid values are: "NONE","QUIET","NORMAL","VERBOSE","DEFAULT"
 * output (String, default is "STDOUT"): The place output from test runs should end up. This can be any Ruby code. The resulting object needs to be IO-like.
+* load (String, default is ""): A string detailing the load strategy to use if any needed. Format: "rspec = abc, foo; active_support=another,dir"
 
 You can also set a system property to use a specific test. This isn't one of the options to configure, but instead is only a Java system property:
 
@@ -73,5 +74,8 @@ The port argument affects both the test goal and the server goal.
 Also note that JtestR work as expected in projects using submodules. Look in the source distribution, in the examples/multi_maven_project for an example that shows how it could look.
 
 If you define your project dependencies in the Maven POM you do not need to add these dependencies to the classpath in the configuration file. The default classpath in a Maven2 project will instead be the default test classpath that Maven uses.
+
+
+The option for specifying load strategy is a bit special and needs to be explained. JtestR includes several different libraries, and uses these internal libraries for everything. In some cases this might not be ideal, and in that case you might want to use a version of a library that you have locally instead. You accomplish that by setting the "load" parameter. This parameter should be a list of keys and values. The values can be separated with commas, while each key value pair should be separated with semi colons. The value should be one or more directories where the code for the library lives. So for example, say that you have ActiveSupport in the directory /usr/lib/ActiveSupport-2.1.1, and you need something else on the load path for ActiveSupport to work, which lives in /usr/lib/RubyFoobar-1.2. Then you can specify this by setting load to be the string "active_support = /usr/lib/ActiveSupport-2.1.1, /usr/lib/RubyFoobar-1.2". Note that spaces are ignored and can be added for readability. The only keys supported at this point is: "active_support", "expectations", "mocha, "spec" and "dust". Using this feature might fail in strange ways, since JtestR is written based on the versions of the libraries bundled.
 
 That is really all there is to the Maven2 integration.
