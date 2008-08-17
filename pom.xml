@@ -70,10 +70,8 @@
       <artifactId>ant</artifactId>
       <version>1.6.5</version>
     </dependency>   
-    
-    <!-- at command prompt type this: mvn install:install-file -Dfile=lib\jruby-complete-r7479.jar -Dversion=r7479 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby  -->
     <dependency>
-      <groupId>org.jruby</groupId>
+      <groupId>org.jtestr</groupId>
       <artifactId>jruby-complete</artifactId>
       <version>r7479</version>
     </dependency>     

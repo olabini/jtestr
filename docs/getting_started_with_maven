@@ -70,12 +70,6 @@ You can provide two other pieces of configuration that is only for the backgroun
 
 The port argument affects both the test goal and the server goal.
 
-There might be a problem with a dependency in the Maven build on a non-standard JRuby complete. This will be fixed in future revisions, but for now the best way of handling it is to download the file from [http://dist.codehaus.org/jtestr/jruby-complete-r7479.jar], and install it locally using this command:
-
-{noformat}
-mvn install:install-file -Dfile=jruby-complete-r7479.jar -Dversion=r7479 -DartifactId=jruby-complete -Dpackaging=jar -DgroupId=org.jruby
-{noformat}
-
 Also note that JtestR work as expected in projects using submodules. Look in the source distribution, in the examples/multi_maven_project for an example that shows how it could look.
 
 If you define your project dependencies in the Maven POM you do not need to add these dependencies to the classpath in the configuration file. The default classpath in a Maven2 project will instead be the default test classpath that Maven uses.
