@@ -88,6 +88,8 @@ module JtestR
         parser.order!(files)
         options = parser.options
 
+        options.colour = true
+
         options.parse_example(RSpecFilter.new(@test_filters)) if !@test_filters.empty?
 
         result_handler = JtestR.result_handler.new(name, "example", @output, @output_level, aggr)
@@ -118,6 +120,9 @@ module JtestR
         result_handler = JtestR.result_handler.new(name, "scenario", @output, @output_level, aggr)
 
         options = Spec::Story::Runner.run_options
+
+        options.colour = true
+
         formatters = load_story_formatters(options, result_handler)
         options.instance_variable_set :@formatters, formatters
 
