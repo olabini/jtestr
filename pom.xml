@@ -5,7 +5,7 @@
   <groupId>org.jtestr</groupId>
   <artifactId>jtestr</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>0.3.2-SNAPSHOT</version>
+  <version>0.4.0-snapshot</version>
   <name>JtestR</name>
   
   <build>
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.jtestr</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>r7479</version>
+      <version>1.2.0</version>
     </dependency>     
   </dependencies> 
 
