@@ -1,8 +1,12 @@
 require 'mocha/expectation'
 require 'mocha/expectation_list'
-require 'mocha/stub'
-require 'mocha/missing_expectation'
 require 'mocha/metaclass'
+require 'mocha/names'
+require 'mocha/mockery'
+require 'mocha/method_matcher'
+require 'mocha/parameters_matcher'
+require 'mocha/unexpected_invocation'
+require 'mocha/argument_iterator'
 
 module Mocha # :nodoc:
   
@@ -11,23 +15,10 @@ module Mocha # :nodoc:
   # Methods return an Expectation which can be further modified by methods on Expectation.
   class Mock
     
-    # :stopdoc:
-    
-    def initialize(stub_everything = false, name = nil)
-      @stub_everything = stub_everything
-      @mock_name = name
-      @expectations = ExpectationList.new
-      @responder = nil
-    end
-
-    attr_reader :stub_everything, :expectations
-  
-    # :startdoc:
-
     # :call-seq: expects(method_name) -> expectation
-    #            expects(method_names) -> last expectation
+    #            expects(method_names_vs_return_values) -> last expectation
     #
-    # Adds an expectation that a method identified by +method_name+ symbol must be called exactly once with any parameters.
+    # Adds an expectation that a method identified by +method_name+ Symbol/String must be called exactly once with any parameters.
     # Returns the new expectation which can be further modified by methods on Expectation.
     #   object = mock()
     #   object.expects(:method1)
@@ -37,7 +28,7 @@ module Mocha # :nodoc:
     #   object = mock()
     #   object.expects(:method1)
     #   # error raised, because method1 not called exactly once
-    # If +method_names+ is a +Hash+, an expectation will be set up for each entry using the key as +method_name+ and value as +return_value+.
+    # If +method_names_vs_return_values+ is a +Hash+, an expectation will be set up for each entry using the key as +method_name+ and value as +return_value+.
     #   object = mock()
     #   object.expects(:method1 => :result1, :method2 => :result2)
     #
@@ -49,26 +40,27 @@ module Mocha # :nodoc:
     #
     # Aliased by <tt>\_\_expects\_\_</tt>
     def expects(method_name_or_hash, backtrace = nil)
-      if method_name_or_hash.is_a?(Hash) then
-        method_name_or_hash.each do |method_name, return_value|
-          add_expectation(Expectation.new(self, method_name, backtrace).returns(return_value))
-        end
-      else
-        add_expectation(Expectation.new(self, method_name_or_hash, backtrace))
-      end
+      iterator = ArgumentIterator.new(method_name_or_hash)
+      iterator.each { |*args|
+        method_name = args.shift
+        ensure_method_not_already_defined(method_name)
+        expectation = Expectation.new(self, method_name, backtrace)
+        expectation.returns(args.shift) if args.length > 0
+        @expectations.add(expectation)
+      }
     end
     
     # :call-seq: stubs(method_name) -> expectation
-    #            stubs(method_names) -> last expectation
+    #            stubs(method_names_vs_return_values) -> last expectation
     #
-    # Adds an expectation that a method identified by +method_name+ symbol may be called any number of times with any parameters.
+    # Adds an expectation that a method identified by +method_name+ Symbol/String may be called any number of times with any parameters.
     # Returns the new expectation which can be further modified by methods on Expectation.
     #   object = mock()
     #   object.stubs(:method1)
     #   object.method1
     #   object.method1
     #   # no error raised
-    # If +method_names+ is a +Hash+, an expectation will be set up for each entry using the key as +method_name+ and value as +return_value+.
+    # If +method_names_vs_return_values+ is a +Hash+, an expectation will be set up for each entry using the key as +method_name+ and value as +return_value+.
     #   object = mock()
     #   object.stubs(:method1 => :result1, :method2 => :result2)
     #
@@ -80,13 +72,15 @@ module Mocha # :nodoc:
     #
     # Aliased by <tt>\_\_stubs\_\_</tt>
     def stubs(method_name_or_hash, backtrace = nil)
-      if method_name_or_hash.is_a?(Hash) then
-        method_name_or_hash.each do |method_name, return_value|
-          add_expectation(Stub.new(self, method_name, backtrace).returns(return_value))
-        end
-      else
-        add_expectation(Stub.new(self, method_name_or_hash, backtrace))
-      end
+      iterator = ArgumentIterator.new(method_name_or_hash)
+      iterator.each { |*args|
+        method_name = args.shift
+        ensure_method_not_already_defined(method_name)
+        expectation = Expectation.new(self, method_name, backtrace)
+        expectation.at_least(0)
+        expectation.returns(args.shift) if args.length > 0
+        @expectations.add(expectation)
+      }
     end
     
     # :call-seq: responds_like(responder) -> mock
@@ -135,6 +129,16 @@ module Mocha # :nodoc:
     end
     
     # :stopdoc:
+    
+    def initialize(name = nil, &block)
+      @name = name || DefaultName.new(self)
+      @expectations = ExpectationList.new
+      @everything_stubbed = false
+      @responder = nil
+      instance_eval(&block) if block
+    end
+
+    attr_reader :everything_stubbed, :expectations
 
     alias_method :__expects__, :expects
 
@@ -142,55 +146,51 @@ module Mocha # :nodoc:
     
     alias_method :quacks_like, :responds_like
 
-    def add_expectation(expectation)
-      @expectations.add(expectation)
-      method_name = expectation.method_name
-      self.__metaclass__.send(:undef_method, method_name) if self.__metaclass__.method_defined?(method_name)
-      expectation
+    def stub_everything
+      @everything_stubbed = true
     end
-
+    
     def method_missing(symbol, *arguments, &block)
       if @responder and not @responder.respond_to?(symbol)
         raise NoMethodError, "undefined method `#{symbol}' for #{self.mocha_inspect} which responds like #{@responder.mocha_inspect}"
       end
-      matching_expectation = @expectations.detect(symbol, *arguments)
-      if matching_expectation then
-        matching_expectation.invoke(&block)
-      elsif stub_everything then
-        return
+      if matching_expectation_allowing_invocation = @expectations.match_allowing_invocation(symbol, *arguments)
+        matching_expectation_allowing_invocation.invoke(&block)
       else
-        unexpected_method_called(symbol, *arguments)
+        if (matching_expectation = @expectations.match(symbol, *arguments)) || (!matching_expectation && !@everything_stubbed)
+          message = UnexpectedInvocation.new(self, symbol, *arguments).to_s
+          message << Mockery.instance.mocha_inspect
+          raise ExpectationError.new(message, caller)
+        end
       end
     end
     
-    def respond_to?(symbol)
+    def respond_to?(symbol, include_private = false)
       if @responder then
-        @responder.respond_to?(symbol)
+        if @responder.method(:respond_to?).arity > 1
+          @responder.respond_to?(symbol, include_private)
+        else
+          @responder.respond_to?(symbol)
+        end
       else
-        @expectations.respond_to?(symbol)
+        @everything_stubbed || @expectations.matches_method?(symbol)
       end
     end
-  
-    def unexpected_method_called(symbol, *arguments)
-      MissingExpectation.new(self, symbol).with(*arguments).verify
+    
+    def __verified__?(assertion_counter = nil)
+      @expectations.verified?(assertion_counter)
     end
-  
-    def verify(&block)
-      @expectations.verify(&block)
-    end
-  
+    
     def mocha_inspect
-      address = self.__id__ * 2
-      address += 0x100000000 if address < 0
-      @mock_name ? "#<Mock:#{@mock_name}>" : "#<Mock:0x#{'%x' % address}>"
+      @name.mocha_inspect
     end
     
     def inspect
       mocha_inspect
     end
-
-    def similar_expectations(method_name)
-      @expectations.similar(method_name)
+    
+    def ensure_method_not_already_defined(method_name)
+      self.__metaclass__.send(:undef_method, method_name) if self.__metaclass__.method_defined?(method_name)
     end
 
     # :startdoc:

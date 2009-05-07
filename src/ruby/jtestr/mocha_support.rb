@@ -6,7 +6,8 @@ module JtestR
                               # Things for internal Ruby
                               '__id__', '__send__', '__metaclass__', '==', 'inspect',
                               '__is_a__', 'equals', 'respond_to?', 'class', 'methods', 
-                              'send', 'equal?', 'eql?', 'to_s',
+                              'send', 'equal?', 'eql?', 'to_s', 'object_id',
+                              'public_methods', 'protected_methods', 'private_methods',
                               # Things for Java Integration
                               '__jcreate!', '__jsend!', 'java_object=', 'java_object', 
                               'to_java_object', 'initialize',
@@ -89,7 +90,7 @@ class Class
 end
 
 module Mocha
-  module AutoVerify
+  module Standalone
     alias old_mock mock
     
     def mock(*args)
