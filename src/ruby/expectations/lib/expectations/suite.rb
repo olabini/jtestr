@@ -1,6 +1,9 @@
 class Expectations::Suite
   
   include Mocha::Standalone
+  class << self
+    attr_accessor :silent
+  end
   
   def initialize
     @do_not_run = false
@@ -21,7 +24,7 @@ class Expectations::Suite
   end
   
   def expect(expected, &block)
-    expectations << Expectations::Expectation.new(expected, *caller.first.split(/:/)[0..1], &block)
+    expectations << Expectations::Expectation.new(expected, *caller.first.match(/\A(.+):(\d+)\Z/)[1..2], &block)
   end
   
   def do_not_run

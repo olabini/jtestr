@@ -37,9 +37,6 @@ class Object
   def do_tests(type, options, &block) #:nodoc:
     options[:allow] = options[:allow].arrayize
     full_path_file_name = eval "__FILE__", block.binding
-    if full_path_file_name == "(eval)" # jruby 1.0.2 compatibility
-      full_path_file_name = caller[1].gsub(/\.rb:\d+.*$/, "")
-    end
     test_name = File.basename(full_path_file_name, ".rb")
     test_class = eval "module #{type}; class #{test_name.to_class_name} < Test::Unit::TestCase; self; end; end"
     test_class.class_eval &block

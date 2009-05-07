@@ -20,6 +20,15 @@ Expectations do
     suite.execute(Silent).succeeded?
   end
   
+  expect false do
+    suite = Expectations::Suite.new
+    suite.expect(true) { true }
+    suite.expect suite.mock.to.receive(:some_method) do |some_mock|
+      # some_method is not called
+    end
+    suite.execute(Silent).succeeded?
+  end
+  
   expect Mocha::Mock do
     Expectations::Suite.new.mock
   end

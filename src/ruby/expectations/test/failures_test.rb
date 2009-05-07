@@ -12,10 +12,11 @@ Expectations do
     suite.expect(ArgumentError) { Object.no_method }
     suite.execute(Silent).expectations.first
   end
-
+  
   expect Expectations::Results::BehaviorBasedFailure do
+    Expectations::StandardError.silence
     suite = Expectations::Suite.new
-    suite.expect Mocha::Mock.new.to.receive(:dial).with("2125551212").times(2) do |phone|
+    suite.expect mock.to.receive(:dial).with("2125551212").times(2) do |phone|
       phone.dial("2125551212")
       phone.dial("2125551212")
       phone.dial("2125551212")
@@ -26,25 +27,25 @@ Expectations do
   expect Expectations::Results::BehaviorBasedFailure do
     Expectations::StandardError.stubs(:print)
     suite = Expectations::Suite.new
-    suite.expect Mocha::Mock.new.to.receive(:dial).with("2125551212").times(2) do |phone| 
+    suite.expect mock.to.receive(:dial).with("2125551212").times(2) do |phone| 
       phone.dial("2125551212")
     end
     suite.execute(Silent).expectations.first
   end
-
+  
   expect Expectations::Results::BehaviorBasedFailure do
     Expectations::StandardError.stubs(:print)
     suite = Expectations::Suite.new
     suite.expect(Object.to.receive(:deal)) {  }
     suite.execute(Silent).expectations.first
   end
-
+  
   expect Expectations::Results::Error do
     suite = Expectations::Suite.new
     suite.expect(2) { stub(:two => 2).twos }
     suite.execute(Silent).expectations.first
   end
-
+  
   expect Expectations::Results::Error do
     Expectations::StandardError.stubs(:print)
     suite = Expectations::Suite.new
@@ -54,7 +55,7 @@ Expectations do
     end
     suite.execute(Silent).expectations.first
   end
-
+  
   expect Expectations::Results::Error do
     Expectations::StandardError.stubs(:print)
     suite = Expectations::Suite.new
@@ -64,7 +65,7 @@ Expectations do
     end
     suite.execute(Silent).expectations.first
   end
-
+  
   expect Expectations::Results::Error do
     Expectations::StandardError.stubs(:print)
     suite = Expectations::Suite.new
@@ -73,7 +74,7 @@ Expectations do
     end
     suite.execute(Silent).expectations.first
   end
-
+  
   expect Expectations::Results::Error do
     Expectations::StandardError.stubs(:print)
     suite = Expectations::Suite.new
@@ -102,5 +103,5 @@ Expectations do
     end
     suite.execute(Silent).expectations.first
   end
-  
+   
 end

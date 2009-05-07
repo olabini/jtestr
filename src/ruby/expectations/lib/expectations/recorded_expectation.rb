@@ -6,6 +6,10 @@ module Expectations::RecordedExpectation
       warn_for_expects do
         instance_exec(expected.subject, &block) if block
       end
+      if expected.subject.is_a?(Mocha::Mock) &&
+          !Mocha::Mockery.instance.mocks.include?(expected.subject)
+        Mocha::Mockery.instance.__send__(:add_mock, expected.subject)
+      end
       if expected.verify! && mocha_verify
         self.extend(Expectations::Results::Fulfilled)
       else

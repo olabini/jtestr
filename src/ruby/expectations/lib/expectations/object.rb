@@ -16,7 +16,6 @@ class Object
   attr_accessor :__which_expects__
   include MochaExpectsMethod
   include ExpectationsExpectsMethod
-
   def expects(*args)
     (__which_expects__ || MochaExpectsMethod).instance_method(:expects).bind(self).call(*args)
   end

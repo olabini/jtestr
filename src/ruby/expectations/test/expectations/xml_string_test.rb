@@ -1,17 +1,9 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
 Expectations do
-  expect true do
-    Expectations::XmlString.new("<foo>bar</foo>").expectations_equal_to "<foo>bar</foo>"
-  end
-
-  expect false do
-    Expectations::XmlString.new("<foo>not bar</foo>").expectations_equal_to "<foo>bar</foo>"
-  end
-
-  expect false do
-    Expectations::XmlString.new("<not-foo>bar</not-foo>").expectations_equal_to "<foo>bar</foo>"
-  end
+  expect Expectations::XmlString.new("<foo>bar</foo>").to.be.expectations_equal_to("<foo>bar</foo>")
+  expect Expectations::XmlString.new("<foo>not bar</foo>").not.to.be.expectations_equal_to("<foo>bar</foo>")
+  expect Expectations::XmlString.new("<not-foo>bar</not-foo>").not.to.be.expectations_equal_to("<foo>bar</foo>")
 
   expect true do
     Expectations::XmlString.new("<foo>bar</foo>").expectations_equal_to "  <foo>bar</foo>  "
