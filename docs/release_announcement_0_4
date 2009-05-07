@@ -1,0 +1,24 @@
+JtestR 0.4 Released
+-------------------
+
+JtestR allows you to test your Java code with Ruby frameworks.
+
+Homepage: http://jtestr.codehaus.org
+Download: http://dist.codehaus.org/jtestr
+
+JtestR 0.4 is the current release of the JtestR testing tool. JtestR integrates JRuby with several Ruby frameworks to allow painless testing of Java code, using RSpec, Test/Unit, Expectations, dust and Mocha.
+
+Features:
+- Integrates with Ant, Maven and JUnit
+- Includes JRuby 1.2, Test/Unit, RSpec, Expectations, dust, Mocha and ActiveSupport
+- Customizes Mocha so that mocking of any Java class is possible
+- Background testing server for quick startup of tests
+- Automatically runs your JUnit and TestNG codebase as part of the build
+
+Getting started: http://jtestr.codehaus.org/Getting+Started
+
+New in the 0.4 release is upgrade of JRuby to version 1.2, upgrade of ActiveSupport to 2.3.2, Mocha to 0.9.5 and RSpec to 1.2.6.
+
+Seeing as the new RSpec version no longer supports the story runner, support for this have been removed from JtestR. Cucumber support will arrive in a future version.
+
+Ola Bini           - ola.bini@gmail.com
