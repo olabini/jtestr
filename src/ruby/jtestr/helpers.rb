@@ -80,6 +80,9 @@ module JtestR
     end
     
     def ext(type)
+      if type.is_a?(Spec::Example::ExampleGroupProxy)
+        type = type.instance_variable_get :@real_group
+      end
       unless type <= @module
         type.send(:include, @module)
       end

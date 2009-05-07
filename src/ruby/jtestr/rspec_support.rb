@@ -1,20 +1,21 @@
+ENV["NO_RUBYGEMS"] = "true"
 JtestR::LoadStrategy.load(File.join(File.dirname(__FILE__), '..', 'rspec', 'lib'), 'spec')
 
 require 'spec/runner/formatter/base_formatter'
-require 'spec/story'
-module Spec
-  module Story
-    module Runner
-      class << self
-        def register_exit_hook # :nodoc:
-        end
-      end
-    end
-  end
-end
+#require 'spec/story'
+# module Spec
+#   module Story
+#     module Runner
+#       class << self
+#         def register_exit_hook # :nodoc:
+#         end
+#       end
+#     end
+#   end
+# end
 
 require 'jtestr/rspec_result_handler'
-require 'jtestr/rspec_story_result_handler'
+#require 'jtestr/rspec_story_result_handler'
 
 Spec::Runner.configure do |config|
   config.mock_with :mocha
@@ -112,7 +113,7 @@ module JtestR
       name = group.name
       files = group.files
       
-      unless (files.empty? && @configuration.configuration_values(:stories).empty?) || !@test_filters.empty?
+      unless true || ((files.empty? && @configuration.configuration_values(:stories).empty?) || !@test_filters.empty?)
         log.debug { "running stories[#{name}] on #{files.inspect}" }
         
         Spec::Story::Runner.run_options.reporter = []

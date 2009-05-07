@@ -250,8 +250,6 @@ $stderr.puts e
       
       #Make sure that Test::Unit won't try to fire its at_exit hook
       Test::Unit.run = true 
-      #Make sure that RSpec won't try to fire its at_exit hook
-      Spec.run = true 
     end
 
     def run_group_with(name, all_rspec, all_expectations)

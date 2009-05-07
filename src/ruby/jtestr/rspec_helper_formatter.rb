@@ -2,9 +2,9 @@ module JtestR
   class RSpecHelperFormatter < ::Spec::Runner::Formatter::BaseFormatter
     def initialize;end
     
-    def add_example_group(example_group)
+    def example_group_started(example_group)
       JtestR::Helpers.apply([example_group])
-      super
+      @example_group = example_group
     end
   end
 end

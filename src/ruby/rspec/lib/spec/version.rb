@@ -1,22 +1,13 @@
-module Spec
-  module VERSION
+module Spec # :nodoc:
+  module VERSION # :nodoc:
     unless defined? MAJOR
       MAJOR  = 1
-      MINOR  = 1
-      TINY   = 4
-      RELEASE_CANDIDATE = nil
+      MINOR  = 2
+      TINY   = 6
+      
+      STRING = [MAJOR, MINOR, TINY].compact.join('.')
 
-      BUILD_TIME_UTC = 20080526202855
-
-      STRING = [MAJOR, MINOR, TINY].join('.')
-      TAG = "REL_#{[MAJOR, MINOR, TINY, RELEASE_CANDIDATE].compact.join('_')}".upcase.gsub(/\.|-/, '_')
-      FULL_VERSION = "#{[MAJOR, MINOR, TINY, RELEASE_CANDIDATE].compact.join('.')} (build #{BUILD_TIME_UTC})"
-
-      NAME   = "RSpec"
-      URL    = "http://rspec.rubyforge.org/"  
-    
-      DESCRIPTION = "#{NAME}-#{FULL_VERSION} - BDD for Ruby\n#{URL}"
+      SUMMARY = "rspec #{STRING}"
     end
   end
 end
-
