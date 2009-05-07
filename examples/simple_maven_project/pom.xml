@@ -17,7 +17,7 @@
       <plugin>
         <groupId>org.jtestr</groupId>
         <artifactId>jtestr</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1-SNAPSHOT</version>
         <configuration>
           <port>20333</port>
         </configuration>
