@@ -5,7 +5,7 @@
   <groupId>org.jtestr</groupId>
   <artifactId>jruby-complete</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.0</version>
+  <version>r50f18ccb59d5899171aa196b13b351d17741f555</version>
   <name>JtestR JRuby Complete</name>
   
   <build>
@@ -25,7 +25,7 @@
             <inherited>false</inherited>
             <configuration>
               <tasks>
-                <copy file="../lib/jruby-complete-1.2.0.jar" todir="target" overwrite="true"/>
+                <copy file="../lib/jruby-complete-r50f18ccb59d5899171aa196b13b351d17741f555.jar" todir="target" overwrite="true"/>
               </tasks>
             </configuration>
           </execution>

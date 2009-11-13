@@ -44,15 +44,18 @@ public class RuntimeFactory {
         this.loader = loader;
     }
 
+
     public Ruby createRuntime() {
         RubyInstanceConfig config = new RubyInstanceConfig(){{
             setInput(System.in);
             setOutput(System.out);
             setError(System.err);
             setLoader(loader);
+            nativeEnabled = false;
         }};
 
         Ruby runtime = Ruby.newInstance(config);
+
         runtime.setKCode(KCode.UTF8);
         
         runtime.setVerbose(runtime.newBoolean(this.verbose));
