@@ -8,12 +8,12 @@ describe JtestRSuite do
     J::System.setProperty("jtestr.junit.tests", "test_tests/one_of_each")
 #    J::System.setProperty("jtestr.junit.logging", "DEBUG")
 
-    request = org.junit.runner.Request.classes("JtestR suite", [JtestRSuite.java_class].to_java(J::Class))
+    request = org.junit.runner.Request.classes([JtestRSuite.java_class].to_java(J::Class))
     runner = org.junit.runner.JUnitCore.new
 
     result = runner.run(request)
     result.failures.to_a.size.should == 6
-    result.run_count.should == 9
+    result.run_count.should == 3
     result.was_successful.should == false
 
     failures, errors = result.failures.partition do |f|

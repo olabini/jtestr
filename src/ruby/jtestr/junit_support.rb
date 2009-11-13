@@ -18,7 +18,7 @@ module JtestR
         test_classes = get_junit_test_classes(test_type, group)
 
         if test_classes.length > 0
-          request = org.junit.runner.Request.classes(desc, test_classes)
+          request = org.junit.runner.Request.classes(test_classes)
           runner = org.junit.runner.JUnitCore.new
 
           result_handler = JtestR.result_handler.new(desc, "test", @output, @output_level, aggr)
