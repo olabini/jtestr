@@ -3,7 +3,7 @@
 $:.unshift "#{File.dirname(__FILE__)}/vendor/builder-2.1.2"
 require 'builder'
 
-$:.unshift "#{File.dirname(__FILE__)}/vendor/memcache-client-1.6.5"
+$:.unshift "#{File.dirname(__FILE__)}/vendor/memcache-client-1.7.4"
 
 $:.unshift "#{File.dirname(__FILE__)}/vendor/tzinfo-0.3.12"
 
