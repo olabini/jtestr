@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require 'spec_helper'
 
 module Spec
   module Example
@@ -80,6 +80,22 @@ module Spec
 
           example = doubly_nested_group.new
           example.subject.should == [1,2,3]
+        end
+      end
+    end
+
+    describe ".its (to access subject's attributes)" do
+      with_sandboxed_options do
+        it "passes when expectation should pass" do
+          group = Class.new(ExampleGroupDouble).describe(Array)
+          child = group.its(:length) { should == 0 }
+          child.run(options).should == true
+        end
+        
+        it "fails when expectation should fail" do
+          group = Class.new(ExampleGroupDouble).describe(Array)
+          child = group.its(:length) { should == 1 }
+          child.run(options).should == false
         end
       end
     end

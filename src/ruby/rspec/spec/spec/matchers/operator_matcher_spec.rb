@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper.rb'
+require 'spec_helper'
 
 require 'spec/runner/differs/default'
 
@@ -33,7 +33,7 @@ describe "should_not ==" do
   
   it "should return true on success" do
     subject = "apple"
-    (subject.should_not == "orange").should be_true
+    (subject.should_not == "orange").should be_false
   end
 
   it "should fail when target.==(actual) returns false" do

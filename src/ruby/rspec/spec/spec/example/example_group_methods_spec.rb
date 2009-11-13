@@ -1,4 +1,4 @@
-  require File.dirname(__FILE__) + '/../../spec_helper'
+require 'spec_helper'
 
 module Spec
   module Example
@@ -670,7 +670,88 @@ module Spec
             example_group.__send__ :run_after_all, true, {}, nil
           end
         end
+        
+        describe "#examples_to_run" do
+          it "runs only the example identified by a line number" do
+            example_group = Class.new(ExampleGroupDouble).describe("this") do
+              it { 3.should == 3 }
+              it "has another example which raises" do
+                raise "this shouldn't have run"
+              end
+            end
+            options.examples << :ignore
+            options.line_number = __LINE__ - 6
+            options.files << __FILE__
+            example_group.run(options).should be_true
+          end
 
+          it "runs the example identified by a line number even if it's not the example line number" do
+            example_group = Class.new(ExampleGroupDouble).describe("this") do
+
+              it { raise "foo" }
+
+            end
+            options.examples << :ignore
+            options.line_number = __LINE__ - 3
+            options.files << __FILE__
+            example_group.run(options).should be_false
+          end
+
+          it "runs all the examples in the group " do
+            first_example_ran  = false
+            second_example_ran = false
+            example_group = Class.new(ExampleGroupDouble).describe("this") do
+
+              it { first_example_ran  = true }
+              it { second_example_ran = true }
+
+            end
+            options.line_number = __LINE__ - 6
+            options.files << __FILE__
+            options.examples << :ignore
+            example_group.run(options)
+            first_example_ran.should be_true
+            second_example_ran.should be_true
+          end
+
+          it "doesn't run any examples in another group" do
+            example_ran  = false
+            example_group_1 = Class.new(ExampleGroupDouble).describe("this") do
+              it "ignore" do
+                example_ran = true
+              end
+            end
+            example_group_2 = Class.new(ExampleGroupDouble).describe("that") do
+            end
+            options.examples << :ignore
+            options.line_number = __LINE__ - 3
+            options.files << __FILE__
+            example_group_1.run(options)
+            example_group_2.run(options)
+            example_ran.should be_false
+          end
+        end
+
+        describe "#define" do
+          let(:counter) do
+            Class.new do
+              def initialize
+                @count = 0
+              end
+              def count
+                @count += 1
+              end
+            end.new
+          end
+          it "generates an instance method" do
+            counter.count.should == 1
+          end
+          
+          it "caches the value" do
+            counter.count.should == 1
+            counter.count.should == 2
+          end
+        end
       end
     end
   end

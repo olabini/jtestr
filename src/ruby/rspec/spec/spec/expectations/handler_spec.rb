@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper.rb'
+require 'spec_helper'
 
 module ExampleExpectations
   
@@ -95,6 +95,15 @@ module Spec
           Spec::Expectations::PositiveExpectationHandler.handle_matcher(actual, matcher)
           
         end
+        
+        it "appends the :or message in the options hash passed to should" do
+          matcher = mock("matcher", :failure_message_for_should => "message", :matches? => false)
+          actual = Object.new
+          
+          ::Spec::Expectations.should_receive(:fail_with).with("custom")
+          
+          Spec::Expectations::PositiveExpectationHandler.handle_matcher(actual, matcher, "custom")
+        end
       end
     end
 
@@ -158,6 +167,15 @@ module Spec
           ::Spec::Expectations.should_receive(:fail_with).with("message", 1, 2)
           
           Spec::Expectations::NegativeExpectationHandler.handle_matcher(actual, matcher)
+        end
+
+        it "appends the :or message in the options hash passed to should" do
+          matcher = mock("matcher", :failure_message_for_should_not => "message", :matches? => true)
+          actual = Object.new
+          
+          ::Spec::Expectations.should_receive(:fail_with).with("custom")
+          
+          Spec::Expectations::NegativeExpectationHandler.handle_matcher(actual, matcher, "custom")
         end
 
       end

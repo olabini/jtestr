@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper.rb'
+require 'spec_helper'
 
 describe "should be_predicate" do  
   it "should pass when actual returns true for :predicate?" do
@@ -16,6 +16,13 @@ describe "should be_predicate" do
     lambda {
       actual.should be_happy
     }.should fail_with("expected happy? to return true, got false")
+  end
+  
+  it "should fail when actual returns false for :predicate?" do
+    actual = stub("actual", :happy? => nil)
+    lambda {
+      actual.should be_happy
+    }.should fail_with("expected happy? to return true, got nil")
   end
   
   it "should fail when actual does not respond to :predicate?" do
@@ -44,6 +51,11 @@ end
 describe "should_not be_predicate" do
   it "should pass when actual returns false for :sym?" do
     actual = stub("actual", :happy? => false)
+    actual.should_not be_happy
+  end
+  
+  it "should pass when actual returns nil for :sym?" do
+    actual = stub("actual", :happy? => nil)
     actual.should_not be_happy
   end
   
@@ -137,7 +149,7 @@ describe "should be_nil" do
   it "should fail when actual is not nil" do
     lambda {
       :not_nil.should be_nil
-    }.should fail_with("expected nil? to return true, got false")
+    }.should fail_with("expected nil, got :not_nil")
   end
 end
 
@@ -149,7 +161,7 @@ describe "should_not be_nil" do
   it "should fail when actual is nil" do
     lambda {
       nil.should_not be_nil
-    }.should fail_with("expected nil? to return false, got true")
+    }.should fail_with("expected not nil, got nil")
   end
 end
 

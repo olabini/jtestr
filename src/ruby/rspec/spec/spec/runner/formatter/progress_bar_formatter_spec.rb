@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../../spec_helper.rb'
+require 'spec_helper'
 require 'spec/runner/formatter/progress_bar_formatter'
 
 module Spec
@@ -45,29 +45,33 @@ Finished in 3 seconds
         end
 
         it "should push green dot for passing spec" do
-          @io.should_receive(:tty?).and_return(true)
-          @options.should_receive(:colour).and_return(true)
+          @formatter.stub(:output_to_file?) {false}
+          @io.stub(:tty?)                   {true}
+          @options.stub(:colour)            {true}
           @formatter.example_passed("spec")
           @io.string.should == "\e[32m.\e[0m"
         end
 
         it "should push red F for failure spec" do
-          @io.should_receive(:tty?).and_return(true)
-          @options.should_receive(:colour).and_return(true)
+          @formatter.stub(:output_to_file?) {false}
+          @io.stub(:tty?)                   {true}
+          @options.stub(:colour)            {true}
           @formatter.example_failed("spec", 98, Spec::Runner::Reporter::Failure.new("g", "c s", Spec::Expectations::ExpectationNotMetError.new))
           @io.string.should eql("\e[31mF\e[0m")
         end
 
         it "should push red F for error spec" do
-          @io.should_receive(:tty?).and_return(true)
-          @options.should_receive(:colour).and_return(true)
+          @formatter.stub(:output_to_file?) {false}
+          @io.stub(:tty?)                   {true}
+          @options.stub(:colour)            {true}
           @formatter.example_failed("spec", 98, Spec::Runner::Reporter::Failure.new("g", "c s", RuntimeError.new))
           @io.string.should eql("\e[31mF\e[0m")
         end
 
         it "should push blue F for fixed pending spec" do
-          @io.should_receive(:tty?).and_return(true)
-          @options.should_receive(:colour).and_return(true)
+          @formatter.stub(:output_to_file?) {false}
+          @io.stub(:tty?)                   {true}
+          @options.stub(:colour)            {true}
           @formatter.example_failed("spec", 98, Spec::Runner::Reporter::Failure.new("g", "c s", Spec::Example::PendingExampleFixedError.new))
           @io.string.should eql("\e[34mF\e[0m")
         end

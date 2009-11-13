@@ -1,3 +1,83 @@
+=== Version 1.2.9 / 2009-10-05
+
+* enhancements
+  * manage backtrace-ignore patterns with Spec::Runner.configure (Martin
+    Emde). Closes #870.
+  * friendly mock argument expectation failure message (Tim Harper). Closes
+    #868.
+  * added double() as alias for stub() and mock()
+  * failure messages for doubles, mocks and stubs use the right name
+  * add let() method to assign memoized attributes (suggestion from Stuart
+    Halloway). Closes #857.
+  * add its method so you can say:
+      describe Array do
+        its(:length) { should == 0 }
+    (Stephen Touset). Closes #833
+  * spec command automatically uses spec/spec.opts if it is present
+    (suggestion from Yehuda Katz)
+  * rspec now adds PROJECT_ROOT/lib and PROJECT_ROOT/spec to the load path
+    * determines PROJECT_ROOT by recursing up until it finds a directory
+      that has a ./spec directory (thanks to Scott Taylor)
+    * supports require 'spec_helper'
+    * supports running specs from the PROJECT_ROOT or any directory
+      below it
+    * closes #733
+  * better handling of determining test names in test/unit/interop mode
+    * Joe Ferris
+    * closes #854
+    
+* bug fixes
+
+  * Fixed problem with colorized output when writing to a file
+    * Corey Ehmke
+    * closes #777
+
+* not really a bug fix or enhancement
+  * temporarily moved heckle feature to features-pending (waiting to see what
+    happens with
+    http://rubyforge.org/tracker/index.php?func=detail&aid=26786&group_id=1513&atid=5921)
+
+=== Version 1.2.8 / 2009-07-16
+
+* enhancements
+  * better messages for should[_not] be_nil (Chad Humphries and Rob Sanheim)
+  * should and should_not accept optional custom message
+    (suggestion from Rob Sanheim)
+    * result.should be_nil, "expected result to be nil"
+  * added 'spec/stubs/cucumber' to plug RSpec's stubbing framework into
+    Cucumber scenarios.
+  * added unstub method to remove a stub mid-example (Scott Taylor). Closes
+    #853.
+  * add more readable diff when expected and actual are hashes (Ryan Bigg).
+    Closes #848.
+
+* bug fixes
+  * fixed --line option for ruby 1.9.1
+  * fix stub_chain conflict between two chains starting with the same message
+    (Mike Rohland). Closes #846.
+
+=== Version 1.2.7 / 2009-06-22
+
+* enhancments
+  * added support for fakes using obj.stub(:method) { # implementation }
+  * allow subject { self } (Jarmo Pertman). Closes #816.
+  * friendly error message when a matcher returns nil on a failure message
+  * add ruby_cmd option to SpecTask (Rick DeNatale). Closes #823.
+    * also added missing specs for SpecTask - thanks Rick!
+  * add support for generating matchers with fluent interfaces with the
+    Matcher DSL
+
+* bug fixes
+  * NegativeOperatorMatcher now returns false (Wesley Beary). Closes #812.
+  * derive MockExpectationError from Exception rather than StandardError
+    (Kerry Buckley). Closes #830.
+  * fix bug where multi-line failure messages weren't getting picked up by
+    autotest (Jarmo Pertman). Closes #832.
+  * --line_number now works for it { should xxx } format (assist from Fred
+    Lee)
+  * warn instead of raise when there is no description supplied for an
+    example. Closes #840.
+
 === Version 1.2.6 / 2009-04-30
 
 * bug fixes
@@ -15,7 +95,7 @@
   * add stub_chain method
     * also alias_method :stub, :stub!, so you can stub with less bang
   * added options to example_group_proxy
-    
+
 * bug fixes
 
   * ensure correct handling of ordered message expectations with duplicate

@@ -18,7 +18,7 @@ module Spec
       def initialize(target, name=nil, options={})
         @target = target
         @name = name
-        @error_generator = ErrorGenerator.new target, name
+        @error_generator = ErrorGenerator.new target, name, options
         @expectation_ordering = OrderGroup.new @error_generator
         @expectations = []
         @messages_received = []
@@ -56,10 +56,21 @@ module Spec
         @expectations.last
       end
 
-      def add_stub(expected_from, sym, opts={})
+      def add_stub(expected_from, sym, opts={}, &implementation)
         __add sym
-        @stubs.unshift MessageExpectation.new(@error_generator, @expectation_ordering, expected_from, sym, nil, :any, opts)
+        @stubs.unshift MessageExpectation.new(@error_generator, @expectation_ordering, expected_from, sym, nil, :any, opts, &implementation)
         @stubs.first
+      end
+
+      def remove_stub(message)
+        message = message.to_sym
+        
+        if stub_to_remove = @stubs.detect { |s| s.matches_name?(message) }
+          reset_proxied_method(message)
+          @stubs.delete(stub_to_remove)
+        else
+          raise MockExpectationError, "The method `#{message}` was not stubbed or was already unstubbed"
+        end
       end
       
       def verify #:nodoc:
@@ -96,9 +107,9 @@ module Spec
           if expectation = find_almost_matching_expectation(sym, *args)
             expectation.advise(args, block) unless expectation.expected_messages_received?
           end
-          stub.invoke(args, block)
+          stub.invoke(*args, &block)
         elsif expectation
-          expectation.invoke(args, block)
+          expectation.invoke(*args, &block)
         elsif expectation = find_almost_matching_expectation(sym, *args)
           expectation.advise(args, block) if null_object? unless expectation.expected_messages_received?
           raise_unexpected_message_args_error(expectation, *args) unless (has_negative_expectation?(sym) or null_object?)
@@ -113,6 +124,10 @@ module Spec
 
       def raise_unexpected_message_error(sym, *args)
         @error_generator.raise_unexpected_message_error sym, *args
+      end
+      
+      def find_matching_method_stub(sym, *args)
+        @stubs.find {|stub| stub.matches(sym, args)}
       end
       
     private
@@ -193,13 +208,17 @@ module Spec
 
       def reset_proxied_methods
         @proxied_methods.each do |sym|
-          munged_sym = munge(sym)
-          target_metaclass.instance_eval do
-            remove_method sym
-            if method_defined?(munged_sym)
-              alias_method sym, munged_sym
-              remove_method munged_sym
-            end
+          reset_proxied_method(sym)
+        end
+      end
+
+      def reset_proxied_method(sym)
+        munged_sym = munge(sym)
+        target_metaclass.instance_eval do
+          remove_method sym
+          if method_defined?(munged_sym)
+            alias_method sym, munged_sym
+            remove_method munged_sym
           end
         end
       end
@@ -219,10 +238,6 @@ module Spec
 
       def find_almost_matching_expectation(sym, *args)
         @expectations.find {|expectation| expectation.matches_name_but_not_args(sym, args)}
-      end
-
-      def find_matching_method_stub(sym, *args)
-        @stubs.find {|stub| stub.matches(sym, args)}
       end
 
     end

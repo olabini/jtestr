@@ -14,7 +14,7 @@ Feature: implicit subject
       end
       """
     When I run "spec top_level_subject_spec.rb"
-    Then the stdout should match "1 example, 0 failures"
+    Then the stdout should include "1 example, 0 failures"
 
   Scenario: subject in a nested group
     Given a file named "nested_subject_spec.rb" with:
@@ -28,4 +28,16 @@ Feature: implicit subject
       end
       """
     When I run "spec nested_subject_spec.rb"
-    Then the stdout should match "1 example, 0 failures"
+    Then the stdout should include "1 example, 0 failures"
+
+  Scenario: subject with getters
+    Given a file named "subject_with_getter_spec.rb" with:
+      """
+      describe Array do
+        describe "when first created" do
+          its(:length) { should == 0 }
+        end
+      end
+      """
+    When I run "spec subject_with_getter_spec.rb"
+    Then the stdout should include "1 example, 0 failures"

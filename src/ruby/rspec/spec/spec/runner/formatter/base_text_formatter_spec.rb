@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../../spec_helper'
+require 'spec_helper'
 require 'spec/runner/formatter/base_text_formatter'
 
 module Spec
@@ -64,6 +64,15 @@ module Spec
         describe "#colour (protected)" do
           before(:each) do
             @original_RSPEC_COLOR = ENV['RSPEC_COLOR']
+          end
+          
+          it "does not colorize when output_to_file? returns true" do
+            out = StringIO.new
+            options = stub('options', :colour => true, :autospec => false)
+            formatter = BaseTextFormatter.new(options,out)
+            formatter.stub!(:output_to_tty?).and_return(true)
+            formatter.stub!(:output_to_file?).and_return(true)
+            formatter.__send__(:colour, 'foo', "\e[32m").should == "foo"
           end
           
           it "colorizes when colour? and output_to_tty? return true" do

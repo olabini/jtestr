@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper.rb'
+require 'spec_helper'
 
 module Spec
   module Example
@@ -73,6 +73,13 @@ module Spec
       it "does not match when no passed in examples match" do
         matcher = ExampleMatcher.new("Foo::Bar", "baz")
         matcher.matches?(["no match1", "no match2"]).should == false
+      end
+    end
+    
+    describe ExampleMatcher, "called with nil example" do
+      it "does not puke" do
+        matcher = ExampleMatcher.new("Foo::Bar", nil)
+        matcher.matches?(["anything"]).should == false
       end
     end
   end

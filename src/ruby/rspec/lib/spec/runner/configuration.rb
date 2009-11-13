@@ -137,6 +137,23 @@ module Spec
       def predicate_matchers
         @predicate_matchers ||= Spec::HashWithDeprecationNotice.new("predicate_matchers", "the new Matcher DSL")
       end
+
+      # Adds patterns to the list of patterns ignored in the backtrace when a
+      # failure is output by rspec. Example:
+      #
+      #   config.ignore_backtrace_patterns /spork/, /shoulda/, "/some/weird/path/"
+      #
+      # When quiet backtraces are turned on (default), this will exclude any
+      # lines that match any of the Regexps and Strings passed.
+      #
+      def ignore_backtrace_patterns(*patterns)
+        @ignored_backtrace_patterns ||= []
+        @ignored_backtrace_patterns += patterns
+      end
+
+      def ignored_backtrace_patterns # :nodoc:
+        @ignored_backtrace_patterns ||= []
+      end
       
     private
     
@@ -161,7 +178,7 @@ module Spec
       end
     
       def mock_framework_path(framework_name)
-        File.expand_path(File.join(File.dirname(__FILE__), "/../adapters/mock_frameworks/#{framework_name}"))
+        "spec/adapters/mock_frameworks/#{framework_name}"
       end
 
       def scope_and_options(*args) # :nodoc:

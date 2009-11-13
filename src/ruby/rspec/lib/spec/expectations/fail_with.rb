@@ -9,6 +9,10 @@ module Spec
       # <code>expected</code> and <code>target</code>, passes them
       # to the differ to append a diff message to the failure message.
       def fail_with(message, expected=nil, target=nil) # :nodoc:
+        if message.nil?
+          raise ArgumentError, "Failure message is nil. Does your matcher define the " +
+                               "appropriate failure_message_for_* method to return a string?"
+        end
         if (Array === message) & (message.length == 3)
           ::Spec.warn(<<-NOTICE
 
@@ -27,9 +31,11 @@ NOTICE
         end
         unless (differ.nil? || expected.nil? || target.nil?)
           if expected.is_a?(String)
-            message << "\nDiff:" << self.differ.diff_as_string(target.to_s, expected)
+            message << "\n\n Diff:" << self.differ.diff_as_string(target.to_s, expected)
+          elsif expected.is_a?(Hash) && target.is_a?(Hash)
+            message << "\n\n Diff:" << self.differ.diff_as_hash(target, expected)
           elsif !target.is_a?(Proc)
-            message << "\nDiff:" << self.differ.diff_as_object(target, expected)
+            message << "\n\n Diff:" << self.differ.diff_as_object(target, expected)
           end
         end
         Kernel::raise(Spec::Expectations::ExpectationNotMetError.new(message))

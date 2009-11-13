@@ -119,10 +119,13 @@ module Spec
       # the executed spec command to stdout. Defaults to false.
       attr_accessor :verbose
 
+      # Explicitly define the path to the ruby binary, or its proxy (e.g. multiruby)
+      attr_accessor :ruby_cmd
+
       # Defines a new task, using the name +name+.
       def initialize(name=:spec)
         @name = name
-        @libs = [File.expand_path(File.dirname(__FILE__) + '/../../../lib')]
+        @libs = ['lib']
         @pattern = nil
         @spec_files = nil
         @spec_opts = []
@@ -139,7 +142,7 @@ module Spec
       end
 
       def define # :nodoc:
-        spec_script = File.expand_path(File.dirname(__FILE__) + '/../../../bin/spec')
+        spec_script = File.expand_path(File.join(File.dirname(__FILE__),"..","..","..","bin","spec"))
 
         lib_path = libs.join(File::PATH_SEPARATOR)
         actual_name = Hash === name ? name.keys.first : name
@@ -152,7 +155,7 @@ module Spec
               # ruby [ruby_opts] -Ilib -S rcov [rcov_opts] bin/spec -- examples [spec_opts]
               # or
               # ruby [ruby_opts] -Ilib bin/spec examples [spec_opts]
-              cmd_parts = [RUBY]
+              cmd_parts = [ruby_cmd || RUBY]
               cmd_parts += ruby_opts
               cmd_parts << %[-I"#{lib_path}"]
               cmd_parts << "-S rcov" if rcov
@@ -192,8 +195,11 @@ module Spec
       end
 
       def rcov_option_list # :nodoc:
-        return "" unless rcov
-        ENV['RCOV_OPTS'] || rcov_opts.join(" ") || ""
+        if rcov
+          ENV['RCOV_OPTS'] || rcov_opts.join(" ") || ""
+        else
+          ""
+        end
       end
 
       def spec_option_list # :nodoc:
