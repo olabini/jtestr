@@ -90,7 +90,7 @@ class Class
 end
 
 module Mocha
-  module Standalone
+  module API
     alias old_mock mock
     
     def mock(*args)

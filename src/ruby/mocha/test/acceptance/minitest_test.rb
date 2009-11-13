@@ -1,7 +1,22 @@
 require File.join(File.dirname(__FILE__), "acceptance_test_helper")
-require 'mocha'
+
+begin
+  require 'rubygems'
+  gem 'minitest'
+rescue Gem::LoadError
+  # MiniTest gem not available
+end
+
+begin
+  require 'minitest/unit'
+rescue LoadError
+  # MiniTest not available
+end
 
 if defined?(MiniTest)
+  
+  # monkey-patch MiniTest now that it has hopefully been loaded
+  require 'mocha/integration/mini_test'
 
   class MiniTestSampleTest < MiniTest::Unit::TestCase
   
@@ -46,7 +61,7 @@ if defined?(MiniTest)
   
   end
 
-  class MiniTestAdapterTest < Test::Unit::TestCase
+  class MiniTestTest < Test::Unit::TestCase
   
     def setup
       @output = StringIO.new
@@ -59,14 +74,16 @@ if defined?(MiniTest)
     def test_should_pass_mocha_test
       runner.run(%w(-n test_mocha_with_fulfilled_expectation))
     
+      assert_equal 0, runner.failures
       assert_equal 0, runner.errors
       assert_equal 1, runner.assertion_count
     end
 
     def test_should_fail_mocha_test_due_to_unfulfilled_expectation
       runner.run(%w(-n test_mocha_with_unfulfilled_expectation))
-    
-      assert_equal 1, runner.errors
+      
+      assert_equal 1, runner.failures
+      assert_equal 0, runner.errors
       assert_equal 1, runner.assertion_count
       assert_not_all_expectation_were_satisfied
     end
@@ -74,7 +91,8 @@ if defined?(MiniTest)
     def test_should_fail_mocha_test_due_to_unexpected_invocation
       runner.run(%w(-n test_mocha_with_unexpected_invocation))
     
-      assert_equal 1, runner.errors
+      assert_equal 1, runner.failures
+      assert_equal 0, runner.errors
       assert_equal 0, runner.assertion_count
       assert_unexpected_invocation
     end
@@ -82,6 +100,7 @@ if defined?(MiniTest)
     def test_should_pass_stubba_test
       runner.run(%w(-n test_stubba_with_fulfilled_expectation))
     
+      assert_equal 0, runner.failures
       assert_equal 0, runner.errors
       assert_equal 1, runner.assertion_count
     end
@@ -89,22 +108,26 @@ if defined?(MiniTest)
     def test_should_fail_stubba_test_due_to_unfulfilled_expectation
       runner.run(%w(-n test_stubba_with_unfulfilled_expectation))
     
-      assert_equal 1, runner.errors
+      assert_equal 1, runner.failures
+      assert_equal 0, runner.errors
       assert_equal 1, runner.assertion_count
-      assert_match Regexp.new('not all expectations were satisfied'), output
+      assert_not_all_expectation_were_satisfied
     end
   
     def test_should_pass_mocha_test_with_matching_parameter
       runner.run(%w(-n test_mocha_with_matching_parameter))
     
+      assert_equal 0, runner.failures
       assert_equal 0, runner.errors
       assert_equal 1, runner.assertion_count
     end
   
     def test_should_fail_mocha_test_with_non_matching_parameter
       runner.run(%w(-n test_mocha_with_non_matching_parameter))
-    
-      assert_equal 1, runner.errors
+      
+      assert_equal 1, runner.failures
+      assert_equal 0, runner.errors
+      assert_equal 0, runner.assertion_count # unexpected invocation occurs before expectation is verified
       assert_unexpected_invocation
     end
   

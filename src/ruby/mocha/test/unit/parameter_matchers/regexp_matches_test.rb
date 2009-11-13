@@ -22,4 +22,25 @@ class RegexpMatchesTest < Test::Unit::TestCase
     assert_equal "regexp_matches(/oo/)", matcher.mocha_inspect
   end
   
+  def test_should_not_raise_error_on_empty_arguments
+    matcher = regexp_matches(/oo/)
+    assert_nothing_raised { matcher.matches?([]) }
+  end
+  
+  def test_should_not_match_on_empty_arguments
+    matcher = regexp_matches(/oo/)
+    assert !matcher.matches?([])
+  end
+  
+  def test_should_not_raise_error_on_argument_that_does_not_respond_to_equals_tilde
+    object_not_responding_to_equals_tilde = Class.new { undef =~ }.new
+    matcher = regexp_matches(/oo/)
+    assert_nothing_raised { matcher.matches?([object_not_responding_to_equals_tilde]) }
+  end
+  
+  def test_should_not_match_on_argument_that_does_not_respond_to_equals_tilde
+    object_not_responding_to_equals_tilde = Class.new { undef =~ }.new
+    matcher = regexp_matches(/oo/)
+    assert !matcher.matches?([object_not_responding_to_equals_tilde])
+  end
 end
