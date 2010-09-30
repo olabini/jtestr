@@ -25,7 +25,7 @@
             <inherited>false</inherited>
             <configuration>
               <tasks>
-                <copy file="../lib/jruby-complete-r50f18ccb59d5899171aa196b13b351d17741f555.jar" todir="target" overwrite="true"/>
+                <copy file="../lib/jruby-complete-r1c672b495cfd204421f4a7aed17f6135e730a3b2.jar" todir="target" overwrite="true"/>
               </tasks>
             </configuration>
           </execution>

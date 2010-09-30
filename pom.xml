@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.jtestr</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>r50f18ccb59d5899171aa196b13b351d17741f555</version>
+      <version>r1c672b495cfd204421f4a7aed17f6135e730a3b2</version>
     </dependency>     
   </dependencies> 
 
