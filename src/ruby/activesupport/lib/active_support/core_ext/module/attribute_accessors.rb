@@ -52,7 +52,7 @@ class Module
       EOS
     end
   end
-  
+
   def mattr_accessor(*syms)
     mattr_reader(*syms)
     mattr_writer(*syms)

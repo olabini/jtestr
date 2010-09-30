@@ -96,6 +96,9 @@ public class JtestRSuite implements Test {
             } else if(input.substring(index).startsWith("file:")) {
                 index += 5;
                 colons++;
+            } else if(input.substring(index).startsWith("classpath:")) {
+                index += 10;
+                colons++;
             }
 
             // Check windows:

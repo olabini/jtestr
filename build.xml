@@ -130,7 +130,7 @@
       <fileset dir="${src.ruby.dir}">
         <include name="**/*.rb"/>
       </fileset>
-      <zipfileset src="${lib.dir}/jruby-complete-r50f18ccb59d5899171aa196b13b351d17741f555.jar"/>
+      <zipfileset src="${lib.dir}/jruby-complete-r1c672b495cfd204421f4a7aed17f6135e730a3b2.jar"/>
       <zipfileset src="${lib.dir}/junit-4.7.jar"/>
       <zipfileset src="${lib.dir}/testng-5.9-jdk15.jar"/>
       <manifest>

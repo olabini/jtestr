@@ -1,5 +1,6 @@
 require 'java'
 
+require 'file_fixes'
 require 'jtestr/load_strategy'
 require 'jtestr/aggregator'
 require 'jtestr/simple_logger'
