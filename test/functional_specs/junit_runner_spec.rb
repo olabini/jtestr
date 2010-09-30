@@ -29,14 +29,14 @@ describe JtestRSuite do
     errors.map { |f| f.message }.should include("Semophar")
     failures.map { |f| f.message }.should include("expected: <String> got: <1>")
 
-    
-    errors.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple.rb:12") }
-    failures.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple.rb:14") }
 
-    errors.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple_spec.rb:12") }
-    failures.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple_spec.rb:14") }
+    errors.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple.rb:12") }
+    failures.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple.rb:8") }
+
+    errors.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple_spec.rb:11") }
+    failures.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple_spec.rb:7") }
 
     errors.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple_expectation.rb:12") }
-    failures.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple_expectation.rb:14") }
+    failures.map { |f| f.trace }.should be_any { |v| v.include?("one_of_each/simple_expectation.rb:7") }
   end
 end

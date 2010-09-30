@@ -11,6 +11,7 @@ module Spec
         @location            = example_group.location
         @backtrace           = example_group.location # deprecated - see the backtrace method below
         @options             = example_group.options.dup
+        @real_group          = example_group
         @options.delete(:location)
         @options.delete(:scope)
       end
