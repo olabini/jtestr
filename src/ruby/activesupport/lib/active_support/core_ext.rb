@@ -1,8 +1,8 @@
+
 require "active_support/core_ext/array"
 require "active_support/core_ext/base64"
 require "active_support/core_ext/benchmark"
 require "active_support/core_ext/bigdecimal"
-require "active_support/core_ext/blank"
 require "active_support/core_ext/cgi"
 require "active_support/core_ext/class"
 require "active_support/core_ext/date"
