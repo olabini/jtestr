@@ -150,7 +150,7 @@ module Spec
         @mock.should_receive(:something) {| bool | bool.should be_true}
         lambda {
           @mock.something false
-        }.should raise_error(MockExpectationError, /Mock "test mock" received :something but passed block failed with: expected true, got false/)
+        }.should raise_error(MockExpectationError, /Mock "test mock" received :something but passed block failed with: expected false to be true/)
       end
 
       it "should fail right away when method defined as never is received" do
@@ -359,7 +359,7 @@ module Spec
           @mock.yield_back
         }.should raise_error(MockExpectationError, "Mock \"test mock\" asked to yield |[\"wha\", \"zup\"]| but no block was passed")
       end
-
+      
       it "should be able to mock send" do
         @mock.should_receive(:send).with(any_args)
         @mock.send 'hi'

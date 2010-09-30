@@ -1,4 +1,4 @@
-require 'spec/matchers/extensions/instance_exec'
+require 'spec/extensions/instance_exec'
 require 'spec/matchers/pretty'
 require 'spec/matchers/matcher'
 require 'spec/matchers/operator_matcher'
@@ -18,7 +18,7 @@ require 'spec/matchers/include'
 require 'spec/matchers/match'
 require 'spec/matchers/match_array'
 require 'spec/matchers/method_missing'
-require 'spec/matchers/raise_error'
+require 'spec/matchers/raise_exception'
 require 'spec/matchers/respond_to'
 require 'spec/matchers/satisfy'
 require 'spec/matchers/simple_matcher'
@@ -138,6 +138,25 @@ module Spec
   # failure message methods (<tt>failure_message_for_should</tt> and
   # <tt>failure_message_for_should_not</tt>) are passed the actual value (the
   # receiver of <tt>should</tt> or <tt>should_not</tt>).
+  #
+  # You can also create matchers that obey a fluent interface using the
+  # <tt>chain</tt> method:
+  #
+  #   Spec::Matchers.define :tip do |expected_tip|
+  #     chain :on do |bill|
+  #       @bill = bill
+  #     end
+  #
+  #     match do |person|
+  #       person.tip_for(bill) == expected_tip
+  #     end
+  #   end
+  #
+  # This matcher can be used as follows:
+  #
+  #   describe Customer do
+  #     it { should tip(10).on(50 }
+  #   end
   #
   # === Custom Matcher from scratch
   #

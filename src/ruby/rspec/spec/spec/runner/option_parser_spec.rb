@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'spec/runner/resources/custom_example_group_runner'
-require 'fakefs/safe'
 require 'fakefs/spec_helpers'
 
 describe "OptionParser" do  
@@ -15,10 +14,8 @@ describe "OptionParser" do
     @parser.options
   end
   
-  # FIXME - this entire file should run w/ fakefs
   describe "with fakefs" do
-    extend FakeFS::SpecHelpers
-    use_fakefs
+    include FakeFS::SpecHelpers
 
     it "should not use colour by default" do
       options = parse([])
@@ -62,6 +59,15 @@ describe "OptionParser" do
     @parser.stub!(:parse_drb).with(no_args).and_return(true)
     options = parse(["--drb", "-u"])
     options.debug.should be_false
+  end
+
+  it "should accept port option" do
+    options = parse(["--port", "9000"])
+    options.drb_port.should == 9000
+  end
+
+  it 'should require argument to port option' do
+    lambda { parse(["--port"]) }.should raise_error(OptionParser::MissingArgument)
   end
   
   it "should accept dry run option" do
@@ -518,8 +524,8 @@ describe "OptionParser" do
   end
   
   describe "implicitly loading spec/spec.opts" do
-    extend FakeFS::SpecHelpers
-    use_fakefs
+    include FakeFS::SpecHelpers
+
     it "uses spec/spec.opts if present" do
       File.open('spec/spec.opts', 'w') { |f| f.write "--colour" }
       options = parse(['ignore.rb'])

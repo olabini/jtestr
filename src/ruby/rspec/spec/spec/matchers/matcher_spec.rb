@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+class UnexpectedError < StandardError; end
+
 module Spec
   module Matchers
     describe Matcher do
@@ -50,6 +52,26 @@ module Spec
         matcher.matches?('actual string')
 
         matcher.actual.should == 'actual string'
+      end
+
+      context "wrapping another expectation (should == ...)" do
+        it "returns true if the wrapped expectation passes" do
+          matcher = Spec::Matchers::Matcher.new(:name, 'value') do |expected|
+            match do |actual|
+              actual.should == expected
+            end
+          end
+          matcher.matches?('value').should be_true
+        end
+
+        it "returns false if the wrapped expectation fails" do
+          matcher = Spec::Matchers::Matcher.new(:name, 'value') do |expected|
+            match do |actual|
+              actual.should == expected
+            end
+          end
+          matcher.matches?('other value').should be_false
+        end
       end
 
       context "with overrides" do
@@ -207,22 +229,61 @@ module Spec
         matcher.matches?(8).should be_true
       end
 
-      it "lets you override the actual() in messages" do
-        matcher = Spec::Matchers::Matcher.new(:be_foo) do
-          match do |actual|
-            @submitted = actual
-            false
+      describe "#match_unless_raises" do
+        context "with a passing assertion" do
+          let(:mod) do
+            Module.new do
+              def assert_equal(a,b)
+                a == b ? nil : (raise UnexpectedError.new("#{a} does not equal #{b}"))
+              end
+            end
           end
-
-          def actual
-            "replaced"
+          let(:matcher) do
+            m = mod
+            Spec::Matchers::Matcher.new :equal, 4 do |expected|
+              extend m
+              match_unless_raises UnexpectedError do
+                assert_equal expected, actual
+              end
+            end
+          end
+          it "passes as you would expect" do
+            matcher.matches?(4).should be_true
+          end
+          it "fails as you would expect" do
+            matcher.matches?(5).should be_false
           end
         end
 
-        matcher.matches?("foo")
-        matcher.failure_message_for_should.should =~ /replaced/
+        context "with an unexpected error" do
+          let(:matcher) do
+            Spec::Matchers::Matcher.new :foo, :bar do |expected|
+              match_unless_raises SyntaxError do |actual|
+                raise "unexpected exception"
+              end
+            end
+          end
+
+          it "raises the error" do
+            expect do
+              matcher.matches?(:bar)
+            end.to raise_error("unexpected exception")
+          end
+        end
+
       end
 
+      it "can define chainable methods" do
+        matcher = Spec::Matchers::Matcher.new(:name) do
+          chain(:expecting) do |expected_value|
+            @expected_value = expected_value
+          end
+          match { |actual| actual == @expected_value }
+        end
+
+        matcher.expecting('value').matches?('value').should be_true
+        matcher.expecting('value').matches?('other value').should be_false
+      end
     end
   end
 end

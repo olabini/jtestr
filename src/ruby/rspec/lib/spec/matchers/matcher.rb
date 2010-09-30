@@ -12,6 +12,7 @@ module Spec
         @expected = expected
         @actual   = nil
         @diffable = false
+        @expected_exception = nil
         @messages = {
           :description => lambda {"#{name_to_sentence}#{expected_to_sentence}"},
           :failure_message_for_should => lambda {|actual| "expected #{actual.inspect} to #{name_to_sentence}#{expected_to_sentence}"},
@@ -22,32 +23,69 @@ module Spec
         end
       end
 
+      #Used internally by objects returns by +should+ and +should_not+.
       def matches?(actual)
-        instance_exec(@actual = actual, &@match_block)
+        @actual = actual
+        if @expected_exception
+          begin
+            instance_exec(actual, &@match_block)
+            true
+          rescue @expected_exception
+            false
+          end
+        else
+          begin
+            instance_exec(actual, &@match_block)
+          rescue Spec::Expectations::ExpectationNotMetError
+            false
+          end
+        end
       end
 
-      def description(&block)
-        cache_or_call_cached(:description, &block)
-      end
-
-      def failure_message_for_should(&block)
-        cache_or_call_cached(:failure_message_for_should, actual, &block)
-      end
-
-      def failure_message_for_should_not(&block)
-        cache_or_call_cached(:failure_message_for_should_not, actual, &block)
-      end
-
+      # See Spec::Matchers
       def match(&block)
         @match_block = block
       end
 
+      # See Spec::Matchers
+      def match_unless_raises(exception=Exception, &block)
+        @expected_exception = exception
+        match(&block)
+      end
+
+      # See Spec::Matchers
+      def failure_message_for_should(&block)
+        cache_or_call_cached(:failure_message_for_should, &block)
+      end
+
+      # See Spec::Matchers
+      def failure_message_for_should_not(&block)
+        cache_or_call_cached(:failure_message_for_should_not, &block)
+      end
+
+      # See Spec::Matchers
+      def description(&block)
+        cache_or_call_cached(:description, &block)
+      end
+
+      #Used internally by objects returns by +should+ and +should_not+.
       def diffable?
         @diffable
       end
 
+      # See Spec::Matchers
       def diffable
         @diffable = true
+      end
+      
+      # See Spec::Matchers
+      def chain(method, &block)
+        self.class.class_eval do
+          define_method method do |*args|
+            block.call(*args)
+            self
+          end
+        end
       end
 
     private
@@ -69,9 +107,16 @@ module Spec
         (private_methods - orig_private_methods).each {|m| st.__send__ :public, m}
       end
 
-      def cache_or_call_cached(key, actual=nil, &block)
-        block ? @messages[key] = block :
-                actual.nil? ? @messages[key].call : @messages[key].call(actual)
+      def cache_or_call_cached(key, &block)
+        block ? cache(key, &block) : call_cached(key)
+      end
+
+      def cache(key, &block)
+        @messages[key] = block
+      end
+
+      def call_cached(key)
+        @messages[key].arity == 1 ? @messages[key].call(@actual) : @messages[key].call
       end
 
       def name_to_sentence

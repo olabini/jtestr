@@ -2,9 +2,8 @@ require 'autotest'
 
 Autotest.add_hook :initialize do |at|
   at.clear_mappings
-  # watch out: Ruby bug (1.8.6):
-  # %r(/) != /\//
-  at.add_mapping(%r%^spec/.*_spec.rb$%) { |filename, _|
+  # watch out for Ruby bug (1.8.6): %r(/) != /\//
+  at.add_mapping(%r%^spec/.*_spec\.rb$%) { |filename, _|
     filename
   }
   at.add_mapping(%r%^lib/(.*)\.rb$%) { |_, m|
@@ -18,6 +17,8 @@ end
 class RspecCommandError < StandardError; end
 
 class Autotest::Rspec < Autotest
+  
+  SPEC_PROGRAM = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'bin', 'spec'))
 
   def initialize
     super
@@ -36,12 +37,18 @@ class Autotest::Rspec < Autotest
   end
 
   def make_test_cmd(files_to_test)
-    return '' if files_to_test.empty?
-    spec_program = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'bin', 'spec'))
-    return "#{ruby} #{spec_program} --autospec #{files_to_test.keys.flatten.join(' ')} #{add_options_if_present}"
+    files_to_test.empty? ? '' :
+      "#{ruby} #{SPEC_PROGRAM} --autospec #{normalize(files_to_test).keys.flatten.join(' ')} #{add_options_if_present}"
+  end
+
+  def normalize(files_to_test)
+    files_to_test.keys.inject({}) do |result, filename|
+      result[File.expand_path(filename)] = []
+      result
+    end
   end
 
   def add_options_if_present # :nodoc:
-    File.exist?("spec/spec.opts") ? "-O spec/spec.opts " : ""
+    File.exist?("spec/spec.opts") ? "-O #{File.join('spec','spec.opts')} " : ""
   end
 end

@@ -101,6 +101,45 @@ module Spec
           end
         end
 
+        context "#port" do
+          before do
+            @options = stub("options", :drb_port => nil)
+          end
+          
+          context "with no additional configuration" do
+            it "defaults to 8989" do
+              Spec::Runner::DrbCommandLine.port(@options).should == 8989
+            end
+          end
+          
+          context "with RSPEC_DRB environment variable set" do
+            def with_RSPEC_DRB_set_to(val)
+              original = ENV['RSPEC_DRB']
+              begin
+                ENV['RSPEC_DRB'] = val
+                yield
+              ensure
+                ENV['RSPEC_DRB'] = original
+              end
+            end
+            
+            it "uses RSPEC_DRB value" do
+              with_RSPEC_DRB_set_to('9000') do
+                Spec::Runner::DrbCommandLine.port(@options).should == 9000
+              end
+            end
+
+            context "and config variable set" do
+              it "uses configured value" do
+                @options.stub(:drb_port => '5000')
+                with_RSPEC_DRB_set_to('9000') do
+                  Spec::Runner::DrbCommandLine.port(@options).should == 5000
+                end
+              end
+            end
+
+          end
+        end
       end
     end
   end

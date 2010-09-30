@@ -1,4 +1,4 @@
-require 'spec/autotest/autotest_helper'
+require 'autotest/autotest_helper'
 
 describe Autotest::Rspec do
   describe "adding spec.opts --options" do 
@@ -26,17 +26,21 @@ describe Autotest::Rspec do
       @ruby = @rspec_autotest.ruby
       @spec_cmd = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'bin', 'spec'))
       @options = @rspec_autotest.add_options_if_present
+      files = %w[file_one file_two]
       @files_to_test = {
-        :spec => ["file_one", "file_two"]
+        files[0] => [],
+        files[1] => []
       }
       # this is not the inner representation of Autotest!
-      @rspec_autotest.stub!(:files_to_test).and_return @files_to_test
-      @files_to_test.stub!(:keys).and_return @files_to_test[:spec]
-      @to_test = @files_to_test.keys.flatten.join ' '
+      @rspec_autotest.files_to_test = @files_to_test
+      @to_test = files.map { |f| File.expand_path(f) }.join ' '
     end
   
     it "should make the appropriate test command" do
-      @rspec_autotest.make_test_cmd(@files_to_test).should == "#{@ruby} #{@spec_cmd} --autospec #{@to_test} #{@options}"
+      cmd = @rspec_autotest.make_test_cmd(@files_to_test)
+      (cmd =~ /#{@ruby} #{@spec_cmd} --autospec (.*) #{@options}/).should be_true
+      $1.should =~ /#{File.expand_path('file_one')}/
+      $1.should =~ /#{File.expand_path('file_two')}/
     end
 
     it "should return a blank command for no files" do
@@ -106,6 +110,17 @@ describe Autotest::Rspec do
         ]
       ]
       @rspec_autotest.consolidate_failures(failures).keys.should_not include(subject_file)
+    end
+  end
+  
+  describe "normalizing file names" do
+    it "should ensure that a single file appears in files_to_test only once" do
+      @rspec_autotest = Autotest::Rspec.new
+      @files_to_test = {}
+      ['filename.rb', './filename.rb', File.expand_path('filename.rb')].each do |file|
+        @files_to_test[file] = []
+      end
+      @rspec_autotest.normalize(@files_to_test).should have(1).file
     end
   end
 end
