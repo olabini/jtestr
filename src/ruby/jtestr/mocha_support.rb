@@ -14,6 +14,7 @@ module JtestR
                               # Things for Mocha
                               'mocha', 'reset_mocha', 'stubba_method', 
                               'stubba_object', 'expects', 'stubs', 'verify',
+                              'mocha_inspect',
                               # Things for RSpec
                               'should', 'should_not',
                               # Things for Expectations
