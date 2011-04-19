@@ -18,6 +18,8 @@ def connect_and_send(input)
   sock.close
 
   result
+rescue SystemCallError
+  "400"
 end
 
 describe BackgroundServer, "without runtimes" do 
